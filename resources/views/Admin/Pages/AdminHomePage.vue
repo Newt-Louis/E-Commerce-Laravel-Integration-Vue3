@@ -1,5 +1,10 @@
 <template>
-  <div><h1>Admin - HomePage</h1></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3">sidebar</div>
+      <div class="col-lg-9">homepage</div>
+    </div>
+  </div>
 </template>
 
 <script>
