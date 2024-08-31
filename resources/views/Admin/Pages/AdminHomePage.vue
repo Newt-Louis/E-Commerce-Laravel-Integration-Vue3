@@ -1,8 +1,8 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-3">sidebar</div>
-      <div class="col-lg-9">homepage</div>
+  <div>
+    <div>
+      <div>sidebar</div>
+      <div>homepage</div>
     </div>
   </div>
 </template>

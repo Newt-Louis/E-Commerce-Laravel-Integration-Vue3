@@ -19,3 +19,13 @@ use Illuminate\Support\Facades\Route;
 Route::get("/{any}", function () {
     return view("welcome");
 })->where("any", "^(?!api\/)[\/\w\.-]*");
+
+Route::get("/admin", function () {
+    return view("admin");
+})->where("admin", "^(?!api\/)[\/\w\.-]*");
+
+/* Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index']);
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+    // ... các route admin khác
+}); */

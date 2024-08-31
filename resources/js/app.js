@@ -1,6 +1,7 @@
 import './bootstrap';
 import { createApp } from 'vue';
 import App from '../views/App.vue';
+import AdminHomePage from '../views/Admin/Pages/AdminHomePage.vue';
 import router from '../js/Routers/index.js';
 import 'ant-design-vue/dist/reset.css';
 
@@ -8,3 +9,6 @@ import 'ant-design-vue/dist/reset.css';
 const app = createApp(App)
 app.use(router)
 app.mount('#app')
+
+const appAdmin = createApp(AdminHomePage)
+appAdmin.mount('#appAdmin')
