@@ -1,7 +1,6 @@
 <template>
   <div class="layout-container">
     <header><Header /></header>
-    <h1>Xin chào từ component Vue!</h1>
     <main>
       <RouterView />
     </main>
