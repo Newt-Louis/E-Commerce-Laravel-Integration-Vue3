@@ -17,5 +17,15 @@ use Illuminate\Support\Facades\Route;
     return view('welcome');
 }); */
 Route::get("/{any}", function () {
-    return view("welcome");
-})->where("any", "^(?!api\/)[\/\w\.-]*");
+    return view("client");
+})->where("any", "^(?!api\/|admin)[\/\w\.-]*");
+
+Route::get("/admin/{any?}", function () {
+    return view("admin");
+})->where("any", ".*");
+
+/* Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index']);
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+    // ... các route admin khác
+}); */

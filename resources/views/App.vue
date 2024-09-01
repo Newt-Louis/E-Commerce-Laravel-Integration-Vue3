@@ -2,13 +2,12 @@
   <div class="layout-container">
     <header><Header /></header>
     <main>
-      <RouterView />
+      <RouterView/>
     </main>
     <footer></footer>
   </div>
 </template>
 <script>
-
 import Header from './Layouts/Header.vue';
 
 export default {
