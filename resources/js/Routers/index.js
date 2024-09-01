@@ -10,16 +10,14 @@ const routerAdmin = createRouter({
   history: createMemoryHistory(),
   routes: [
     {
-      path:'/',
-      name:'',
-      children: [
-        {
-        path:'/admin',
-        name:'admin',
-        component:() => import('../../views/AdminApp.vue'),
-        }
-      ],
-    }
+      path:'',
+      component:() => import('../../views/AdminApp.vue'),
+      // redirect: '/admin',
+    },
+    // {
+    //   path:'/admin',
+    //   name:'admin',
+    // }
   ]
 })
 

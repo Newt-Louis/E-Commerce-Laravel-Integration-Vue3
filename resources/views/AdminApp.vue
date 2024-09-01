@@ -1,13 +1,23 @@
 <template>
-  <div><h1>This is admin app</h1></div>
+<div>
+  <header>Header</header>
+  <main class="container">
+    <div class="row">
+      <div class="col-lg-3 col-md-2">ádfsdfsf</div>
+      <div class="col-lg-9 col-md-10">ádfsadf</div>
+    </div>
+    Content
+  </main>
+  <footer>
+    Footer
+  </footer>
+</div>
 </template>
 
 <script>
-export default {
 
-}
 </script>
 
-<style>
+<style scoped>
 
 </style>

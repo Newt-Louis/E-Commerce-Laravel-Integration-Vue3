@@ -1,10 +1,8 @@
 import './bootstrap';
 import { createApp } from 'vue';
 import App from '../views/App.vue';
-
-import {routerClient, routerAdmin} from '../js/Routers/index.js';
-import 'ant-design-vue/dist/reset.css';
-
+import {routerClient} from '../js/Routers/index.js';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const app = createApp(App)
 app.use(routerClient)
