@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="/nl-logo.png" />
         <title>Perfume - Devandur</title>
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/Admin/adminApp.css', 'resources/js/Admin/adminApp.js'])
     </head>
     <body>
         <div id="appAdmin"></div>

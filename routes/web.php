@@ -17,12 +17,12 @@ use Illuminate\Support\Facades\Route;
     return view('welcome');
 }); */
 Route::get("/{any}", function () {
-    return view("welcome");
-})->where("any", "^(?!api\/)[\/\w\.-]*");
+    return view("client");
+})->where("any", "^(?!api\/|admin)[\/\w\.-]*");
 
-Route::get("/admin", function () {
+Route::get("/admin/{any?}", function () {
     return view("admin");
-})->where("admin", "^(?!api\/)[\/\w\.-]*");
+})->where("any", ".*");
 
 /* Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index']);

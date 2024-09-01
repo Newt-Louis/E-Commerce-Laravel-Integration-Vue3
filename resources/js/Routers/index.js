@@ -1,9 +1,26 @@
-import {createRouter, createWebHistory} from "vue-router";
+import {createMemoryHistory, createRouter, createWebHistory} from "vue-router";
 import routes from "./routes";
 
-const router = createRouter({
+const routerClient = createRouter({
   history: createWebHistory(),
   routes: routes,
 })
 
-export default router
+const routerAdmin = createRouter({
+  history: createMemoryHistory(),
+  routes: [
+    {
+      path:'/',
+      name:'',
+      children: [
+        {
+        path:'/admin',
+        name:'admin',
+        component:() => import('../../views/AdminApp.vue'),
+        }
+      ],
+    }
+  ]
+})
+
+export {routerClient,routerAdmin}
