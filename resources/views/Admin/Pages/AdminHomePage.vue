@@ -8,8 +8,12 @@
 </template>
 
 <script>
-export default {
+import UserManagement from './UserManagement.vue';
 
+export default {
+  components:{
+    UserManagement
+  }
 }
 </script>
 

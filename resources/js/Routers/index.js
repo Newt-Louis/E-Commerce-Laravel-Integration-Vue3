@@ -1,5 +1,6 @@
 import {createMemoryHistory, createRouter, createWebHistory} from "vue-router";
 import routes from "./routes";
+import adminRoutes from "./adminRoutes";
 
 const routerClient = createRouter({
   history: createWebHistory(),
@@ -7,18 +8,15 @@ const routerClient = createRouter({
 })
 
 const routerAdmin = createRouter({
-  history: createMemoryHistory(),
-  routes: [
-    {
-      path:'',
-      component:() => import('../../views/AdminApp.vue'),
-      // redirect: '/admin',
-    },
-    // {
-    //   path:'/admin',
-    //   name:'admin',
-    // }
-  ]
+  history: createWebHistory(),
+  routes: adminRoutes,
 })
 
+routerAdmin.beforeEach((to,from,next) => {
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    next({name: 'login-admin'})
+  } else {
+    next();
+  }
+})
 export {routerClient,routerAdmin}
