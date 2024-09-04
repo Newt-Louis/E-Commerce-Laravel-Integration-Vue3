@@ -7,6 +7,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import 'animate.css';
 const appAdmin = createApp(AdminApp)
+const pinia = createPinia()
 appAdmin.use(routerAdmin)
 appAdmin.use(pinia)
 appAdmin.mount('#appAdmin')

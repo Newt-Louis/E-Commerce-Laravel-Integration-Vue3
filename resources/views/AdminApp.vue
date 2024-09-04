@@ -1,21 +1,46 @@
 <template>
-<router-view name="login"></router-view>
-<div class="row">
-  <div class="col-lg-2 col-md-2">Sidebar</div>
-  <div class="col-lg-10 col-md-10">
-    <header>Header</header>
+
+<div class="row" v-if="isLoggin">
+  <div class="col-lg-2"><AdminSideBar/></div>
+  <div class="col-lg-10">
+    <header><AdminHeader/></header>
     <main>
       <router-view></router-view>
     </main>
     <footer>
-    Footer
+    <AdminFooter/>
   </footer>
   </div>
 </div>
+<router-view name="login" v-else></router-view>
 </template>
 
 <script>
-
+import { useUserStore } from '../js/Admin/piniaStores/UserStore';
+import AdminFooter from './Admin/Layouts/AdminFooter.vue';
+import AdminHeader from './Admin/Layouts/AdminHeader.vue';
+import AdminSideBar from './Admin/Layouts/AdminSideBar.vue';
+export default {
+  data(){
+    return {
+      
+    }
+  },
+  computed: {
+    isLoggin(){
+      const userStore = useUserStore();
+      return userStore.isLoggin;
+    }
+  },
+  methods:{},
+  watch:{},
+  mounted(){},
+  components:{
+    AdminHeader,
+    AdminFooter,
+    AdminSideBar
+  }
+}
 </script>
 
 <style scoped>
