@@ -4,15 +4,22 @@
     <main>
       <RouterView/>
     </main>
-    <footer></footer>
+    <footer>
+      <Footer/>
+    </footer>
   </div>
 </template>
+
 <script>
 import Header from './Layouts/Header.vue';
+import SideBar from './Layouts/SideBar.vue';
+import Footer from './Layouts/Footer.vue';
 
 export default {
   components: {
-    Header
+    Header,
+    Footer,
+    SideBar,
   },
 }
 </script>

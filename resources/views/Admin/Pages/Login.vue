@@ -1,29 +1,43 @@
 <template>
   <div class="login-page">
-    <form action="" class="login-form d-none d-lg-block">
+    <form class="login-form d-none d-lg-block" @submit.prevent="checkSubmitIsDone" novalidate>
+      <h1 class="text-primary text-center mb-4">Admin Sign In</h1>
       <div class="row">
         <div class="col-lg-3 mb-3">
           <label for="inputUserName" class="form-label col-form-label">User Name</label>
         </div>
         <div class="col-lg-9 mb-3">
-          <input id="inputUserName" type="text" class="form-control" placeholder="User Name ">
+          <input id="inputUserName" type="text" class="form-control" placeholder="User Name" v-model="userName">
+          <div class="invalid-feedback">
+            Input Username !!!
+          </div>
         </div>
         <div class="col-lg-3 mb-3">
-          <label for="inputUserName" class="form-label col-form-label">Password</label>
+          <label for="inputPassword" class="form-label col-form-label">Password</label>
         </div>
         <div class="col-lg-9 mb-3">
-          <input id="inputUserName" type="text" class="form-control" placeholder="Password">
+          <input id="inputPassword" type="password" class="form-control" placeholder="Password">
+          <div class="invalid-feedback">
+            Input Password Or Click "Forget password" below !
+          </div>
         </div>
         <div class="col-lg-3 mb-3">
-          <label for="inputUserName" class="form-label col-form-label">Password Confirm</label>
+          <label for="inputPasswordConfirm" class="form-label col-form-label">Password Confirm</label>
         </div>
         <div class="col-lg-9 mb-3">
-          <input id="inputUserName" type="text" class="form-control" placeholder="Password Confirm">
+          <input id="inputPasswordConfirm" type="password" class="form-control" placeholder="Password Confirm">
+          <div class="invalid-feedback">
+            Input Password Or Click "Forget password" below !
+          </div>
         </div>
         <div class="col-lg-3 mb-3"></div>
         <div class="col-lg-9 mb-3">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="gridCheck1">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="gridCheck1"
+            >
             <label class="form-check-label" for="gridCheck1">
               Remember Me For 30 Days !
             </label>
@@ -43,22 +57,22 @@
     <form action="" class="login-form-sm d-lg-none d-sm-block">
       <div class="row">
         <div class="col-12 mb-3">
-          <label for="inputUserName" class="form-label col-form-label">User Name</label>
+          <label for="inputUserNameMobile" class="form-label col-form-label">User Name</label>
         </div>
         <div class="col-sm-12 mb-3">
-          <input id="inputUserName" type="text" class="form-control" placeholder="User Name ">
+          <input id="inputUserNameMobile" type="text" class="form-control" placeholder="User Name ">
         </div>
         <div class="col-sm-12 mb-3">
-          <label for="inputUserName" class="form-label col-form-label">Password</label>
+          <label for="inputPasswordMobile" class="form-label col-form-label">Password</label>
         </div>
         <div class="col-sm-12 mb-3">
-          <input id="inputUserName" type="text" class="form-control" placeholder="Password">
+          <input id="inputPasswordMobile" type="text" class="form-control" placeholder="Password">
         </div>
         <div class="col-lg-3 mb-3">
-          <label for="inputUserName" class="form-label col-form-label">Password Confirm</label>
+          <label for="inputPasswordConfirmMobile" class="form-label col-form-label">Password Confirm</label>
         </div>
         <div class="col-sm-12 mb-3">
-          <input id="inputUserName" type="text" class="form-control" placeholder="Password Confirm">
+          <input id="inputPasswordConfirmMobile" type="text" class="form-control" placeholder="Password Confirm">
         </div>
         <div class="col-sm-12 mb-3"></div>
         <div class="col-sm-12 mb-3">
@@ -85,7 +99,20 @@
 
 <script>
 export default {
-
+  data(){
+    return{
+      isSubmitDone: true,
+      userName: '',
+    }
+  },
+  methods:{
+    checkSubmitIsDone(event){
+      let elementInput = event.srcElement.querySelectorAll('input')
+      console.log(this.userName);
+      
+      console.log(elementInput)
+    },
+  }
 }
 </script>
 

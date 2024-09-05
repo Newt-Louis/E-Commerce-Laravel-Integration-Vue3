@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/png" href="/nl-logo.png" />
         <title>Perfume - Devandur</title>
+        <script src="https://kit.fontawesome.com/f5fc8fd02c.js" crossorigin="anonymous"></script>
         @vite(['resources/css/Admin/adminApp.css', 'resources/js/Admin/adminApp.js'])
     </head>
     <body>

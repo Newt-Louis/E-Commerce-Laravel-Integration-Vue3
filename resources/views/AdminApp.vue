@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { useUserStore } from '../js/Admin/piniaStores/UserStore';
+import { useUserStore } from '../js/Admin/piniaStores/userStore.js';
 import AdminFooter from './Admin/Layouts/AdminFooter.vue';
 import AdminHeader from './Admin/Layouts/AdminHeader.vue';
 import AdminSideBar from './Admin/Layouts/AdminSideBar.vue';
