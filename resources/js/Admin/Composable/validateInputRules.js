@@ -1,75 +1,77 @@
 import { ref } from "vue";
 
 const required = (value) => {
+  let status = false;
   if (value === "") {
-    return {
-      status: false,
-    };
-  } else {
-    return {
-      status: true,
-    };
+    return status;
   }
+  return (status = true);
 };
 
 const minlength = (value, stringLength) => {
+  let status = false;
   if (value === "") {
-    return {
-      status: false,
-    };
+    return status;
   }
+
   if (value.length < stringLength) {
-    return {
-      status: false,
-    };
-  } else {
-    return {
-      status: true,
-    };
+    return status;
   }
+  return (status = true);
 };
 
 const maxlength = (value, stringLength) => {
+  let status = false;
   if (value === "") {
-    return {
-      status: false,
-    };
+    return status;
   }
   if (value.length > stringLength) {
-    return {
-      status: false,
-    };
+    return status;
   }
+  return (status = true);
 };
 
 const pattern = (value, stringPattern) => {
+  let status = false;
   if (value === "") {
-    return {
-      state: false,
-    };
+    return status;
   }
   const regexp = new RegExp(stringPattern);
   const matchesPattern = regexp.test(value);
-  if (matchesPattern) {
-    return {
-      state: true,
-    };
-  } else {
-    return {
-      state: false,
-    };
+  if (!matchesPattern) {
+    return status;
   }
+  return (status = true);
 };
 
 const email = (value) => {
-  const emailPattern = "/^[a-z0-9._-]+@[a-z0-9.-]+.[a-z]{2,}$/i;";
-  const regexp = new RegExp(emailPattern);
-  const checkEmail = regexp.test(value);
+  // Đây là dạng tạo đối tượng Regular Expression động (dynamic)
+  /*
+    |  const emailPattern = "^[a-z0-9._-]+@[a-z0-9.]+\\.[a-z]{2,}$";
+    |  const regexp = new RegExp(emailPattern, "i");
+    |  const checkEmail = regexp.test(value); 
+  */
+
+  /* Đây là dạng tạo đối tượng Regular Expression cố định
+    do chúng ta sẽ đặt validate email mặc định
+    nên sẽ viết theo cách này */
+
+  const emailPattern = /^[a-z0-9._-]+@[a-z0-9.]+.[a-z]{2,}$/i;
+  const checkEmail = emailPattern.test(value);
+  let status = false;
   if (checkEmail) {
-    return {
-      status: true,
-    };
+    return (status = true);
   }
-  return { status: false };
+  return status;
 };
-export function useInputRules(value, rules) {}
+export function useInputRules(value, rules) {
+  const validators = {
+    required,
+    minlength,
+    maxlength,
+    pattern,
+    email,
+  };
+
+  return { validators };
+}
