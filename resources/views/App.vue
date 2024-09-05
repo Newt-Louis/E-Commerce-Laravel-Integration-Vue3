@@ -1,27 +1,25 @@
 <template>
   <div class="layout-container">
-    <header><Header /></header>
+    <header><HeaderComponent /></header>
     <main>
-      <RouterView/>
+      <RouterView />
     </main>
     <footer>
-      <Footer/>
+      <FooterComponent />
     </footer>
   </div>
 </template>
 
 <script>
-import Header from './Layouts/Header.vue';
-import SideBar from './Layouts/SideBar.vue';
-import Footer from './Layouts/Footer.vue';
+import HeaderComponent from "./Layouts/HeaderComponent.vue";
+import FooterComponent from "./Layouts/FooterComponent.vue";
 
 export default {
   components: {
-    Header,
-    Footer,
-    SideBar,
+    HeaderComponent,
+    FooterComponent,
   },
-}
+};
 </script>
 <style scoped>
 /* CSS dành riêng cho component này */
