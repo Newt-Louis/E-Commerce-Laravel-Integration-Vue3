@@ -1,6 +1,6 @@
 import { ref } from "vue";
 
-const required = (value) => {
+export const required = (value) => {
   let status = false;
   if (value === "") {
     return status;
@@ -8,7 +8,7 @@ const required = (value) => {
   return (status = true);
 };
 
-const minlength = (value, stringLength) => {
+export const minlength = (value, stringLength) => {
   let status = false;
   if (value === "") {
     return status;
@@ -20,7 +20,7 @@ const minlength = (value, stringLength) => {
   return (status = true);
 };
 
-const maxlength = (value, stringLength) => {
+export const maxlength = (value, stringLength) => {
   let status = false;
   if (value === "") {
     return status;
@@ -31,7 +31,7 @@ const maxlength = (value, stringLength) => {
   return (status = true);
 };
 
-const pattern = (value, stringPattern) => {
+export const pattern = (value, stringPattern) => {
   let status = false;
   if (value === "") {
     return status;
@@ -44,7 +44,7 @@ const pattern = (value, stringPattern) => {
   return (status = true);
 };
 
-const email = (value) => {
+export const email = (value) => {
   // Đây là dạng tạo đối tượng Regular Expression động (dynamic)
   /*
     |  const emailPattern = "^[a-z0-9._-]+@[a-z0-9.]+\\.[a-z]{2,}$";
@@ -64,14 +64,3 @@ const email = (value) => {
   }
   return status;
 };
-export function useInputRules(value, rules) {
-  const validators = {
-    required,
-    minlength,
-    maxlength,
-    pattern,
-    email,
-  };
-
-  return { validators };
-}
