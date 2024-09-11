@@ -1,26 +1,16 @@
 <template>
-  <input
-    type="text"
-    :class="`form-control ${isValidation}`"
-    v-model="inputValue"
-    @input="validateRules"
-  />
-  <slot name="required"></slot>
-  <slot name="minlength"></slot>
-  <slot name="maxlength"></slot>
-  <slot name="pattern"></slot>
-  <slot name="email"></slot>
+  <input type="text" :class="`form-control ${isValidation}`" v-model="inputValue" @input="validateRules" />
+  <slot name="required" v-if="displayError.required"></slot>
+  <slot name="minlength" v-if="displayError.minlength"></slot>
+  <slot name="maxlength" v-if="displayError.maxlength"></slot>
+  <slot name="pattern" v-if="displayError.pattern"></slot>
+  <slot name="email" v-if="displayError.email"></slot>
   <button @click="checkValue">Check</button>
 </template>
 
 <script>
-import {
-  required,
-  minlength,
-  maxlength,
-  pattern,
-  email,
-} from "../../js/Admin/Composable/validateInputRules";
+import { getValidator } from "../../js/Composable/validateInputRules";
+// import { useUtilities } from "../../js/Composable/utilities.composable";
 export default {
   props: {
     required: {
@@ -40,49 +30,63 @@ export default {
       default: "",
     },
     email: {
-      type: String,
-      default: "",
+      type: Boolean,
+      default: false,
     },
   },
   data() {
     return {
       inputValue: "",
       isValidation: "",
+      validationResults: {
+        required: null,
+        minlength: null,
+        maxlength: null,
+        pattern: null,
+        email: null,
+      },
+      displayError: {
+        required: false,
+        minlength: false,
+        maxlength: false,
+        pattern: false,
+        email: false,
+      },
     };
   },
   methods: {
     checkValue() {
       console.log(this.inputValue);
       console.log(this.required);
+      console.log(this.validationResults);
+    },
+    checkRules() {
+      const enabledRules = [];
+      if (this.required) enabledRules.push("required");
+      if (this.minlength > 0) enabledRules.push("minlength");
+      if (this.maxlength > 0) enabledRules.push("maxlength");
+      if (this.pattern !== "") enabledRules.push("pattern");
+      if (this.email) enabledRules.push("email");
+      return enabledRules;
     },
     validateRules() {
-      const validationResults = {
-        requiredValid: this.required ? required(this.inputValue) : null,
-        minlengthValid:
-          this.minlength !== 0
-            ? minlength(this.inputValue, this.minlength)
-            : null,
-        maxlengthValid:
-          this.maxlength !== 0
-            ? maxlength(this.inputValue, this.maxlength)
-            : null,
-        patternValid:
-          this.pattern !== "" ? pattern(this.inputValue, this.pattern) : null,
-        emailValid: this.email !== "" ? email(this.inputValue) : null,
-      };
-      const isRulesOn = Object.values(validationResults).some(
-        (result) => result !== null
-      );
-      if (!isRulesOn) {
+      // const { isEmptyObject, checkStringLowerCase } = useUtilities();
+      const enabledRules = this.checkRules();
+
+      enabledRules.forEach((rule) => {
+        const params = { value: this.inputValue, additionalArgs: [this[rule]] };
+        this.validationResults[rule] = getValidator(rule, params);
+        this.displayError[rule] = !this.validationResults[rule];
+      });
+      if (enabledRules.length > 0) {
+        const checkIsValid = Object.values(this.validationResults).some((value) => value === false);
+        if (checkIsValid) {
+          return (this.isValidation = "is-invalid");
+        }
+        return (this.isValidation = "is-valid");
+      } else {
         return (this.isValidation = "");
       }
-      console.log(Object.values(validationResults));
-
-      const hasInvalidRule = Object.values(validationResults).some(
-        (result) => result === false
-      );
-      this.isValidation = hasInvalidRule ? "is-invalid" : "is-valid";
-      return this.isValidation;
     },
   },
 };
