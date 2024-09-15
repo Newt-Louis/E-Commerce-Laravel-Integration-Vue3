@@ -1,18 +1,26 @@
 <template>
-  <input type="text" :class="`form-control ${isValidation}`" v-model="inputValue" @input="validateRules" />
+  <input
+    type="text"
+    :class="`form-control ${isValidation}`"
+    v-model="inputValue"
+    @input="validateRules"
+    :placeholder="placeholder"
+  />
   <slot name="required" v-if="displayError.required"></slot>
   <slot name="minlength" v-if="displayError.minlength"></slot>
   <slot name="maxlength" v-if="displayError.maxlength"></slot>
   <slot name="pattern" v-if="displayError.pattern"></slot>
   <slot name="email" v-if="displayError.email"></slot>
-  <button @click="checkValue">Check</button>
 </template>
 
 <script>
-import { getValidator } from "../../js/Composable/validateInputRules";
-// import { useUtilities } from "../../js/Composable/utilities.composable";
+import { getValidator } from "~composable/validateInputRules.composable";
 export default {
   props: {
+    placeholder: {
+      type: String,
+      default: "",
+    },
     required: {
       type: Boolean,
       default: false,
@@ -54,11 +62,19 @@ export default {
       },
     };
   },
+  computed: {
+    /* inputValue: {
+      get() {
+        return this.inputValue;
+      },
+      set(value) {
+        this.$emit("update:inputValue", value);
+      },
+    }, */
+  },
   methods: {
     checkValue() {
-      console.log(this.inputValue);
-      console.log(this.required);
-      console.log(this.validationResults);
+      console.log(this.passwordInput);
     },
     checkRules() {
       const enabledRules = [];
@@ -72,6 +88,7 @@ export default {
     validateRules() {
       // const { isEmptyObject, checkStringLowerCase } = useUtilities();
       const enabledRules = this.checkRules();
+      console.log(enabledRules);
 
       enabledRules.forEach((rule) => {
         const params = { value: this.inputValue, additionalArgs: [this[rule]] };

@@ -1,0 +1,21 @@
+::placeholder {
+  color: rgb(170, 170, 170) !important;
+}
+:root {
+  --background-color: white;
+  --background-color2: pink;
+  --background-color3: rgb(40, 130, 40);
+  --text-normal: black;
+  --text-title: black;
+  --text-title2: rgb(100, 100, 100);
+  --text-title3: white;
+}
+[data-theme="dark"] {
+  --background-color: rgb(104, 100, 100);
+  --background-color2: rgb(59, 0, 10);
+  --background-color3: rgb(0, 30, 0);
+  --text-normal: white;
+  --text-title: white;
+  --text-title2: rgb(150, 150, 150);
+  --text-title3: black;
+}

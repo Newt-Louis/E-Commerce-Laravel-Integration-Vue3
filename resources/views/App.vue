@@ -21,6 +21,4 @@ export default {
   },
 };
 </script>
-<style scoped>
-/* CSS dành riêng cho component này */
-</style>
+<style scoped></style>

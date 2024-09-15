@@ -1,10 +1,15 @@
 import { defineConfig } from "vite";
 import laravel from "laravel-vite-plugin";
 import vue from "@vitejs/plugin-vue";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 export default defineConfig({
   plugins: [
     laravel({
-      input: ["resources/css/app.css", "resources/js/app.js"],
+      input: ["./resources/css/app.css", "./resources/js/app.js"],
       refresh: true,
     }),
     vue({
@@ -25,4 +30,12 @@ export default defineConfig({
       },
     }),
   ],
+  resolve: {
+    alias: {
+      "~views": path.resolve(__dirname, "./resources/views"),
+      "~js": path.resolve(__dirname, "./resources/js"),
+      "~composable": path.resolve(__dirname, "./resources/js/Composable"),
+      "~components": path.resolve(__dirname, "./resources/views/Components"),
+    },
+  },
 });
