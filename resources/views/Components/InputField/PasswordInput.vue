@@ -1,5 +1,5 @@
 <template>
-  <BaseInput type="password" v-model="passwordValue" v-bind="$attrs">
+  <BaseInput type="password" v-model="passwordValue" v-bind="$attrs" @bi-valid="declarePasswordInput">
     <template #required>
       <div class="invalid-feedback">
         <slot name="required"></slot>
@@ -37,21 +37,32 @@ export default {
   data() {
     return {
       passwordValue: "",
+      isPasswordValid: {
+        name: "password",
+        isValid: false,
+      },
     };
   },
-
+  emits: ["passwordValid"],
   methods: {
-    checkValueFromPasswordInput() {
-      console.log(this.passwordValue);
+    declarePasswordInput(data) {
+      const biCheck = data;
+      if (biCheck?.baseValid === true) {
+        this.isPasswordValid.isValid = true;
+        return this.$emit("passwordValid", this.isPasswordValid);
+      }
+      return this.$emit("passwordValid", this.isPasswordValid);
     },
   },
-  mounted() {},
+  mounted() {
+    this.declarePasswordInput();
+  },
   watch: {
-    passwordValue(newVal) {
+    /* passwordValue(newVal) {
       if (newVal) {
         this.checkValueFromPasswordInput();
       }
-    },
+    }, */
   },
   components: {
     BaseInput,

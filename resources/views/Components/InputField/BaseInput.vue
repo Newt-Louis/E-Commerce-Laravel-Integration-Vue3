@@ -4,8 +4,8 @@
       type="text"
       :class="`form-control ${isValidation}`"
       v-model="inputValue"
-      @input="validateRules"
       :placeholder="placeholder"
+      @input="isBaseInputDone"
       v-bind="$attrs"
     />
     <slot name="required" v-if="displayError.required"></slot>
@@ -58,6 +58,7 @@ export default {
       },
     };
   },
+  emits: ["biValid"],
   methods: {
     checkRules() {
       const enabledRules = [];
@@ -87,7 +88,22 @@ export default {
         return (this.isValidation = "");
       }
     },
+    isBaseInputDone() {
+      const baseInputValid = { baseValid: false };
+      if (this.isValidation === "is-valid") {
+        baseInputValid.baseValid = true;
+        return this.$emit("biValid", baseInputValid);
+      }
+    },
   },
+  watch: {
+    inputValue(newVal, oldVal) {
+      if (newVal || oldVal) {
+        this.validateRules();
+      }
+    },
+  },
+  mounted() {},
 };
 </script>
 
