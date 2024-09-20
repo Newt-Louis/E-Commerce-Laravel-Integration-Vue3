@@ -1,5 +1,5 @@
 <template>
-  <div class="base-input">
+  <div class="base-input" v-if="!typeNumber">
     <input
       type="text"
       :class="`form-control ${isValidation}`"
@@ -13,12 +13,31 @@
     <slot name="maxlength" v-if="displayError.maxlength"></slot>
     <slot name="pattern" v-if="displayError.pattern"></slot>
   </div>
+  <div class="base-input" v-else>
+    <input
+      type="text"
+      :class="`form-control ${isValidation}`"
+      v-model="formattedNumber"
+      :placeholder="placeholder"
+      @input="isNumberInputDone"
+      v-bind="$attrs"
+    />
+    <slot name="required" v-if="displayError.required"></slot>
+    <slot name="minlength" v-if="displayError.minlength"></slot>
+    <slot name="maxlength" v-if="displayError.maxlength"></slot>
+    <slot name="pattern" v-if="displayError.pattern"></slot>
+  </div>
 </template>
 
 <script>
+import { useUtilities } from "../../../js/Composable/utilities.composable";
 import { getValidator } from "~composable/validateInputRules.composable";
 export default {
   props: {
+    typeNumber: {
+      type: Boolean,
+      default: false,
+    },
     placeholder: {
       type: String,
       default: "",
@@ -56,9 +75,36 @@ export default {
         maxlength: false,
         pattern: false,
       },
+      formattedNumber: "",
+      numberValue: "",
     };
   },
   emits: ["biValid"],
+  computed: {},
+  watch: {
+    inputValue(newVal, oldVal) {
+      if (newVal || oldVal) {
+        this.validateRules();
+      }
+    },
+    formattedNumber(newVal) {
+      if (newVal) {
+        if (newVal !== "") {
+          const { numberWithCommas } = useUtilities();
+
+          const cleanedValue = newVal.replace(/[^0-9]/g, "");
+          this.numberValue = parseInt(cleanedValue, 10);
+          this.formattedNumber = numberWithCommas(cleanedValue);
+          console.log(this.numberValue);
+        }
+        this.validateRules();
+      } else {
+        this.validateRules();
+      }
+    },
+  },
+
+  mounted() {},
   methods: {
     checkRules() {
       const enabledRules = [];
@@ -72,7 +118,9 @@ export default {
       const enabledRules = this.checkRules();
 
       enabledRules.forEach((rule) => {
-        const params = { value: this.inputValue, additionalArgs: [this[rule]] };
+        const params = this.typeNumber
+          ? { value: this.formattedNumber, additionalArgs: [this[rule]] }
+          : { value: this.inputValue, additionalArgs: [this[rule]] };
         this.validationResults[rule] = getValidator(rule, params);
         this.displayError[rule] = !this.validationResults[rule];
       });
@@ -94,15 +142,14 @@ export default {
         return this.$emit("biValid", baseInputValid);
       }
     },
-  },
-  watch: {
-    inputValue(newVal, oldVal) {
-      if (newVal || oldVal) {
-        this.validateRules();
+    isNumberInputDone() {
+      const baseNumberInputValid = { baseValid: false, numberValue: this.numberValue };
+      if (this.isValidation === "is-valid") {
+        baseNumberInputValid.baseValid = true;
+        return this.$emit("biValid", baseNumberInputValid);
       }
     },
   },
-  mounted() {},
 };
 </script>
 

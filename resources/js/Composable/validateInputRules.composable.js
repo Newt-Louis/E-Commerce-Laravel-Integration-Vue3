@@ -36,6 +36,7 @@ const validationRulesStrategies = {
     }
     const regexp = new RegExp(stringPattern);
     const matchesPattern = regexp.test(value);
+
     if (!matchesPattern) {
       return status;
     }

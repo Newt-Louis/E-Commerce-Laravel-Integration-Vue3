@@ -37,6 +37,7 @@ export default {
       isTextValid: {
         name: "text",
         isValid: false,
+        value: "",
       },
     };
   },
@@ -50,13 +51,12 @@ export default {
       console.log(this.passwordInput);
     },
     declareTextInput(data) {
-      if (data?.baseValid === true) {
+      if (data?.baseValid) {
         this.isTextValid.isValid = true;
-        return this.$emit("textValid", this.isTextValid);
+        this.isTextValid.value = this.textValue;
       }
       return this.$emit("textValid", this.isTextValid);
     },
-    validateRules() {},
   },
 };
 </script>

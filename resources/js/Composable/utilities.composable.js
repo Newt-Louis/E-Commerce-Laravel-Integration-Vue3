@@ -5,8 +5,8 @@ export function useUtilities() {
   const checkStringLowerCase = (string1, string2) => {
     return string1.toLowerCase().includes(string2.toLowerCase());
   };
-  const numberWithCommas = (number) => {
-    return number.toFixed(3).replace(/\d(?=(\d{3})+\.)/g, "$&,");
+  const numberWithCommas = (stringNumber) => {
+    return stringNumber.replace(/\d(?=(\d{3})+$)/g, "$&,");
   };
   return { isEmptyObject, checkStringLowerCase, numberWithCommas };
 }

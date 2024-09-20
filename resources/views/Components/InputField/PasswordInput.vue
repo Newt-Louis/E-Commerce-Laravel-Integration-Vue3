@@ -37,6 +37,7 @@ export default {
       isPasswordValid: {
         name: "password",
         isValid: false,
+        value: "",
       },
     };
   },
@@ -63,8 +64,13 @@ export default {
   },
   methods: {
     declarePasswordInput(validationData) {
-      const validationConditions = [validationData.baseValid];
-      this.isPasswordValid.isValid = validationConditions.every((condition) => condition === true);
+      // Phương pháp trong comment sử dụng khi một thuộc tính phải kiểm tra hàng loạt điều kiện true thì mới được thành true.
+      /*       const validationConditions = [validationData.baseValid];
+      this.isPasswordValid.isValid = validationConditions.every((condition) => condition === true); */
+      if (validationData?.baseValid === true) {
+        this.isPasswordValid.isValid = validationData?.baseValid;
+        this.isPasswordValid.value = this.passwordValue;
+      }
       return this.$emit("passwordValid", this.isPasswordValid);
     },
   },
