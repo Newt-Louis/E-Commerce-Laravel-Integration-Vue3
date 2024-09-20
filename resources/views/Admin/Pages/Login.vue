@@ -1,94 +1,115 @@
 <template>
   <div class="login-page">
-    <form class="login-form d-none d-lg-block" @submit.prevent="checkSubmitIsDone" novalidate>
+    <form class="login-form d-none d-lg-block" @submit.prevent="signIn" novalidate>
       <h1 class="text-primary text-center mb-4">Admin Sign In</h1>
       <div class="row">
         <div class="col-lg-3 mb-3">
           <label for="inputUserName" class="form-label col-form-label">User Name</label>
         </div>
         <div class="col-lg-9 mb-3">
-          <input id="inputUserName" type="text" class="form-control" placeholder="User Name" v-model="userName">
-          <div class="invalid-feedback">
-            Input Username !!!
-          </div>
+          <TextInput
+            v-model="loginValue.usernameValue"
+            :placeholder="`Username`"
+            :required="true"
+            @text-valid="checkValidateInputs"
+          >
+            <template #required> Please input your username ! </template>
+          </TextInput>
         </div>
         <div class="col-lg-3 mb-3">
-          <label for="inputPassword" class="form-label col-form-label">Password</label>
+          <label for="inputPassword" class="form-label col-form-label" :required="true">Password</label>
         </div>
         <div class="col-lg-9 mb-3">
-          <input id="inputPassword" type="password" class="form-control" placeholder="Password">
-          <div class="invalid-feedback">
-            Input Password Or Click "Forget password" below !
-          </div>
+          <PasswordInput
+            v-model="loginValue.passwordValue"
+            :placeholder="`Password`"
+            :required="true"
+            @password-valid="checkValidateInputs"
+          >
+            <template #required> Please input your password ! </template>
+          </PasswordInput>
         </div>
         <div class="col-lg-3 mb-3">
           <label for="inputPasswordConfirm" class="form-label col-form-label">Password Confirm</label>
         </div>
         <div class="col-lg-9 mb-3">
-          <input id="inputPasswordConfirm" type="password" class="form-control" placeholder="Password Confirm">
-          <div class="invalid-feedback">
-            Input Password Or Click "Forget password" below !
-          </div>
+          <PasswordConfirmInput
+            v-model="loginValue.confirmPasswordValue"
+            :placeholder="`Confirm Password`"
+            :password="loginValue.passwordValue"
+            @confirm-password-valid="checkValidateInputs"
+          >
+            Confirm Password & Password do not match !
+          </PasswordConfirmInput>
         </div>
         <div class="col-lg-3 mb-3"></div>
         <div class="col-lg-9 mb-3">
           <div class="form-check">
-            <input 
-              class="form-check-input" 
-              type="checkbox" 
-              id="gridCheck1"
-            >
-            <label class="form-check-label" for="gridCheck1">
-              Remember Me For 30 Days !
-            </label>
+            <input class="form-check-input" type="checkbox" id="gridCheck1" v-model="loginValue.rememberMe" />
+            <label class="form-check-label" for="gridCheck1"> Remember Me For 30 Days ! </label>
           </div>
         </div>
         <div class="col-lg-3 mb-3"></div>
         <div class="col-lg-9 mb-3">
           <div class="row">
-            <p class="col-lg-4 col-sm-12">Forget password</p>
-            <p class="col-lg-2 col-sm-12 text-center"><span>Or</span></p>
-            <p class="col-lg-4 col-sm-12">Register</p>
+            <p class="col-lg-4 col-sm-12">Forgot password !</p>
           </div>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Sign in</button>
+      <button type="submit" class="btn btn-primary w-100" :disabled="!isInputsValidated">Sign in</button>
     </form>
-    <form action="" class="login-form-sm d-lg-none d-sm-block">
+    <form @submit.prevent="signIn" class="login-form-sm d-lg-none d-sm-block" novalidate>
       <div class="row">
         <div class="col-12 mb-3">
           <label for="inputUserNameMobile" class="form-label col-form-label">User Name</label>
         </div>
         <div class="col-sm-12 mb-3">
-          <input id="inputUserNameMobile" type="text" class="form-control" placeholder="User Name ">
+          <TextInput
+            v-model="loginValue.usernameValue"
+            :placeholder="`Username`"
+            :required="true"
+            @text-valid="checkValidateInputs"
+          >
+            <template #required> Please input your username ! </template>
+          </TextInput>
         </div>
         <div class="col-sm-12 mb-3">
           <label for="inputPasswordMobile" class="form-label col-form-label">Password</label>
         </div>
         <div class="col-sm-12 mb-3">
-          <input id="inputPasswordMobile" type="text" class="form-control" placeholder="Password">
+          <PasswordInput
+            v-model="loginValue.passwordValue"
+            :placeholder="`Password`"
+            :required="true"
+            @password-valid="checkValidateInputs"
+          >
+            <template #required> Please input your password ! </template>
+          </PasswordInput>
         </div>
         <div class="col-lg-3 mb-3">
           <label for="inputPasswordConfirmMobile" class="form-label col-form-label">Password Confirm</label>
         </div>
         <div class="col-sm-12 mb-3">
-          <input id="inputPasswordConfirmMobile" type="text" class="form-control" placeholder="Password Confirm">
+          <PasswordConfirmInput
+            v-model="loginValue.confirmPasswordValue"
+            :placeholder="`Confirm Password`"
+            :password="loginValue.passwordValue"
+            @confirm-password-valid="checkValidateInputs"
+          >
+            Confirm Password & Password do not match !
+          </PasswordConfirmInput>
         </div>
         <div class="col-sm-12 mb-3"></div>
         <div class="col-sm-12 mb-3">
           <div class="form-check">
-            <input class="form-check-input" type="checkbox" id="gridCheck">
-            <label class="form-check-label" for="gridCheck">
-              Remember Me For 30 Days !
-            </label>
+            <input class="form-check-input" type="checkbox" id="gridCheck" v-model="loginValue.rememberMe" />
+            <label class="form-check-label" for="gridCheck"> Remember Me For 30 Days ! </label>
           </div>
         </div>
         <div class="col-sm-12 mb-3"></div>
         <div class="col-sm-12 mb-3">
           <div class="d-flex flex-column">
-            <span class="mb-3">Forget password</span>
-            <span class="mb-3">Or</span>
-            <span class="mb-3">Register</span>
+            <span class="mb-3">Forgot password !</span>
           </div>
         </div>
       </div>
@@ -98,26 +119,51 @@
 </template>
 
 <script>
+import TextInput from "../../Components/InputField/TextInput.vue";
+import PasswordInput from "../../Components/InputField/PasswordInput.vue";
+import PasswordConfirmInput from "../../Components/InputField/PasswordConfirmInput.vue";
 export default {
-  data(){
-    return{
-      isSubmitDone: true,
-      userName: '',
-    }
+  components: {
+    TextInput,
+    PasswordInput,
+    PasswordConfirmInput,
   },
-  methods:{
-    checkSubmitIsDone(event){
-      let elementInput = event.srcElement.querySelectorAll('input')
-      console.log(this.userName);
-      
-      console.log(elementInput)
+  data() {
+    return {
+      isSubmitDone: true,
+      registeredInputs: [],
+      loginValue: {
+        usernameValue: "",
+        passwordValue: "",
+        confirmPasswordValue: "",
+        rememberMe: false,
+      },
+    };
+  },
+  computed: {
+    isInputsValidated() {
+      return this.registeredInputs.every((value) => value.isValid === true);
     },
-  }
-}
+  },
+  watch: {},
+  methods: {
+    checkValidateInputs(data) {
+      const existingInput = this.registeredInputs.find((value) => data.name === value.name);
+      if (existingInput) {
+        existingInput.isValid = data.isValid;
+      } else {
+        this.registeredInputs.push(data);
+      }
+    },
+    signIn() {
+      console.log(this.loginValue);
+    },
+  },
+};
 </script>
 
 <style>
-.login-page{
+.login-page {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -125,40 +171,24 @@ export default {
   width: 100vw;
   background-color: rgb(170, 170, 170);
 }
-.login-form{
+.login-form {
   width: 50%;
   padding: 24px;
   border-radius: 8px;
-  background-color: white
+  background-color: white;
 }
-.login-form-sm{
+.login-form-sm {
   width: 100%;
   height: 100%;
   padding: 24px;
-  background-color: white
+  background-color: white;
 }
-p{
+p {
   margin-bottom: 0;
-}
-p:first-child{
-  border-right: 1px solid black;
-  padding-right: 24px;
-}
-p:last-child{
-  border-left: 1px solid black;
-  padding-left: 24px;
-}
-p:first-child:hover{
-  cursor: pointer;
-  color: rgb(13, 110, 253);
-}
-p:last-child:hover{
-  cursor: pointer;
-  color: rgb(13, 110, 253);
 }
 
 @media (max-width: 1281px) {
-  .login-form{
+  .login-form {
     width: 70%;
   }
 }

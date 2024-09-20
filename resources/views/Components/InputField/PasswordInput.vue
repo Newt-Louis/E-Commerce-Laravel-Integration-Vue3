@@ -20,20 +20,17 @@
         <slot name="pattern"></slot>
       </div>
     </template>
-    <template #email>
-      <div class="invalid-feedback">
-        <slot name="email"></slot>
-      </div>
-    </template>
   </BaseInput>
 </template>
 
 <script>
 import BaseInput from "./BaseInput.vue";
 export default {
-  /* props: {
-    
-  }, */
+  components: {
+    BaseInput,
+  },
+  props: {},
+  emits: ["passwordValid", "emitPasswordStatus"],
   data() {
     return {
       passwordValue: "",
@@ -43,29 +40,33 @@ export default {
       },
     };
   },
-  emits: ["passwordValid"],
-  methods: {
-    declarePasswordInput(data) {
-      const biCheck = data;
-      if (biCheck?.baseValid === true) {
-        this.isPasswordValid.isValid = true;
-        return this.$emit("passwordValid", this.isPasswordValid);
-      }
-      return this.$emit("passwordValid", this.isPasswordValid);
+  computed: {
+    passwordStatus() {
+      return {
+        isValid: this.isPasswordValid.isValid,
+        passwordValue: this.passwordValue,
+      };
+    },
+  },
+  watch: {
+    passwordStatus: {
+      deep: true,
+      handler(newStatus) {
+        if (newStatus.isValid) {
+          this.$emit("emitPasswordStatus", newStatus);
+        }
+      },
     },
   },
   mounted() {
-    this.declarePasswordInput();
+    this.$emit("passwordValid", this.isPasswordValid);
   },
-  watch: {
-    /* passwordValue(newVal) {
-      if (newVal) {
-        this.checkValueFromPasswordInput();
-      }
-    }, */
-  },
-  components: {
-    BaseInput,
+  methods: {
+    declarePasswordInput(validationData) {
+      const validationConditions = [validationData.baseValid];
+      this.isPasswordValid.isValid = validationConditions.every((condition) => condition === true);
+      return this.$emit("passwordValid", this.isPasswordValid);
+    },
   },
 };
 </script>

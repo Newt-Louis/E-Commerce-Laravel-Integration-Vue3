@@ -8,6 +8,15 @@ export default [
     rules: {
       "prefer-const": "warn",
       "no-constant-binary-expression": "error",
+      "no-unused-vars": "warn",
+      "no-undef": "warn",
+      "vue/no-unused-vars": "warn",
+      "vue/multi-word-component-names": [
+        "error",
+        {
+          ignores: ["About", "Register", "Login"],
+        },
+      ],
     },
   },
   { languageOptions: { globals: globals.browser } },

@@ -70,7 +70,6 @@ export default {
     },
     validateRules() {
       const enabledRules = this.checkRules();
-      console.log(this.inputValue);
 
       enabledRules.forEach((rule) => {
         const params = { value: this.inputValue, additionalArgs: [this[rule]] };
