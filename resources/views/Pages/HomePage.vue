@@ -3,23 +3,21 @@
     <h1>Trang Chủ Client</h1>
     <button @click="gotoAbout">let's go</button>
     <form action="" novalidate class="mt-5">
-      <NumberInput :required="true">
-        <template #required>Nhập số</template>
-        <template #pattern>Chỉ được nhập số và không bắt đầu bằng 0!</template>
-      </NumberInput>
+      <DateInput @dateValid="dateHandle"></DateInput>
     </form>
   </div>
 </template>
 
 <script>
-import NumberInput from "../Components/InputField/NumberInput.vue";
+import DateInput from "../Components/InputField/DateInput.vue";
 export default {
   components: {
-    NumberInput,
+    DateInput,
   },
   data() {
     return {
       validInput: "",
+      fileValues: [],
     };
   },
   methods: {
@@ -28,6 +26,9 @@ export default {
     },
     getEvent() {
       console.log(this.validInput);
+    },
+    dateHandle(data) {
+      console.log(data);
     },
   },
 };
