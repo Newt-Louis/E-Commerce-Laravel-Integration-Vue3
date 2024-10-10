@@ -122,6 +122,8 @@
 import TextInput from "../../Components/InputField/TextInput.vue";
 import PasswordInput from "../../Components/InputField/PasswordInput.vue";
 import PasswordConfirmInput from "../../Components/InputField/PasswordConfirmInput.vue";
+import axios from "axios";
+import { useAdminUserStore } from "../../../js/Admin/piniaStores/userAdminStore.js";
 export default {
   components: {
     TextInput,
@@ -138,6 +140,7 @@ export default {
         confirmPasswordValue: "",
         rememberMe: false,
       },
+      useAdminStore: useAdminUserStore(),
     };
   },
   computed: {
@@ -146,6 +149,7 @@ export default {
     },
   },
   watch: {},
+  mounted() {},
   methods: {
     checkValidateInputs(data) {
       const existingInput = this.registeredInputs.find((value) => data.name === value.name);
@@ -155,8 +159,12 @@ export default {
         this.registeredInputs.push(data);
       }
     },
-    signIn() {
-      console.log(this.loginValue);
+    async signIn() {
+      try {
+        const response = await axios.post("admin/login");
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };

@@ -18,4 +18,8 @@ use App\Http\Controllers\UserController;
 /* Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 }); */
-Route::apiResource('users', UserController::class);
+Route::post('admin/login', [UserController::class,'login']);
+Route::post('admin/logout', [UserController::class,'logout']);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('users', UserController::class);
+});
