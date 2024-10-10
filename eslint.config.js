@@ -19,7 +19,7 @@ export default [
       ],
     },
   },
-  { languageOptions: { globals: globals.browser } },
+  { languageOptions: { globals: { ...globals.browser, axios: true } } },
   pluginJs.configs.recommended,
   ...pluginVue.configs["flat/essential"],
 ];

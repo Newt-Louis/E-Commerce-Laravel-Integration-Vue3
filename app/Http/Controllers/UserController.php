@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -60,22 +61,17 @@ class UserController extends Controller
     }
     public function login(Request $request)
     {
-        $user = User::where('name', $request->usernameValue);
+        $user = User::where('name', 'like', $request->usernameValue)->first();
         if (!$user && !Hash::check($request->passwordValue, $user->password)) {
             throw ValidationException::withMessages([
               'message' => ['Username or Password is incorrect !!!'],
             ]);
         }
-        $token = $user->createToken($user->name, ['server:create'])->plainTextToken;
-        return response()->json(['token' => $token]);
-        try {
-            $user = User::findOrFail($id);
-            return response($user)->json();
-        } catch (ModelNotFoundException $e) {
-            echo $e->getMessage();
-        }
+        $token = $user->createToken($user->name)->plainTextToken;
+        return response()->json(['admin-token' => $token,'admin-user' => $user]);
     }
-    public function logout($id)
+    public function logout(Request $request)
     {
+        return response()->json('success');
     }
 }

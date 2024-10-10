@@ -122,7 +122,6 @@
 import TextInput from "../../Components/InputField/TextInput.vue";
 import PasswordInput from "../../Components/InputField/PasswordInput.vue";
 import PasswordConfirmInput from "../../Components/InputField/PasswordConfirmInput.vue";
-import axios from "axios";
 import { useAdminUserStore } from "../../../js/Admin/piniaStores/userAdminStore.js";
 export default {
   components: {
@@ -161,7 +160,8 @@ export default {
     },
     async signIn() {
       try {
-        const response = await axios.post("admin/login");
+        const response = await axios.post("/api/admin-user/login", this.loginValue);
+        console.log(response);
       } catch (error) {
         console.log(error);
       }
