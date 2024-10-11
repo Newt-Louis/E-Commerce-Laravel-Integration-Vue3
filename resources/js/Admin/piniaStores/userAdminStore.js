@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 
-export const useAdminUserStore = defineStore("admin-users", {
+export const useAdminUserStore = defineStore("adminUser", {
   state: () => {
     return {
       isLoggin: false,
@@ -9,10 +9,8 @@ export const useAdminUserStore = defineStore("admin-users", {
     };
   },
   getters: {
-    checkIsLoggin: (state) => {
-      state.isLoggin;
-    },
-    getAdminUser: () => this.adminUser,
+    checkLoggin: (state) => state.isLoggin,
+    getAdminUser: (state) => state.adminUser,
   },
   actions: {
     async loggin() {
@@ -20,6 +18,9 @@ export const useAdminUserStore = defineStore("admin-users", {
     },
     setAdminUser(data) {
       this.adminUser = data;
+    },
+    setIsLoggin() {
+      this.isLoggin = true;
     },
   },
 });

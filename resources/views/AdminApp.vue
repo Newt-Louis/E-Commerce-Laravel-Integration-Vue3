@@ -1,41 +1,47 @@
 <template>
-  <div class="row" v-if="isLoggin">
-    <div class="col-lg-2"><AdminSideBar /></div>
+  <header class="position-relative top-0"><AdminHeader /></header>
+  <div class="row" style="height: 2000px">
+    <div class="col-lg-2">
+      <AdminSideBar />
+      <button @click="checkstore">check</button>
+      <p>{{ getAdminUser }}</p>
+    </div>
     <div class="col-lg-10">
-      <header><AdminHeader /></header>
       <main>
         <router-view></router-view>
       </main>
-      <footer>
-        <AdminFooter />
-      </footer>
     </div>
   </div>
-  <router-view name="login" v-else></router-view>
+  <footer class="position-relative bottom-0">
+    <AdminFooter />
+  </footer>
 </template>
 
 <script>
 import { useAdminUserStore } from "../js/Admin/piniaStores/userAdminStore.js";
+import { mapState, mapActions } from "pinia";
 import AdminFooter from "./Admin/Layouts/AdminFooter.vue";
 import AdminHeader from "./Admin/Layouts/AdminHeader.vue";
 import AdminSideBar from "./Admin/Layouts/AdminSideBar.vue";
 export default {
-  data() {
-    return {};
-  },
-  computed: {
-    isLoggin() {
-      const userStore = useAdminUserStore();
-      return userStore.isLoggin;
-    },
-  },
-  methods: {},
-  watch: {},
-  mounted() {},
   components: {
     AdminHeader,
     AdminFooter,
     AdminSideBar,
+  },
+  data() {
+    return {};
+  },
+  computed: {
+    ...mapState(useAdminUserStore, ["getAdminUser", "checkLoggin"]),
+  },
+  methods: {
+    ...mapActions(useAdminUserStore, ["setIsLoggin", "setAdminUser"]),
+    checkstore() {},
+  },
+  watch: {},
+  mounted() {
+    console.log(this.checkLoggin);
   },
 };
 </script>

@@ -12,4 +12,6 @@ const appAdmin = createApp(AdminApp);
 const pinia = createPinia();
 appAdmin.use(routerAdmin);
 appAdmin.use(pinia);
+
+axios.get("/api/auth/admin-remember");
 appAdmin.mount("#appAdmin");

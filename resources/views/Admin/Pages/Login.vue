@@ -1,5 +1,8 @@
 <template>
   <div class="login-page">
+    <div :class="`alert alert-danger animate__animated ${isLogin.alertAnimate}`" role="alert" v-if="isLogin.isAlert">
+      {{ isLogin.messageError }}
+    </div>
     <form class="login-form d-none d-lg-block" @submit.prevent="signIn" novalidate>
       <h1 class="text-primary text-center mb-4">Admin Sign In</h1>
       <div class="row">
@@ -139,6 +142,11 @@ export default {
         confirmPasswordValue: "",
         rememberMe: false,
       },
+      isLogin: {
+        messageError: "",
+        isAlert: false,
+        alertAnimate: "",
+      },
       useAdminStore: useAdminUserStore(),
     };
   },
@@ -159,11 +167,24 @@ export default {
       }
     },
     async signIn() {
+      this.isLogin.isAlert = false;
+      this.isLogin.messageError = "";
+      this.isLogin.alertAnimate = "";
+      let response;
       try {
-        const response = await axios.post("/api/admin-user/login", this.loginValue);
-        console.log(response);
+        response = await axios.post("/api/admin-user/login", this.loginValue);
       } catch (error) {
-        console.log(error);
+        this.isLogin.isAlert = true;
+        this.isLogin.messageError = error.response.data.message;
+        this.isLogin.alertAnimate = "animate__fadeInRight";
+        return;
+      }
+      if (response.status === 200) {
+        this.useAdminStore.setIsLoggin();
+        this.useAdminStore.setAdminUser(response.data.adminUser);
+        localStorage.setItem("adminToken", response.data.adminToken);
+        await this.$router.push("/admin");
+        return;
       }
     },
   },
@@ -194,7 +215,11 @@ export default {
 p {
   margin-bottom: 0;
 }
-
+.alert {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
 @media (max-width: 1281px) {
   .login-form {
     width: 70%;

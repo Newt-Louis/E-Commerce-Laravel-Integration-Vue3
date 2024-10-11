@@ -59,19 +59,4 @@ class UserController extends Controller
     {
         //
     }
-    public function login(Request $request)
-    {
-        $user = User::where('name', 'like', $request->usernameValue)->first();
-        if (!$user && !Hash::check($request->passwordValue, $user->password)) {
-            throw ValidationException::withMessages([
-              'message' => ['Username or Password is incorrect !!!'],
-            ]);
-        }
-        $token = $user->createToken($user->name)->plainTextToken;
-        return response()->json(['admin-token' => $token,'admin-user' => $user]);
-    }
-    public function logout(Request $request)
-    {
-        return response()->json('success');
-    }
 }

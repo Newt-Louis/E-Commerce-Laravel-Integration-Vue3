@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -18,8 +19,9 @@ use App\Http\Controllers\UserController;
 /* Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 }); */
-Route::post('/admin-user/login', [UserController::class,'login']);
-Route::post('admin/logout', [UserController::class,'logout']);
+Route::get('/auth/admin-remember', [AuthController::class,'check_remember_access']);
+Route::post('/admin-user/login', [AuthController::class,'login']);
+Route::post('/admin-user/logout', [UserController::class,'logout']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
 });

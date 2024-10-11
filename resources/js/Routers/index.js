@@ -1,7 +1,7 @@
-import { createMemoryHistory, createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory } from "vue-router";
 import routes from "./routes";
 import adminRoutes from "./adminRoutes";
-
+import { useAdminUserStore } from "../Admin/piniaStores/userAdminStore";
 const routerClient = createRouter({
   history: createWebHistory(),
   routes: routes,
@@ -13,7 +13,8 @@ const routerAdmin = createRouter({
 });
 
 routerAdmin.beforeEach((to, from, next) => {
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
+  const adminUserStore = useAdminUserStore();
+  if (adminUserStore.checkLoggin && to.matched.some((record) => record.meta.requiresAuth)) {
     next({ name: "login-admin" });
     console.log(to.matched);
   } else {
