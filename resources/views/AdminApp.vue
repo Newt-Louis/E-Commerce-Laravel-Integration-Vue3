@@ -1,25 +1,26 @@
 <template>
-  <header class="position-relative top-0"><AdminHeader /></header>
-  <div class="row" style="height: 2000px">
-    <div class="col-lg-2">
-      <AdminSideBar />
-      <button @click="checkstore">check</button>
-      <p>{{ getAdminUser }}</p>
+  <div class="d-flex flex-column">
+    <header class="position-relative top-0"><AdminHeader /></header>
+    <div class="row">
+      <div class="col-lg-2">
+        <AdminSideBar />
+      </div>
+      <div class="col-lg-10">
+        <main>
+          <router-view></router-view>
+        </main>
+      </div>
     </div>
-    <div class="col-lg-10">
-      <main>
-        <router-view></router-view>
-      </main>
-    </div>
+    <footer class="position-relative bottom-0">
+      <AdminFooter />
+    </footer>
   </div>
-  <footer class="position-relative bottom-0">
-    <AdminFooter />
-  </footer>
+  <!-- <router-view name="login" v-else></router-view> -->
 </template>
 
 <script>
 import { useAdminUserStore } from "../js/Admin/piniaStores/userAdminStore.js";
-import { mapState, mapActions } from "pinia";
+import { mapState } from "pinia";
 import AdminFooter from "./Admin/Layouts/AdminFooter.vue";
 import AdminHeader from "./Admin/Layouts/AdminHeader.vue";
 import AdminSideBar from "./Admin/Layouts/AdminSideBar.vue";
@@ -33,16 +34,13 @@ export default {
     return {};
   },
   computed: {
-    ...mapState(useAdminUserStore, ["getAdminUser", "checkLoggin"]),
+    ...mapState(useAdminUserStore, ["checkLoggin"]),
   },
   methods: {
-    ...mapActions(useAdminUserStore, ["setIsLoggin", "setAdminUser"]),
     checkstore() {},
   },
   watch: {},
-  mounted() {
-    console.log(this.checkLoggin);
-  },
+  mounted() {},
 };
 </script>
 
