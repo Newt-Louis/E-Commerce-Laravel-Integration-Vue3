@@ -1,38 +1,53 @@
 <template>
   <div class="row header-container bg-info-subtle">
-    <div class="col-lg-4"><h5>Left Head</h5></div>
-    <div class="col-lg-4"><h5>Center Head</h5></div>
-    <div class="col-lg-4">
-      <div class="d-flex justify-content-end gap-4">
-        <div class="">hello username</div>
-        <div class="admin-user-setting">
-          <i class="fa-solid fa-gears"></i>
-        </div>
-        <div class="admin-user-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</div>
+    <div class="col-lg-4 d-flex justify-content-start gap-4">
+      <img src="" alt="Avatar" />
+      <h5>{{ getAdminUser.name }}</h5>
+    </div>
+    <div class="col-lg-4 d-flex justify-content-evenly gap-4">
+      <div><span>System Help</span></div>
+      <div><span>Call Support</span></div>
+    </div>
+    <div class="col-lg-4 d-flex justify-content-end gap-4">
+      <div><span>Change theme color</span></div>
+      <div class="admin-user-setting">
+        <i class="fa-solid fa-gears"></i>
       </div>
+      <div class="admin-user-logout" @click="logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+import { mapActions, mapState } from "pinia";
+import { useAdminUserStore } from "~js/Admin/piniaStores/userAdminStore";
 export default {
   data() {
     return {};
   },
-  computed: {},
+  computed: {
+    ...mapState(useAdminUserStore, ["getAdminUser", "checkLogin"]),
+  },
   mounted() {},
   watch: {},
   methods: {
+    ...mapActions(useAdminUserStore, ["setAdminUser", "setLogout"]),
     async logout() {
       let response;
       try {
         response = await axios.post("/api/admin-user/logout");
+        if (response.status === 200) {
+          this.setLogout();
+          this.setAdminUser({});
+          console.log(this.getAdminUser);
+          console.log(this.checkLogin);
+          sessionStorage.clear();
+          await this.$router.replace({ name: "login-admin" });
+        }
       } catch (error) {
         console.log(error);
       }
-      // if (response?.data === 200) {
-
-      // }
     },
   },
 };

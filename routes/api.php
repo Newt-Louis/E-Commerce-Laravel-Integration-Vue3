@@ -21,7 +21,7 @@ use App\Http\Controllers\UserController;
 }); */
 Route::get('/auth/admin-remember', [AuthController::class,'check_remember_access']);
 Route::post('/admin-user/login', [AuthController::class,'login']);
-Route::post('/admin-user/logout', [UserController::class,'logout']);
+Route::post('/admin-user/logout', [AuthController::class,'logout']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
 });

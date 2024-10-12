@@ -1,5 +1,6 @@
 <template>
-  <div class="d-flex flex-column">
+  <Authentication />
+  <div class="d-flex flex-column" v-if="checkLogin">
     <header class="position-relative top-0"><AdminHeader /></header>
     <div class="row">
       <div class="col-lg-2">
@@ -15,26 +16,28 @@
       <AdminFooter />
     </footer>
   </div>
-  <!-- <router-view name="login" v-else></router-view> -->
+  <router-view name="login" v-else></router-view>
 </template>
 
 <script>
-import { useAdminUserStore } from "../js/Admin/piniaStores/userAdminStore.js";
+import { useAdminUserStore } from "~js/Admin/piniaStores/userAdminStore.js";
 import { mapState } from "pinia";
 import AdminFooter from "./Admin/Layouts/AdminFooter.vue";
 import AdminHeader from "./Admin/Layouts/AdminHeader.vue";
 import AdminSideBar from "./Admin/Layouts/AdminSideBar.vue";
+import Authentication from "~components/Authentication.vue";
 export default {
   components: {
     AdminHeader,
     AdminFooter,
     AdminSideBar,
+    Authentication,
   },
   data() {
     return {};
   },
   computed: {
-    ...mapState(useAdminUserStore, ["checkLoggin"]),
+    ...mapState(useAdminUserStore, ["checkLogin"]),
   },
   methods: {
     checkstore() {},

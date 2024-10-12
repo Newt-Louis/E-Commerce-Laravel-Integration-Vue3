@@ -14,7 +14,7 @@ export default [
       "vue/multi-word-component-names": [
         "error",
         {
-          ignores: ["About", "Register", "Login"],
+          ignores: ["About", "Register", "Login", "Authentication"],
         },
       ],
     },

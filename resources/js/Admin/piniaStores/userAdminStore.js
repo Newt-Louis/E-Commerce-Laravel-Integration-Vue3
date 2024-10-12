@@ -3,24 +3,24 @@ import { defineStore } from "pinia";
 export const useAdminUserStore = defineStore("adminUser", {
   state: () => {
     return {
-      isLoggin: false,
+      isLogin: false,
       userToken: "",
       adminUser: {},
     };
   },
   getters: {
-    checkLoggin: (state) => state.isLoggin,
+    checkLogin: (state) => state.isLogin,
     getAdminUser: (state) => state.adminUser,
   },
   actions: {
-    async loggin() {
-      this.isLoggin = !this.isLoggin;
-    },
     setAdminUser(data) {
       this.adminUser = data;
     },
-    setIsLoggin() {
-      this.isLoggin = true;
+    setLogin() {
+      this.isLogin = true;
+    },
+    setLogout() {
+      this.isLogin = false;
     },
   },
 });

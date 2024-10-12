@@ -122,10 +122,12 @@
 </template>
 
 <script>
-import TextInput from "../../Components/InputField/TextInput.vue";
-import PasswordInput from "../../Components/InputField/PasswordInput.vue";
-import PasswordConfirmInput from "../../Components/InputField/PasswordConfirmInput.vue";
-import { useAdminUserStore } from "../../../js/Admin/piniaStores/userAdminStore.js";
+import TextInput from "~components/InputField/TextInput.vue";
+import PasswordInput from "~components/InputField/PasswordInput.vue";
+import PasswordConfirmInput from "~components/InputField/PasswordConfirmInput.vue";
+import { useAdminUserStore } from "~js/Admin/piniaStores/userAdminStore.js";
+import { mapState, mapActions } from "pinia";
+import axios from "axios";
 export default {
   components: {
     TextInput,
@@ -147,10 +149,10 @@ export default {
         isAlert: false,
         alertAnimate: "",
       },
-      useAdminStore: useAdminUserStore(),
     };
   },
   computed: {
+    ...mapState(useAdminUserStore, ["checkLogin", "getAdminUser"]),
     isInputsValidated() {
       return this.registeredInputs.every((value) => value.isValid === true);
     },
@@ -158,6 +160,7 @@ export default {
   watch: {},
   mounted() {},
   methods: {
+    ...mapActions(useAdminUserStore, ["setAdminUser", "setLogin"]),
     checkValidateInputs(data) {
       const existingInput = this.registeredInputs.find((value) => data.name === value.name);
       if (existingInput) {
@@ -177,15 +180,16 @@ export default {
         this.isLogin.isAlert = true;
         this.isLogin.messageError = error.response.data.message;
         this.isLogin.alertAnimate = "animate__fadeInRight";
-        return;
       }
       if (response.status === 200) {
-        this.useAdminStore.setIsLoggin();
-        this.useAdminStore.setAdminUser(response.data.adminUser);
-        localStorage.setItem("adminToken", response.data.adminToken);
-        await this.$router.push("/admin");
-        return;
+        this.setLogin();
+        this.setAdminUser(response.data.adminUser);
+        const token = response.data.adminToken;
+        sessionStorage.setItem("temporary_token", token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        await this.$router.push({ name: "admin-homepage" });
       }
+      return;
     },
   },
 };
