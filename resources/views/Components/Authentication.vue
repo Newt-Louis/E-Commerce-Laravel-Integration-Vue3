@@ -19,10 +19,7 @@ export default {
       const response = await axsIns.get("/api/auth/admin-remember");
       if (response.status === 200) {
         this.setLogin();
-        this.setAdminUser(response.data.adminUser);
-        // const token = response.data.adminToken;
-        // sessionStorage.setItem("temporary_token", token);
-        // this.$axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        this.setAdminUser(response.data);
         this.$router.push({ name: "admin-homepage" });
       }
     } catch (error) {

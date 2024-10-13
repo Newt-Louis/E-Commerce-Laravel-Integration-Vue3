@@ -33,24 +33,10 @@ class AuthController extends Controller
             return response()->json(['message' => 'Wrong Username or Password'], 404);
         }
     }
-    public function check_remember_access(Request $request)
-    {
-        if (Auth::check()) {
-            Log::info(Auth::check());
-            /** @var \App\Models\User */
-            $user = Auth::user();
-            // $token = $user->createToken($user->name, ['*'], Carbon::now()->addMinutes(5))->plainTextToken;
-            return response()->json([
-              "message" => "Successfully Login",
-              "adminUser" => $user], 200);
-        } else {
-            return response()->json(["isRemember" => false], 404);
-        }
-    }
     public function logout(Request $request)
     {
         Auth::guard('web')->logout();
-
+        Log::info(Auth::guard('web')->logout());
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 

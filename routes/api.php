@@ -23,6 +23,8 @@ Route::post('/admin-user/login', [AuthController::class,'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
-    Route::get('/auth/admin-remember', [AuthController::class,'check_remember_access']);
+    Route::get('/auth/admin-remember', function (Request $request) {
+        return $request->user();
+    });
     Route::post('/admin-user/logout', [AuthController::class,'logout']);
 });
