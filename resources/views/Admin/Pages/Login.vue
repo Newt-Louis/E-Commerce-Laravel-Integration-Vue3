@@ -127,7 +127,7 @@ import PasswordInput from "~components/InputField/PasswordInput.vue";
 import PasswordConfirmInput from "~components/InputField/PasswordConfirmInput.vue";
 import { useAdminUserStore } from "~js/Admin/piniaStores/userAdminStore.js";
 import { mapState, mapActions } from "pinia";
-import axios from "axios";
+import { axsIns } from "../../../js/bootstrap";
 export default {
   components: {
     TextInput,
@@ -175,7 +175,7 @@ export default {
       this.isLogin.alertAnimate = "";
       let response;
       try {
-        response = await axios.post("/api/admin-user/login", this.loginValue);
+        response = await axsIns.post("/api/admin-user/login", this.loginValue);
       } catch (error) {
         this.isLogin.isAlert = true;
         this.isLogin.messageError = error.response.data.message;
@@ -184,9 +184,9 @@ export default {
       if (response.status === 200) {
         this.setLogin();
         this.setAdminUser(response.data.adminUser);
-        const token = response.data.adminToken;
-        sessionStorage.setItem("temporary_token", token);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        // const token = response.data.adminToken;
+        // sessionStorage.setItem("temporary_token", token);
+        // axsIns.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         await this.$router.push({ name: "admin-homepage" });
       }
       return;

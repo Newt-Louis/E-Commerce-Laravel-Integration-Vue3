@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import axios from "axios";
 import { useAdminUserStore } from "../../js/Admin/piniaStores/userAdminStore";
 import { mapState, mapActions } from "pinia";
+import { axsIns } from "../../js/bootstrap";
 export default {
   data() {
     return {};
@@ -16,15 +16,13 @@ export default {
   watch: {},
   async created() {
     try {
-      const response = await axios.get("/api/auth/admin-remember");
+      const response = await axsIns.get("/api/auth/admin-remember");
       if (response.status === 200) {
         this.setLogin();
         this.setAdminUser(response.data.adminUser);
-        const token = response.data.adminToken;
-        sessionStorage.setItem("temporary_token", token);
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        console.log(response.data);
-
+        // const token = response.data.adminToken;
+        // sessionStorage.setItem("temporary_token", token);
+        // this.$axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         this.$router.push({ name: "admin-homepage" });
       }
     } catch (error) {

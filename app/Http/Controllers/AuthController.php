@@ -14,21 +14,21 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        Log::info($request);
         $credentials = [
           'name' => $request->usernameValue,
           'password' => $request->passwordValue,
         ];
-        if (Auth::attempt($credentials, $request->rememberMe)) {
+        if (Auth::attempt($credentials)) {
             /** @var \App\Models\User */
             $user = Auth::user();
             if (!Gate::allows('admin-login', $user)) {
                 return response()->json(['message' => 'User are not allow to access this page !'], 403);
             }
-            $token = $user->createToken($user->name, ['*'], Carbon::now()->addMinutes(5))->plainTextToken;
+            // $token = $user->createToken($user->name, ['*'], Carbon::now()->addMinutes(5))->plainTextToken;
             return response()->json([
               "message" => "Successfully Login",
-              "adminUser" => $user,
-              "adminToken" => $token], 200);
+              "adminUser" => $user], 200);
         } else {
             return response()->json(['message' => 'Wrong Username or Password'], 404);
         }
@@ -39,20 +39,21 @@ class AuthController extends Controller
             Log::info(Auth::check());
             /** @var \App\Models\User */
             $user = Auth::user();
-            $token = $user->createToken($user->name, ['*'], Carbon::now()->addMinutes(5))->plainTextToken;
+            // $token = $user->createToken($user->name, ['*'], Carbon::now()->addMinutes(5))->plainTextToken;
             return response()->json([
               "message" => "Successfully Login",
-              "adminUser" => $user,
-              "adminToken" => $token], 200);
+              "adminUser" => $user], 200);
         } else {
             return response()->json(["isRemember" => false], 404);
         }
     }
     public function logout(Request $request)
     {
-        // $request->user()->currentAccessToken()->delete();
-        // Auth::guard('web')->logout();
-        Auth::logout();
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return response('Successfully Logout', 200);
     }
 }

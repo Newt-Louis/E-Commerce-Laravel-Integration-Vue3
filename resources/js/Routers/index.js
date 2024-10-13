@@ -14,8 +14,6 @@ const routerAdmin = createRouter({
 
 routerAdmin.beforeEach((to, from, next) => {
   const adminUserStore = useAdminUserStore();
-  console.log(to.meta.requiresAuth);
-  console.log(!adminUserStore.checkLogin);
   if (!adminUserStore.checkLogin && to.meta.requiresAuth) {
     next({ name: "auth" });
   } else {

@@ -26,6 +26,7 @@ import AdminFooter from "./Admin/Layouts/AdminFooter.vue";
 import AdminHeader from "./Admin/Layouts/AdminHeader.vue";
 import AdminSideBar from "./Admin/Layouts/AdminSideBar.vue";
 import Authentication from "~components/Authentication.vue";
+import { axsIns } from "../js/bootstrap";
 export default {
   components: {
     AdminHeader,
@@ -43,6 +44,17 @@ export default {
     checkstore() {},
   },
   watch: {},
+  async beforeMount() {
+    try {
+      const csrfToken = await axsIns.get("/sanctum/csrf-cookie");
+      if (csrfToken.status === 204) {
+        axsIns.defaults.withCredentials = true;
+        axsIns.defaults.withXSRFToken = true;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
   mounted() {},
 };
 </script>
