@@ -46,7 +46,9 @@ export default {
           await this.$router.replace({ name: "login-admin" });
         }
       } catch (error) {
-        console.log(error);
+        if (error.response.status === 404) {
+          console.log(error);
+        }
       }
     },
   },
