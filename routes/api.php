@@ -19,11 +19,12 @@ use App\Http\Controllers\UserController;
 /* Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 }); */
-Route::post('/admin-user/login', [AuthController::class,'login']);
+Route::post('/admin-user/login', [AuthController::class,'adminLogin'])->middleware('check.admin');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('users', UserController::class);
     Route::get('/auth/admin-remember', function (Request $request) {
+        $request->session()->regenerate();
         return $request->user();
     });
     Route::post('/admin-user/logout', [AuthController::class,'logout']);

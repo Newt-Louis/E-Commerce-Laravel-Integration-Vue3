@@ -37,8 +37,9 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
+          'driver' => 'session',
+          'provider' => 'users',
+          'remember' => now()->addDays(30)->diffInMinutes(),
         ],
     ],
 

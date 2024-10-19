@@ -40,13 +40,10 @@ export default {
         if (response.status === 200) {
           this.setLogout();
           this.setAdminUser({});
-          console.log(this.getAdminUser);
-          console.log(this.checkLogin);
-          sessionStorage.clear();
           await this.$router.replace({ name: "login-admin" });
         }
       } catch (error) {
-          console.log(error);
+        console.log(error);
       }
     },
   },

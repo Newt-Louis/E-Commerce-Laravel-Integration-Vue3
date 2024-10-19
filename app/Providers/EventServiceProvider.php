@@ -18,6 +18,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        \Illuminate\Http\Client\Events\ResponseReceived::class => [
+        \App\Listeners\LogCookie::class,
+    ],
     ];
 
     /**
