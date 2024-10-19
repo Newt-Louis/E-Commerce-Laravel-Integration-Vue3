@@ -184,9 +184,6 @@ export default {
       if (response.status === 200) {
         this.setLogin();
         this.setAdminUser(response.data.adminUser);
-        // const token = response.data.adminToken;
-        // sessionStorage.setItem("temporary_token", token);
-        // axsIns.defaults.headers.common["Authorization"] = `Bearer ${token}`;
         await this.$router.push({ name: "admin-homepage" });
       }
       return;

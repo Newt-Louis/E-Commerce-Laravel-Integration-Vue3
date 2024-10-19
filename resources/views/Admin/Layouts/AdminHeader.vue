@@ -1,5 +1,5 @@
 <template>
-  <div class="row header-container bg-info-subtle">
+  <div class="row header-container bg-info-subtle m-0">
     <div class="col-lg-4 d-flex justify-content-start gap-4">
       <img src="" alt="Avatar" />
       <h5>{{ getAdminUser.name }}</h5>
