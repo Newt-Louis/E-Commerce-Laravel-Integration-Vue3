@@ -5,7 +5,7 @@
     <div class="row select-group">
       <div class="col-lg-3 filter-select">
         <label for="role_filter" class="form-label fw-bold">Filter Role</label>
-        <select class="form-select" aria-label="Default select example" id="role_filter">
+        <select class="form-select" aria-label="Default select example" id="role_filter" multiple>
           <option selected>Open this select menu</option>
           <option value="1">One</option>
           <option value="2">Two</option>
@@ -14,29 +14,26 @@
       </div>
       <div class="col-lg-3 filter-select">
         <label for="createdAt_filter" class="form-label fw-bold">Filter Created By</label>
-        <select class="form-select" aria-label="Default select example" id="createdAt_filter">
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+        <select class="form-select" aria-label="Default select example" id="createdAt_filter" v-model="sortCreated">
+          <option selected value="">Open this select menu</option>
+          <option value="asc">Acsending</option>
+          <option value="desc">Descending</option>
         </select>
       </div>
       <div class="col-lg-3 filter-select">
         <label for="updatedAt_filter" class="form-label fw-bold">Filter Updated By</label>
         <select class="form-select" aria-label="Default select example" id="updatedAt_filter">
           <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+          <option value="1">Acsending</option>
+          <option value="2">Descending</option>
         </select>
       </div>
       <div class="col-lg-3 filter-select">
         <label for="updatedAt_filter" class="form-label fw-bold">Filter Deleted By</label>
         <select class="form-select" aria-label="Default select example" id="updatedAt_filter">
           <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+          <option value="1">Acsending</option>
+          <option value="2">Descending</option>
         </select>
       </div>
     </div>
@@ -62,25 +59,26 @@
             <th>Created At</th>
             <th>Updated At</th>
             <th>Config</th>
-            <th>Deleted At</th>
+            <!-- <th v-if="user?.deleted_at ? true : false">Deleted At</th> -->
           </tr>
         </thead>
-        <tbody class="table-group-divider">
-          <tr>
-            <th>1</th>
-            <td>admin</td>
-            <td>admin@gmail.com</td>
-            <td>0123456789</td>
-            <td>owner</td>
-            <td>2024-09-02 11:26:41</td>
-            <td>2024-09-02 11:26:41</td>
+        <tbody v-if="usersData.length > 0" class="table-group-divider">
+          <tr v-for="(user, index) in filteredUsers" :key="index">
+            <th>{{ user.id }}</th>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone }}</td>
+            <td>{{ user.role }}</td>
+            <td>{{ user.created_at ? user.created_at : "None" }}</td>
+            <td>{{ user.updated_at ? user.updated_at : "None" }}</td>
+
             <td>
               <div class="config-button-group">
                 <button class="btn btn-outline-warning btn-sm me-2">Edit</button>
                 <button class="btn btn-outline-danger btn-sm">Delete</button>
               </div>
             </td>
-            <td>2024-09-02 11:26:41</td>
+            <td v-if="user?.deleted_at ? true : false">{{ user.deleted_at }}</td>
           </tr>
         </tbody>
       </table>
@@ -105,7 +103,7 @@
 
 <script>
 import AddOrEditUser from "~components/AddOrEditUser.vue";
-
+import { axsIns } from "../../../js/bootstrap";
 export default {
   components: {
     AddOrEditUser,
@@ -113,22 +111,62 @@ export default {
   data() {
     return {
       usersData: [],
+      userRole: 0,
+      filterRole: [],
+      sortCreated: "",
+      sortUpdated: {
+        isSort: false,
+        value: "",
+      },
+      sortDeleted: {
+        isSort: false,
+        value: "",
+      },
     };
   },
-  computed: {},
+  computed: {
+    filteredUsers() {
+      let result = [...this.usersData];
+      if (this.sortCreated !== "") {
+        result = this.sortCreatedAt(this.sortCreated, result);
+        console.log(result);
+      }
+      return result;
+    },
+  },
   watch: {},
   created() {},
-  mounted() {
+  async mounted() {
     try {
-      const response = axios.get("/api/users");
+      const response = await axsIns.get("/api/users");
       if (response.status === 200) {
-        this.usersData = response.data.users_data;
+        this.usersData = response.data;
+        console.log(this.usersData);
       }
     } catch (error) {
       console.log(error);
     }
   },
-  methods: {},
+  methods: {
+    sortCreatedAt(sortBy, data) {
+      this.sortUpdated.isSort = false;
+      this.sortDeleted.isSort = false;
+      if (sortBy === "asc") {
+        data.sort((a, b) => {
+          const date1 = new Date(a.created_at);
+          const date2 = new Date(b.created_at);
+          return date1 - date2;
+        });
+      } else if (sortBy === "desc") {
+        data.sort((a, b) => {
+          const date1 = new Date(a.created_at);
+          const date2 = new Date(b.created_at);
+          return date2 - date1;
+        });
+      }
+      return data;
+    },
+  },
 };
 </script>
 

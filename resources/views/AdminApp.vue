@@ -85,7 +85,7 @@ export default {
     clearInterval(this.refreshToken);
   },
   methods: {
-    ...mapActions(useAdminUserStore, ["setAdminUser"]),
+    ...mapActions(useAdminUserStore, ["setAdminUser", "setLogin"]),
     checkstore() {},
   },
 };

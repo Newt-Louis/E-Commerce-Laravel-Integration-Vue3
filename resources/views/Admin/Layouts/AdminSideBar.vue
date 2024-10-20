@@ -2,16 +2,16 @@
   <div>
     <ul class="nav flex-column nav-underline bg-info-subtle p-3 rounded">
       <li class="nav-item">
-        <a class="nav-link active">User</a>
+        <router-link :to="{ name: 'admin-homepage' }" class="nav-link" activeClass="active">User</router-link>
       </li>
       <li class="nav-item">
-        <a class="nav-link">Product</a>
+        <router-link :to="{ name: 'admin-product' }" class="nav-link" activeClass="active"> Product </router-link>
       </li>
       <li class="nav-item">
-        <a class="nav-link">Client Order</a>
+        <router-link :to="{ name: 'admin-order' }" class="nav-link" activeClass="active">Client Order</router-link>
       </li>
       <li class="nav-item">
-        <a class="nav-link">Purchase</a>
+        <router-link :to="{ name: 'admin-purchase' }" class="nav-link" activeClass="active">Purchase</router-link>
       </li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false"
@@ -33,7 +33,23 @@
 </template>
 
 <script>
-export default {};
+export default {
+  data() {
+    return {
+      activated: "active",
+    };
+  },
+  computed: {},
+  watch: {},
+  methods: {
+    changeActive() {},
+  },
+};
 </script>
 
-<style></style>
+<style>
+/* .nav-underline .nav-link.router-link-active {
+  font-weight: bold;
+  color: black;
+} */
+</style>
