@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\UserController;
 Route::post('/admin-user/login', [AuthController::class,'adminLogin'])->middleware('check.admin');
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/roles', RoleController::class);
     Route::apiResource('users', UserController::class);
     Route::get('/auth/admin-remember', function (Request $request) {
         $request->session()->regenerate();

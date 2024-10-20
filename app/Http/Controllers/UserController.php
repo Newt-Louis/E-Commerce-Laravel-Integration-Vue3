@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -14,8 +15,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        // something
-        $user = User::all();
+        $user = User::with('userRole')->get();
         return response()->json($user);
     }
     public function create(Request $request)

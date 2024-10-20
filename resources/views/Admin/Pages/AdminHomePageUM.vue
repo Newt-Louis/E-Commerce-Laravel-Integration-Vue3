@@ -5,11 +5,9 @@
     <div class="row select-group">
       <div class="col-lg-3 filter-select">
         <label for="role_filter" class="form-label fw-bold">Filter Role</label>
-        <select class="form-select" aria-label="Default select example" id="role_filter" multiple>
-          <option selected>Open this select menu</option>
-          <option value="1">One</option>
-          <option value="2">Two</option>
-          <option value="3">Three</option>
+        <select class="form-select" aria-label="Default select example" id="role_filter" multiple v-model="filterRole">
+          <option selected value="">Open this select menu</option>
+          <option v-for="(role, index) in usersRole" :value="role.id" :key="index">{{ role.description }}</option>
         </select>
       </div>
       <div class="col-lg-3 filter-select">
@@ -68,7 +66,9 @@
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.phone }}</td>
-            <td>{{ user.role }}</td>
+            <td>
+              {{ user.user_role.description }}
+            </td>
             <td>{{ user.created_at ? user.created_at : "None" }}</td>
             <td>{{ user.updated_at ? user.updated_at : "None" }}</td>
 
@@ -93,7 +93,7 @@
           <li class="page-item"><a class="page-link" href="#">2</a></li>
           <li class="page-item"><a class="page-link" href="#">3</a></li>
           <li class="page-item">
-            <a class="page-link" href="#">Next</a>
+            <a class="page-link" @click="test">Next</a>
           </li>
         </ul>
       </nav>
@@ -111,17 +111,11 @@ export default {
   data() {
     return {
       usersData: [],
-      userRole: 0,
+      usersRole: [],
       filterRole: [],
       sortCreated: "",
-      sortUpdated: {
-        isSort: false,
-        value: "",
-      },
-      sortDeleted: {
-        isSort: false,
-        value: "",
-      },
+      sortUpdated: "",
+      sortDeleted: "",
     };
   },
   computed: {
@@ -129,19 +123,28 @@ export default {
       let result = [...this.usersData];
       if (this.sortCreated !== "") {
         result = this.sortCreatedAt(this.sortCreated, result);
+      }
+      if (this.filterRole[0] !== "" || this.filterRole[0] !== undefined) {
+        result = this.filteredByRole(this.filterRole, result);
         console.log(result);
       }
       return result;
     },
   },
-  watch: {},
+  watch: {
+    sortCreated(newVal, oldVal) {},
+  },
   created() {},
   async mounted() {
     try {
-      const response = await axsIns.get("/api/users");
-      if (response.status === 200) {
-        this.usersData = response.data;
+      const [usersResponse, rolesResponse] = await Promise.all([axsIns.get("/api/users"), axsIns.get("api/roles")]);
+      if (usersResponse.status === 200) {
+        this.usersData = usersResponse.data;
         console.log(this.usersData);
+      }
+      if (rolesResponse.status === 200) {
+        this.usersRole = rolesResponse.data;
+        console.log(this.usersRole);
       }
     } catch (error) {
       console.log(error);
@@ -164,7 +167,32 @@ export default {
           return date2 - date1;
         });
       }
+
       return data;
+    },
+    filteredByRole(filterArray, data) {
+      let result;
+      if (filterArray.length > 0) {
+        for (let i = 0; i < data.length; i++) {
+          for (let j = 0; j < filterArray.length; j++) {
+            if (data[i].role_id == filterArray[j].id) {
+              result.push(data[i]);
+              console.log(data[i]);
+              break;
+            }
+          }
+        }
+        console.log(data);
+      } else {
+        console.log(data);
+        return data;
+      }
+      console.log(result);
+
+      return result;
+    },
+    test() {
+      console.log(this.filterRole);
     },
   },
 };
