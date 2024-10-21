@@ -116,7 +116,7 @@
           </div>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Sign in</button>
+      <button type="submit" class="btn btn-primary w-100" :disabled="!isInputsValidated">Sign in</button>
     </form>
   </div>
 </template>

@@ -6,7 +6,7 @@
       <div class="col-lg-3 filter-select">
         <label for="role_filter" class="form-label fw-bold">Filter Role</label>
         <select class="form-select" aria-label="Default select example" id="role_filter" multiple v-model="filterRole">
-          <option selected value="">Open this select menu</option>
+          <option selected value="">All</option>
           <option v-for="(role, index) in usersRole" :value="role.id" :key="index">{{ role.description }}</option>
         </select>
       </div>
@@ -67,7 +67,7 @@
             <td>{{ user.email }}</td>
             <td>{{ user.phone }}</td>
             <td>
-              {{ user.user_role.description }}
+              {{ user.role.description }}
             </td>
             <td>{{ user.created_at ? user.created_at : "None" }}</td>
             <td>{{ user.updated_at ? user.updated_at : "None" }}</td>
@@ -124,9 +124,8 @@ export default {
       if (this.sortCreated !== "") {
         result = this.sortCreatedAt(this.sortCreated, result);
       }
-      if (this.filterRole[0] !== "" || this.filterRole[0] !== undefined) {
+      if (this.filterRole.length > 0 && this.filterRole[0] !== "") {
         result = this.filteredByRole(this.filterRole, result);
-        console.log(result);
       }
       return result;
     },
@@ -144,7 +143,6 @@ export default {
       }
       if (rolesResponse.status === 200) {
         this.usersRole = rolesResponse.data;
-        console.log(this.usersRole);
       }
     } catch (error) {
       console.log(error);
@@ -171,24 +169,19 @@ export default {
       return data;
     },
     filteredByRole(filterArray, data) {
-      let result;
+      const result = [];
       if (filterArray.length > 0) {
         for (let i = 0; i < data.length; i++) {
           for (let j = 0; j < filterArray.length; j++) {
-            if (data[i].role_id == filterArray[j].id) {
+            if (data[i].role_id == filterArray[j]) {
               result.push(data[i]);
-              console.log(data[i]);
               break;
             }
           }
         }
-        console.log(data);
       } else {
-        console.log(data);
         return data;
       }
-      console.log(result);
-
       return result;
     },
     test() {

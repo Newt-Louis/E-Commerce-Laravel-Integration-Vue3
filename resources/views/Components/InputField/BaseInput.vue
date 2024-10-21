@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { useUtilities } from "../../../js/Composable/utilities.composable";
+import { useUtilities } from "~composable/utilities.composable";
 import { getValidator } from "~composable/validateInputRules.composable";
 export default {
   props: {
@@ -95,7 +95,6 @@ export default {
           const cleanedValue = newVal.replace(/[^0-9]/g, "");
           this.numberValue = parseInt(cleanedValue, 10);
           this.formattedNumber = numberWithCommas(cleanedValue);
-          console.log(this.numberValue);
         }
         this.validateRules();
       } else {
