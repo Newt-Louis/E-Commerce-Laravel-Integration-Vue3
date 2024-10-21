@@ -27,7 +27,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Log::info($request);
     }
     public function show(string $id)
     {

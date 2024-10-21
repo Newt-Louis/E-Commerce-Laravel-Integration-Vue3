@@ -6,6 +6,7 @@
       type="text"
       placeholder="Email"
       @input="validated"
+      v-bind="$attrs"
     />
     <div class="invalid-feedback" v-if="displayError.required">Please input your email !</div>
     <div class="invalid-feedback" v-if="displayError.isInValid">Invalid email !</div>

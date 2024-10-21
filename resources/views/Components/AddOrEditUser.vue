@@ -20,13 +20,23 @@
             <div class="row">
               <div class="col-lg-6">
                 <label for="" class="form-label col-form-label">User name</label>
-                <TextInput :placeholder="`Username`" :required="true" @text-valid="checkValidateInputs">
+                <TextInput
+                  :text-input-name="`username`"
+                  v-model="userInfo.nameValue"
+                  :placeholder="`Username`"
+                  :required="true"
+                  @text-valid="checkValidateInputs"
+                >
                   <template #required> Please input your username ! </template>
                 </TextInput>
               </div>
               <div class="col-lg-6">
                 <label for="" class="form-label col-form-label">Email</label>
-                <EmailInput @email-valid="checkValidateInputs"></EmailInput>
+                <EmailInput
+                  v-bind="$attrs"
+                  v-model="userInfo.emailValue"
+                  @email-valid="checkValidateInputs"
+                ></EmailInput>
               </div>
               <div class="col-lg-6">
                 <label class="form-label col-form-label">Password</label>
@@ -52,7 +62,13 @@
               </div>
               <div class="col-lg-6">
                 <label for="" class="form-label col-form-label">Phone</label>
-                <TextInput :pattern="'^0\\d{9}$'" :placeholder="`Phone Number`">
+                <TextInput
+                  :text-input-name="`phone`"
+                  v-model="userInfo.phoneValue"
+                  :pattern="'^0\\d{9}$'"
+                  :placeholder="`Phone Number`"
+                  @text-valid="checkValidateInputs"
+                >
                   <template #pattern> Bắt đầu bằng số 0 và phải đủ 10 chữ số ! </template>
                 </TextInput>
               </div>
@@ -68,11 +84,12 @@
               </div>
               <div class="col-lg-6 offset-3">
                 <label for="" class="form-label col-form-label">Choose Avatar</label>
-                <FileInput v-model="userInfo.avatarValue" :imageNumber="1"></FileInput>
+                <FileInput v-model="userInfo.avatarValue" :imageNumber="1" @files-valid="getFileData"></FileInput>
               </div>
             </div>
           </div>
           <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" @click="testValue">Test</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             <button type="submit" class="btn btn-outline-primary" v-if="isAdd" :disabled="!isInputsValidated">
               Ok !
@@ -148,7 +165,33 @@ export default {
         this.registeredInputs.push(data);
       }
     },
-    addOrUpdate() {},
+    getFileData(data) {
+      console.log(data);
+      if (data?.value.length > 0) {
+        this.userInfo.avatarValue.push(data.value);
+      }
+    },
+    async addOrUpdate() {
+      const formData = new FormData();
+      formData.append("name", this.userInfo.nameValue);
+      formData.append("email", this.userInfo.emailValue);
+      formData.append("password", this.userInfo.passwordValue);
+      formData.append("phone", this.userInfo.phoneValue);
+      formData.append("role", this.userInfo.roleValue);
+      formData.append("avatar", this.userInfo.avatarValue);
+      try {
+        const response = await axsIns.post("/api/users", formData);
+        if (response.status === 200) {
+          console.log(response);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    testValue() {
+      console.log(this.userInfo);
+      console.log(this.registeredInputs);
+    },
   },
 };
 </script>

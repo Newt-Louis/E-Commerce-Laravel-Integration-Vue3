@@ -29,13 +29,15 @@ export default {
   components: {
     BaseInput,
   },
-  props: {},
+  props: {
+    textInputName: String,
+  },
   emits: ["textValid"],
   data() {
     return {
       textValue: "",
       isTextValid: {
-        name: "text",
+        name: this.textInputName,
         isValid: false,
         value: "",
       },
