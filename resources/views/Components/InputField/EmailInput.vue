@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { getValidator } from "../../../js/Composable/validateInputRules.composable";
+import { getValidator } from "~composable/validateInputRules.composable";
 export default {
   props: {},
   emits: ["emailValid"],

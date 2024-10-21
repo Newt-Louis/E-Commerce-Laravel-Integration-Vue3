@@ -14,6 +14,12 @@
 
 <script>
 export default {
+  props: {
+    imageNumber: {
+      type: Number,
+      default: 0,
+    },
+  },
   emits: ["filesValid"],
   data() {
     return {
@@ -36,9 +42,9 @@ export default {
     onFileChange(event) {
       const files = event.target.files;
       this.imageUrl = [];
-      if (files.length > 4) {
+      if (files.length > this.imageNumber) {
         this.isValidation = "is-invalid";
-        this.errMess = "Không được thêm nhiều hơn 4 hình !";
+        this.errMess = `Không được thêm nhiều hơn ${this.imageNumber} hình !`;
         return;
       } else if (files.length === 0) {
         this.isValidation = "";
