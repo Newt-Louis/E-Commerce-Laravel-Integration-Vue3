@@ -25,9 +25,11 @@
                   v-model="userInfo.nameValue"
                   :placeholder="`Username`"
                   :required="true"
+                  :pattern="'^\\S*$'"
                   @text-valid="checkValidateInputs"
                 >
                   <template #required> Please input your username ! </template>
+                  <template #pattern> Username cannot contain spaces ! </template>
                 </TextInput>
               </div>
               <div class="col-lg-6">
@@ -177,7 +179,7 @@ export default {
       formData.append("email", this.userInfo.emailValue);
       formData.append("password", this.userInfo.passwordValue);
       formData.append("phone", this.userInfo.phoneValue);
-      formData.append("role", this.userInfo.roleValue);
+      formData.append("role_id", this.userInfo.roleValue);
       formData.append("avatar", this.userInfo.avatarValue);
       try {
         const response = await axsIns.post("/api/users", formData);

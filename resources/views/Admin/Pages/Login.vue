@@ -14,9 +14,12 @@
             v-model="loginValue.usernameValue"
             :placeholder="`Username`"
             :required="true"
+            :pattern="'^\\S*$'"
+            :text-input-name="`name`"
             @text-valid="checkValidateInputs"
           >
             <template #required> Please input your username ! </template>
+            <template #pattern> Username cannot contain spaces !</template>
           </TextInput>
         </div>
         <div class="col-lg-3 mb-3">
@@ -87,6 +90,7 @@
             @password-valid="checkValidateInputs"
           >
             <template #required> Please input your password ! </template>
+            <template #pattern> Username cannot contain spaces !</template>
           </PasswordInput>
         </div>
         <div class="col-lg-3 mb-3">

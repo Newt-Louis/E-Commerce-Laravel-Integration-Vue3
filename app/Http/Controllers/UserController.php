@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUserRequest;
+use App\Models\Avatar;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -25,8 +24,21 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
+        $validate = $request->validated();
+        if ($validate) {
+            $user = User::created($validate);
+            if (!$request->hasFile('avatar')) {
+                /** @var \App\Models\User $user */
+                $path = 'avatars/'.$user->name;
+                Storage::makeDirectory($path);
+                Avatar::created([
+                  'path' => $path,
+                  'user_id' => $user->id,
+                ]);
+            }
+        }
         Log::info($request);
     }
     public function show(string $id)
