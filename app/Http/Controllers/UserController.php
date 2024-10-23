@@ -21,50 +21,45 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        $files = $request->file('avatar');
-        foreach ($files as $key => $value) {
-            Log::info($value);
+        $validate = $request->validated();
+        if ($validate) {
+            $user = User::create($validate);
+            /** @var \App\Models\User $user */
+            $path = 'avatars/'.$user->name;
+            Storage::makeDirectory($path);
+            if (!$request->hasFile('avatar')) {
+                Avatar::create([
+                  'path' => $path,
+                  'user_id' => $user->id,
+                ]);
+                Log::info('không xác nhận được file');
+            } else {
+                /** @var \App\Models\User $user */
+                $validateFile = $request->validated(
+                    [
+                    'avatar' => 'image|max:2048',
+                  ],
+                    [
+                    'avatar.image' => 'Avatar must be image file !',
+                    'avatar.max' => 'Avatar maximum capacity is 2MB',
+                  ]
+                );
+                if ($validateFile) {
+                    $file = $request->file('avatar');
+                    $fileName = uniqid().'_'. $file[0]->getClientOriginalName();
+                    $filePath = Storage::putFileAs($path, $file[0], $fileName);
+                    Avatar::create([
+                      'path' => $filePath,
+                      'user_id' => $user->id
+                    ]);
+                    Log::info('Xác nhận được file');
+                }
+            }
         }
-        // return response($request->all());
-        // $validate = $request->validated();
-        // if ($validate) {
-        //     $user = User::create($validate);
-        //     /** @var \App\Models\User $user */
-        //     $path = 'avatars/'.$user->name;
-        //     Storage::makeDirectory($path);
-        //     if (!$request->hasFile('avatar')) {
-        //         Avatar::create([
-        //           'path' => $path,
-        //           'user_id' => $user->id,
-        //         ]);
-        //         Log::info('không xác nhận được file');
-        //     } else {
-        //         /** @var \App\Models\User $user */
-        //         $validateFile = $request->validated(
-        //             [
-        //             'avatar' => 'image|max:2048',
-        //           ],
-        //             [
-        //             'avatar.image' => 'Avatar must be image file !',
-        //             'avatar.max' => 'Avatar maximum capacity is 2MB',
-        //           ]
-        //         );
-        //         if ($validateFile) {
-        //             $file = $request->file('avatar');
-        //             $fileName = uniqid().'_'. $file->getClientOriginalName();
-        //             $filePath = Storage::putFileAs($path, $file, $fileName);
-        //             Avatar::create([
-        //               'path' => $filePath,
-        //               'user_id' => $user->id
-        //             ]);
-        //             Log::info('Xác nhận được file');
-        //         }
-        //     }
-        // }
 
-        // return $this->index();
+        return $this->index();
     }
     public function show(string $id)
     {
@@ -85,7 +80,7 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request)
     {
         //
     }

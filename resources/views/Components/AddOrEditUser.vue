@@ -180,6 +180,17 @@ export default {
       formData.append("password", this.userInfo.passwordValue);
       formData.append("phone", this.userInfo.phoneValue);
       formData.append("role_id", this.userInfo.roleValue);
+      /*
+        if single file we just use normal append like this : ('avatar', this.userInfo.avatarValue[0])
+        if we need to send an array of files we have to push each file to avatar array like this:
+          this.selectedFiles.forEach(value => {
+            formData.append("avatar[]",value); //value is each file in selectedFiles array
+          });
+        1. name like this : "avatar[]" to make server understand that this input filed is an array
+        2. this array won't accept an array assign to it, so that we have to make an iterator
+           to append each file to this array.
+        3. 
+      */
       formData.append("avatar[]", this.userInfo.avatarValue[0]);
       try {
         const response = await axsIns.post("/api/users", formData);
