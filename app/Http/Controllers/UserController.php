@@ -15,7 +15,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $user = User::with('role')->get();
+        $user = User::with(['role', 'avatar'])->get();
 
         return response()->json($user);
     }
@@ -74,10 +74,10 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(User $user)
-    {
-        //
-    }
+    // public function edit(User $user)
+    // {
+    //     //
+    // }
     /**
      * Update the specified resource in storage.
      */
@@ -92,12 +92,12 @@ class UserController extends Controller
                 Storage::disk('local')->delete($files);
             }
             $file = $request->file('avatar');
-                $fileName = uniqid().'_'.$file[0]->getClientOriginalName();
-                $filePath = Storage::putFileAs('avatars/'.$user->name, $request->file('avatar'), $fileName);
-                $avatar = Avatar::where('user_id', $user->id)->get();
-                $avatar->update([
-                  'path' => $filePath,
-                ]);
+            $fileName = uniqid().'_'.$file[0]->getClientOriginalName();
+            $filePath = Storage::putFileAs('avatars/'.$user->name, $request->file('avatar'), $fileName);
+            $avatar = Avatar::where('user_id', $user->id)->get();
+            $avatar->update([
+              'path' => $filePath,
+            ]);
         }
         return $this->index();
     }

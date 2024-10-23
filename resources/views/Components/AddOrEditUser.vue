@@ -1,6 +1,6 @@
 <template>
   <div
-    class="modal bg-dark"
+    class="modal fade"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
     id="exampleModal"
@@ -209,8 +209,4 @@ export default {
 };
 </script>
 
-<style>
-.modal {
-  display: block !important;
-}
-</style>
+<style></style>

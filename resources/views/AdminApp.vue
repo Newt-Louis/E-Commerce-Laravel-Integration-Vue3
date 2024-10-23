@@ -4,7 +4,7 @@
     <div :class="`alert alert-danger animate__animated ${rtAlert.alertAnimate}`" role="alert" v-if="rtAlert.isAlert">
       {{ rtAlert.messageError }}
     </div>
-    <header class=""><AdminHeader /></header>
+    <header class="header-layout"><AdminHeader /></header>
     <div class="row mt-3 m-0 main-container">
       <div class="col-lg-2">
         <AdminSideBar />
@@ -94,6 +94,9 @@ export default {
 <style scoped>
 .main-container {
   height: 2400px;
+}
+.header-layout {
+  position: relative;
 }
 .alert {
   position: absolute;

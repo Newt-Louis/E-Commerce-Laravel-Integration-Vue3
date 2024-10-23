@@ -50,6 +50,7 @@
         <thead>
           <tr>
             <th>#</th>
+            <th>Avatar</th>
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
@@ -63,6 +64,7 @@
         <tbody v-if="usersData.length > 0" class="table-group-divider">
           <tr v-for="(user, index) in filteredUsers" :key="index">
             <th>{{ user.id }}</th>
+            <!-- <td><img :src="user.avatar" :alt="user.name" class="array-avatar-user"></td> -->
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.phone }}</td>

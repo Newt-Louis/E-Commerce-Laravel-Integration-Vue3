@@ -1,7 +1,8 @@
 <template>
   <div class="row header-container bg-info-subtle m-0">
-    <div class="col-lg-4 d-flex justify-content-start gap-4">
-      <img src="" alt="Avatar" />
+    <div class="col-lg-4 d-flex justify-content-start gap-4 user-facade">
+      <!-- <img src="" alt="Avatar" /> -->
+      <img src="/blank_avatar.jpg" alt="Blank Avatar" />
       <h5>{{ getAdminUser.name }}</h5>
     </div>
     <div class="col-lg-4 d-flex justify-content-evenly gap-4">
@@ -51,6 +52,15 @@ export default {
 </script>
 
 <style>
+.user-facade {
+  width: 100%;
+  height: 100%;
+  position: inherit;
+}
+.user-facade > img {
+  object-fit: contain;
+  border-radius: 50%;
+}
 .header-container {
   padding: 12px 24px 12px 24px;
   height: 50px;
