@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\Avatar;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -80,9 +81,25 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request)
+    public function update(UpdateUserRequest $request)
     {
-        //
+        $validatedData = $request->validated();
+        $user = User::find($validatedData->id);
+        $user->update($validatedData);
+        if ($request->hasFile('avatar')) {
+            $files = Storage::disk('local')->files('avatars/'.$user->name);
+            if (count($files) > 0) {
+                Storage::disk('local')->delete($files);
+            }
+            $file = $request->file('avatar');
+                $fileName = uniqid().'_'.$file[0]->getClientOriginalName();
+                $filePath = Storage::putFileAs('avatars/'.$user->name, $request->file('avatar'), $fileName);
+                $avatar = Avatar::where('user_id', $user->id)->get();
+                $avatar->update([
+                  'path' => $filePath,
+                ]);
+        }
+        return $this->index();
     }
 
     /**
