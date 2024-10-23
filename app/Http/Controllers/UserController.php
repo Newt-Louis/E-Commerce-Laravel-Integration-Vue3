@@ -12,34 +12,59 @@ use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $user = User::with('role')->get();
 
         return response()->json($user);
     }
-    public function create(Request $request)
-    {
-    }
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request)
+    public function store(Request $request)
     {
-        $validate = $request->validated();
-        if ($validate) {
-            $user = User::created($validate);
-            if (!$request->hasFile('avatar')) {
-                /** @var \App\Models\User $user */
-                $path = 'avatars/'.$user->name;
-                Storage::makeDirectory($path);
-                Avatar::created([
-                  'path' => $path,
-                  'user_id' => $user->id,
-                ]);
-            }
+        $files = $request->file('avatar');
+        foreach ($files as $key => $value) {
+            Log::info($value);
         }
-        Log::info($request);
+        // return response($request->all());
+        // $validate = $request->validated();
+        // if ($validate) {
+        //     $user = User::create($validate);
+        //     /** @var \App\Models\User $user */
+        //     $path = 'avatars/'.$user->name;
+        //     Storage::makeDirectory($path);
+        //     if (!$request->hasFile('avatar')) {
+        //         Avatar::create([
+        //           'path' => $path,
+        //           'user_id' => $user->id,
+        //         ]);
+        //         Log::info('không xác nhận được file');
+        //     } else {
+        //         /** @var \App\Models\User $user */
+        //         $validateFile = $request->validated(
+        //             [
+        //             'avatar' => 'image|max:2048',
+        //           ],
+        //             [
+        //             'avatar.image' => 'Avatar must be image file !',
+        //             'avatar.max' => 'Avatar maximum capacity is 2MB',
+        //           ]
+        //         );
+        //         if ($validateFile) {
+        //             $file = $request->file('avatar');
+        //             $fileName = uniqid().'_'. $file->getClientOriginalName();
+        //             $filePath = Storage::putFileAs($path, $file, $fileName);
+        //             Avatar::create([
+        //               'path' => $filePath,
+        //               'user_id' => $user->id
+        //             ]);
+        //             Log::info('Xác nhận được file');
+        //         }
+        //     }
+        // }
+
+        // return $this->index();
     }
     public function show(string $id)
     {

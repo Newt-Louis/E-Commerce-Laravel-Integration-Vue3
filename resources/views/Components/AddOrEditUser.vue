@@ -168,9 +168,9 @@ export default {
       }
     },
     getFileData(data) {
-      console.log(data);
       if (data?.value.length > 0) {
-        this.userInfo.avatarValue.push(data.value);
+        this.userInfo.avatarValue.push(data.value[0]);
+        console.log(this.userInfo.avatarValue);
       }
     },
     async addOrUpdate() {
@@ -180,7 +180,7 @@ export default {
       formData.append("password", this.userInfo.passwordValue);
       formData.append("phone", this.userInfo.phoneValue);
       formData.append("role_id", this.userInfo.roleValue);
-      formData.append("avatar", this.userInfo.avatarValue);
+      formData.append("avatar[]", this.userInfo.avatarValue[0]);
       try {
         const response = await axsIns.post("/api/users", formData);
         if (response.status === 200) {

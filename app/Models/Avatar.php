@@ -10,6 +10,16 @@ class Avatar extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+      'path',
+      'user_id',
+    ];
+
     public function user(): HasOne
     {
         return $this->hasOne(User::class);
