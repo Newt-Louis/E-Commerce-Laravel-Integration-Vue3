@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Resources\UserResource;
 use App\Models\Avatar;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -15,9 +16,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $user = User::with(['role', 'avatar'])->get();
+        $users = User::with(['role', 'avatar'])->get();
 
-        return response()->json($user);
+        return UserResource::collection($users);
     }
     /**
      * Store a newly created resource in storage.
