@@ -39,10 +39,16 @@
     <div class="row button-manage">
       <div class="col-lg-4">
         <label for="add_user" class="form-label fw-bold">Add User</label><br />
-        <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" id="add_user">
+        <button
+          class="btn btn-outline-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#addOrEditUser"
+          id="add_user"
+          @click="addingUser"
+        >
           Add New User
         </button>
-        <AddOrEditUser></AddOrEditUser>
+        <AddOrEditUser :isAdd="isAdd" :user-data="userEditing"></AddOrEditUser>
       </div>
     </div>
     <div class="table-container w-100">
@@ -78,7 +84,15 @@
 
             <td>
               <div class="config-button-group">
-                <button class="btn btn-outline-warning btn-sm me-2">Edit</button>
+                <button
+                  class="btn btn-outline-warning btn-sm me-2"
+                  @click="editingUser(user.id)"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addOrEditUser"
+                  id="edit_user"
+                >
+                  Edit
+                </button>
                 <button class="btn btn-outline-danger btn-sm">Delete</button>
               </div>
             </td>
@@ -120,6 +134,8 @@ export default {
       sortCreated: "",
       sortUpdated: "",
       sortDeleted: "",
+      isAdd: true,
+      userEditing: { id: 0, name: "", email: "", phone: "", role: 0, avatar: [] },
     };
   },
   computed: {
@@ -190,6 +206,28 @@ export default {
     },
     test() {
       console.log(this.filterRole);
+    },
+    addingUser() {
+      this.isAdd = true;
+      this.userEditing.id = 0;
+      this.userEditing.name = "";
+      this.userEditing.email = "";
+      this.userEditing.phone = "";
+      this.userEditing.role = 0;
+      this.userEditing.avatar.pop();
+    },
+    editingUser(id) {
+      this.isAdd = false;
+      const userById = this.usersData.find((user) => user.id === id);
+      this.userEditing.id = userById.id;
+      this.userEditing.name = userById.name;
+      this.userEditing.email = userById.email;
+      this.userEditing.phone = userById.phone;
+      this.userEditing.role = userById.role_id;
+      if (userById?.avatar) {
+        this.userEditing.avatar.push(userById.avatar);
+      }
+      console.log(userById);
     },
   },
 };

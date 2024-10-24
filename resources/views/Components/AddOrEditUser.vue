@@ -3,16 +3,16 @@
     class="modal fade"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
-    id="exampleModal"
+    id="addOrEditUser"
     tabindex="-1"
-    aria-labelledby="exampleModalLabel"
+    aria-labelledby="addOrEditUserLabel"
     aria-hidden="true"
   >
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-3 text-primary" id="exampleModalLabel" v-if="isAdd">Add New User</h1>
-          <h1 class="modal-title fs-3 text-warning" id="exampleModalLabel" v-else>Edit User</h1>
+          <h1 class="modal-title fs-3 text-primary" id="addOrEditUserLabel" v-if="isAdd">Add New User</h1>
+          <h1 class="modal-title fs-3 text-warning" id="addOrEditUserLabel" v-else>Edit User</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form @submit.prevent="addOrUpdate" novalidate>
@@ -86,7 +86,12 @@
               </div>
               <div class="col-lg-6 offset-3">
                 <label for="" class="form-label col-form-label">Choose Avatar</label>
-                <FileInput v-model="userInfo.avatarValue" :imageNumber="1" @files-valid="getFileData"></FileInput>
+                <FileInput
+                  v-model="userInfo.avatarValue"
+                  :imageNumber="1"
+                  @files-valid="getFileData"
+                  :image-url-server="userData.avatar"
+                ></FileInput>
               </div>
             </div>
           </div>
@@ -128,7 +133,7 @@ export default {
     },
     userData: {
       type: Object,
-      default: () => ({ name: "", email: "", password: "", phone: "", role: 0 }),
+      default: () => ({ id: 0, name: "", email: "", phone: "", role: 0, avatar: [] }),
     },
   },
   emit: [],
@@ -136,6 +141,7 @@ export default {
     return {
       registeredInputs: [],
       userInfo: {
+        idValue: 0,
         nameValue: "",
         emailValue: "",
         passwordValue: "",
@@ -156,7 +162,19 @@ export default {
       return this.registeredInputs.every((value) => value.isValid === true);
     },
   },
-  watch: {},
+  watch: {
+    userData(newVal, oldVal) {
+      console.log(this.userData);
+      if (newVal) {
+        this.userInfo.idValue = newVal.id;
+        this.userInfo.nameValue = newVal.name;
+        this.userInfo.emailValue = newVal.email;
+        this.userInfo.phoneValue = newVal.phone;
+        this.userInfo.roleValue = newVal.role;
+        this.userInfo.avatarValue[0] = newVal.avatar;
+      }
+    },
+  },
   mounted() {},
   methods: {
     checkValidateInputs(data) {
@@ -175,6 +193,9 @@ export default {
     },
     async addOrUpdate() {
       const formData = new FormData();
+      if (this.userInfo.idValue > 0) {
+        formData.append("id", this.userInfo.idValue);
+      }
       formData.append("name", this.userInfo.nameValue);
       formData.append("email", this.userInfo.emailValue);
       formData.append("password", this.userInfo.passwordValue);
@@ -203,7 +224,7 @@ export default {
     },
     testValue() {
       console.log(this.userInfo);
-      console.log(this.registeredInputs);
+      console.log(this.userData);
     },
   },
 };

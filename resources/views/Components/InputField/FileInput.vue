@@ -4,8 +4,13 @@
     <div class="invalid-feedback">
       <span>{{ errMess }}</span>
     </div>
-    <div v-if="imageUrl.length > 0" class="img-container">
+    <div v-if="imageUrl.length > 0 && imageUrlServer.length === 0" class="img-container">
       <div v-for="(img, index) in imageUrl" :key="index" class="img-element">
+        <img :src="img" alt="" width="70px" height="70px" style="border-radius: 8px" />
+      </div>
+    </div>
+    <div v-else class="img-container">
+      <div v-for="(img, index) in imageUrlServer" :key="index" class="img-element">
         <img :src="img" alt="" width="70px" height="70px" style="border-radius: 8px" />
       </div>
     </div>
@@ -18,6 +23,10 @@ export default {
     imageNumber: {
       type: Number,
       default: 0,
+    },
+    imageUrlServer: {
+      type: Array,
+      default: () => [],
     },
   },
   emits: ["filesValid"],
@@ -44,7 +53,7 @@ export default {
       this.imageUrl = [];
       if (files.length > this.imageNumber) {
         this.isValidation = "is-invalid";
-        this.errMess = `Không được thêm nhiều hơn ${this.imageNumber} hình !`;
+        this.errMess = `Only ${this.imageNumber} images can be uploaded !`;
         return;
       } else if (files.length === 0) {
         this.isValidation = "";
@@ -59,7 +68,7 @@ export default {
 
           if (!isValidType || !isValidSize) {
             this.isValidation = "is-invalid";
-            this.errMess = "File hình ảnh và phải nhỏ hơn 1MB";
+            this.errMess = "File must be image type and max size 1MB";
             isFilesValid = false;
             return;
           }
