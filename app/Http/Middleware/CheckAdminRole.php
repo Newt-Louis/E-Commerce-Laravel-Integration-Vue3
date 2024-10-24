@@ -18,7 +18,8 @@ class CheckAdminRole
     {
         if ($request->has('usernameValue')) {
             $user = User::firstWhere('name', $request->input('usernameValue'));
-            if ($user && in_array($user->role, [1,2,3])) {
+
+            if ($user && in_array($user->role_id, [1,2,3])) {
                 return $next($request);
             } else {
                 return response()->json(['message' => 'User are not allow to login this page !'], 401);

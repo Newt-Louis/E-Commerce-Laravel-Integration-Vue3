@@ -53,7 +53,8 @@ class UserController extends Controller
                     $fileName = uniqid().'_'. $file[0]->getClientOriginalName();
                     $filePath = Storage::putFileAs($path, $file[0], $fileName);
                     Avatar::create([
-                      'path' => $filePath,
+                      'path' => $path,
+                      'filename' => $fileName,
                       'user_id' => $user->id
                     ]);
                     Log::info('Xác nhận được file');
@@ -97,7 +98,8 @@ class UserController extends Controller
             $filePath = Storage::putFileAs('avatars/'.$user->name, $request->file('avatar'), $fileName);
             $avatar = Avatar::where('user_id', $user->id)->get();
             $avatar->update([
-              'path' => $filePath,
+              'path' => 'avatars/'.$user->name,
+              'filename' => $fileName,
             ]);
         }
         return $this->index();

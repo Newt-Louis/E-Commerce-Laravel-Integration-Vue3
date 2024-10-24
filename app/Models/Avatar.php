@@ -17,6 +17,7 @@ class Avatar extends Model
      */
     protected $fillable = [
       'path',
+      'filename',
       'user_id',
     ];
 

@@ -74,6 +74,7 @@
             v-model="loginValue.usernameValue"
             :placeholder="`Username`"
             :required="true"
+            :text-input-name="`name`"
             @text-valid="checkValidateInputs"
           >
             <template #required> Please input your username ! </template>
@@ -158,6 +159,8 @@ export default {
   computed: {
     ...mapState(useAdminUserStore, ["checkLogin", "getAdminUser"]),
     isInputsValidated() {
+      console.log(this.registeredInputs);
+
       return this.registeredInputs.every((value) => value.isValid === true);
     },
   },
@@ -180,16 +183,18 @@ export default {
       let response;
       try {
         response = await axsIns.post("/api/admin-user/login", this.loginValue);
+        if (response.status === 200) {
+          this.setLogin();
+          this.setAdminUser(response.data.adminUser);
+          await this.$router.push({ name: "admin-homepage" });
+        }
       } catch (error) {
         this.isLogin.isAlert = true;
         this.isLogin.messageError = error.response.data.message;
         this.isLogin.alertAnimate = "animate__fadeInRight";
+        console.log(error);
       }
-      if (response.status === 200) {
-        this.setLogin();
-        this.setAdminUser(response.data.adminUser);
-        await this.$router.push({ name: "admin-homepage" });
-      }
+
       return;
     },
   },
