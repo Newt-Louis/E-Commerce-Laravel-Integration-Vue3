@@ -3,10 +3,9 @@
     <input
       type="text"
       :class="`form-control ${isValidation}`"
-      v-model="inputValue"
+      :value="value"
       :placeholder="placeholder"
       @input="isBaseInputDone"
-      v-bind="$attrs"
     />
     <slot name="required" v-if="displayError.required"></slot>
     <slot name="minlength" v-if="displayError.minlength"></slot>
@@ -58,10 +57,15 @@ export default {
       type: String,
       default: "",
     },
+    inputValue: {
+      type: String,
+      default: "",
+    },
   },
+  emits: ["biValid", "update:inputValue"],
   data() {
     return {
-      inputValue: "",
+      valueTyping: "",
       isValidation: "",
       validationResults: {
         required: null,
@@ -79,13 +83,22 @@ export default {
       numberValue: "",
     };
   },
-  emits: ["biValid"],
-  computed: {},
+  computed: {
+    value: {
+      get() {
+        return this.inputValue;
+      },
+      set(value) {
+        this.$emit("update:inputValue", value);
+      },
+    },
+  },
   watch: {
-    inputValue(newVal, oldVal) {
-      if (newVal || oldVal) {
-        this.validateRules();
-      }
+    valueTyping(newVal) {
+      this.validateRules(newVal);
+    },
+    inputValue(newVal) {
+      this.validateRules(newVal);
     },
     formattedNumber(newVal) {
       if (newVal) {
@@ -113,13 +126,13 @@ export default {
       if (this.pattern !== "") enabledRules.push("pattern");
       return enabledRules;
     },
-    validateRules() {
+    validateRules(valueToValid) {
       const enabledRules = this.checkRules();
 
       enabledRules.forEach((rule) => {
         const params = this.typeNumber
           ? { value: this.formattedNumber, additionalArgs: [this[rule]] }
-          : { value: this.inputValue, additionalArgs: [this[rule]] };
+          : { value: valueToValid, additionalArgs: [this[rule]] };
         this.validationResults[rule] = getValidator(rule, params);
         this.displayError[rule] = !this.validationResults[rule];
       });
@@ -134,8 +147,9 @@ export default {
         return (this.isValidation = "");
       }
     },
-    isBaseInputDone() {
+    isBaseInputDone(event) {
       const baseInputValid = { baseValid: false };
+      this.validateRules(event.target.value);
       if (this.isValidation === "is-valid") {
         baseInputValid.baseValid = true;
         return this.$emit("biValid", baseInputValid);

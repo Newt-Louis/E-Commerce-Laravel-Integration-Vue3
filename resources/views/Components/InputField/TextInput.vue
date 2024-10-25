@@ -1,5 +1,5 @@
 <template>
-  <BaseInput type="text" v-model="textValue" v-bind="$attrs" @bi-valid="declareTextInput">
+  <BaseInput type="text" v-model:input-value="textValue" @bi-valid="declareTextInput">
     <template #required>
       <div class="invalid-feedback">
         <slot name="required"></slot>
@@ -31,11 +31,11 @@ export default {
   },
   props: {
     textInputName: String,
+    parentValue: String,
   },
   emits: ["textValid"],
   data() {
     return {
-      textValue: "",
       isTextValid: {
         name: this.textInputName,
         isValid: false,
@@ -43,7 +43,11 @@ export default {
       },
     };
   },
-  computed: {},
+  computed: {
+    textValue() {
+      return this.parentValue;
+    },
+  },
   watch: {},
   mounted() {
     this.$emit("textValid", this.isTextValid);

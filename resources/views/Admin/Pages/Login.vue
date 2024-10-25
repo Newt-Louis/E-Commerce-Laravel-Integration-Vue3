@@ -159,8 +159,6 @@ export default {
   computed: {
     ...mapState(useAdminUserStore, ["checkLogin", "getAdminUser"]),
     isInputsValidated() {
-      console.log(this.registeredInputs);
-
       return this.registeredInputs.every((value) => value.isValid === true);
     },
   },

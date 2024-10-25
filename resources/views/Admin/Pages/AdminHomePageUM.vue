@@ -135,7 +135,7 @@ export default {
       sortUpdated: "",
       sortDeleted: "",
       isAdd: true,
-      userEditing: { id: 0, name: "", email: "", phone: "", role: 0, avatar: [] },
+      userEditing: { id: 0, name: "", email: "", phone: "", role: "", avatar: [] },
     };
   },
   computed: {

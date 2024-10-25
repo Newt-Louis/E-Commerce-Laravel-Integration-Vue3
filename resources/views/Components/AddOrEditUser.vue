@@ -22,7 +22,7 @@
                 <label for="" class="form-label col-form-label">User name</label>
                 <TextInput
                   :text-input-name="`username`"
-                  v-model="userInfo.nameValue"
+                  :parent-value="userInfo.nameValue"
                   :placeholder="`Username`"
                   :required="true"
                   :pattern="'^\\S*$'"
@@ -133,7 +133,7 @@ export default {
     },
     userData: {
       type: Object,
-      default: () => ({ id: 0, name: "", email: "", phone: "", role: 0, avatar: [] }),
+      default: (rawProps) => ({ id: 0, name: "", email: "", phone: "", role: "", avatar: [] }),
     },
   },
   emit: [],
@@ -163,16 +163,18 @@ export default {
     },
   },
   watch: {
-    userData(newVal, oldVal) {
-      console.log(this.userData);
-      if (newVal) {
-        this.userInfo.idValue = newVal.id;
-        this.userInfo.nameValue = newVal.name;
-        this.userInfo.emailValue = newVal.email;
-        this.userInfo.phoneValue = newVal.phone;
-        this.userInfo.roleValue = newVal.role;
-        this.userInfo.avatarValue[0] = newVal.avatar;
-      }
+    userData: {
+      handler(newVal) {
+        if (newVal) {
+          this.userInfo.idValue = newVal.id;
+          this.userInfo.nameValue = newVal.name;
+          this.userInfo.emailValue = newVal.email;
+          this.userInfo.phoneValue = newVal.phone;
+          this.userInfo.roleValue = newVal.role;
+          this.userInfo.avatarValue = newVal.avatar;
+        }
+      },
+      deep: true,
     },
   },
   mounted() {},
