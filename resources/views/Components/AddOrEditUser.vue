@@ -22,7 +22,7 @@
                 <label for="" class="form-label col-form-label">User name</label>
                 <TextInput
                   :text-input-name="`username`"
-                  :parent-value="userInfo.nameValue"
+                  v-model:parent-value="userInfo.nameValue"
                   :placeholder="`Username`"
                   :required="true"
                   :pattern="'^\\S*$'"
@@ -35,9 +35,8 @@
               <div class="col-lg-6">
                 <label for="" class="form-label col-form-label">Email</label>
                 <EmailInput
-                  v-bind="$attrs"
-                  v-model="userInfo.emailValue"
                   @email-valid="checkValidateInputs"
+                  v-model:email-edit-value="userInfo.emailValue"
                 ></EmailInput>
               </div>
               <div class="col-lg-6">
@@ -97,7 +96,9 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline-secondary" @click="testValue">Test</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @click="hanldeOnCloseModal">
+              Close
+            </button>
             <button type="submit" class="btn btn-outline-primary" v-if="isAdd" :disabled="!isInputsValidated">
               Ok !
             </button>
@@ -136,9 +137,15 @@ export default {
       default: (rawProps) => ({ id: 0, name: "", email: "", phone: "", role: "", avatar: [] }),
     },
   },
+  provide() {
+    return {
+      validateShouldStop: this.isValidateStop,
+    };
+  },
   emit: [],
   data() {
     return {
+      stopValidate: false,
       registeredInputs: [],
       userInfo: {
         idValue: 0,
@@ -159,7 +166,10 @@ export default {
   },
   computed: {
     isInputsValidated() {
-      return this.registeredInputs.every((value) => value.isValid === true);
+      return this.registeredInputs.every((input) => input.isValid === true);
+    },
+    isValidateStop() {
+      return this.stopValidate;
     },
   },
   watch: {
@@ -172,6 +182,7 @@ export default {
           this.userInfo.phoneValue = newVal.phone;
           this.userInfo.roleValue = newVal.role;
           this.userInfo.avatarValue = newVal.avatar;
+          console.log(this.userInfo);
         }
       },
       deep: true,
@@ -180,7 +191,7 @@ export default {
   mounted() {},
   methods: {
     checkValidateInputs(data) {
-      const existingInput = this.registeredInputs.find((value) => data.name === value.name);
+      const existingInput = this.registeredInputs.find((input) => data.name === input.name);
       if (existingInput) {
         existingInput.isValid = data.isValid;
       } else {
@@ -223,6 +234,9 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    hanldeOnCloseModal() {
+      this.stopValidate = true;
     },
     testValue() {
       console.log(this.userInfo);

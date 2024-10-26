@@ -3,9 +3,11 @@
     <input
       type="text"
       :class="`form-control ${isValidation}`"
-      :value="value"
       :placeholder="placeholder"
+      :value="inputValue"
       @input="isBaseInputDone"
+      @focus="hasFocused = true"
+      @blur="hasFocused = false"
     />
     <slot name="required" v-if="displayError.required"></slot>
     <slot name="minlength" v-if="displayError.minlength"></slot>
@@ -61,11 +63,15 @@ export default {
       type: String,
       default: "",
     },
+    stopValidate: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ["biValid", "update:inputValue"],
   data() {
     return {
-      valueTyping: "",
+      hasFocused: false,
       isValidation: "",
       validationResults: {
         required: null,
@@ -83,22 +89,16 @@ export default {
       numberValue: "",
     };
   },
-  computed: {
-    value: {
-      get() {
-        return this.inputValue;
-      },
-      set(value) {
-        this.$emit("update:inputValue", value);
-      },
-    },
-  },
+  computed: {},
   watch: {
     valueTyping(newVal) {
       this.validateRules(newVal);
     },
-    inputValue(newVal) {
-      this.validateRules(newVal);
+    inputValue: {
+      handler(newVal) {
+        this.validateRules(newVal);
+      },
+      immediate: true,
     },
     formattedNumber(newVal) {
       if (newVal) {
@@ -114,8 +114,16 @@ export default {
         this.validateRules();
       }
     },
+    stopValidate: {
+      handler(newVal) {
+        if (newVal === true) {
+          this.isValidation = "";
+        }
+      },
+      immediate: true,
+    },
   },
-
+  watchEffect() {},
   mounted() {},
   methods: {
     checkRules() {
@@ -127,33 +135,60 @@ export default {
       return enabledRules;
     },
     validateRules(valueToValid) {
-      const enabledRules = this.checkRules();
+      if (this.inputValue !== "") {
+        const enabledRules = this.checkRules();
 
-      enabledRules.forEach((rule) => {
-        const params = this.typeNumber
-          ? { value: this.formattedNumber, additionalArgs: [this[rule]] }
-          : { value: valueToValid, additionalArgs: [this[rule]] };
-        this.validationResults[rule] = getValidator(rule, params);
-        this.displayError[rule] = !this.validationResults[rule];
-      });
+        enabledRules.forEach((rule) => {
+          const params = this.typeNumber
+            ? { value: this.formattedNumber, additionalArgs: [this[rule]] }
+            : { value: valueToValid, additionalArgs: [this[rule]] };
+          this.validationResults[rule] = getValidator(rule, params);
+          this.displayError[rule] = !this.validationResults[rule];
+        });
 
-      if (enabledRules.length > 0) {
-        const checkIsValid = Object.values(this.validationResults).some((value) => value === false);
-        if (checkIsValid) {
-          return (this.isValidation = "is-invalid");
+        if (enabledRules.length > 0) {
+          const checkIsValid = Object.values(this.validationResults).some((value) => value === false);
+          if (checkIsValid) {
+            return (this.isValidation = "is-invalid");
+          }
+          return (this.isValidation = "is-valid");
+        } else {
+          return (this.isValidation = "");
         }
-        return (this.isValidation = "is-valid");
       } else {
-        return (this.isValidation = "");
+        if (this.hasFocused) {
+          const enabledRules = this.checkRules();
+
+          enabledRules.forEach((rule) => {
+            const params = this.typeNumber
+              ? { value: this.formattedNumber, additionalArgs: [this[rule]] }
+              : { value: valueToValid, additionalArgs: [this[rule]] };
+            this.validationResults[rule] = getValidator(rule, params);
+            this.displayError[rule] = !this.validationResults[rule];
+          });
+
+          if (enabledRules.length > 0) {
+            const checkIsValid = Object.values(this.validationResults).some((value) => value === false);
+            if (checkIsValid) {
+              return (this.isValidation = "is-invalid");
+            }
+            return (this.isValidation = "is-valid");
+          } else {
+            return (this.isValidation = "");
+          }
+        }
       }
     },
-    isBaseInputDone(event) {
-      const baseInputValid = { baseValid: false };
-      this.validateRules(event.target.value);
+    async isBaseInputDone(event) {
+      this.$emit("update:inputValue", event.target.value);
+      const baseInputValid = { baseValid: false, value: event.target.value };
+      await this.validateRules(event.target.value);
+
       if (this.isValidation === "is-valid") {
         baseInputValid.baseValid = true;
-        return this.$emit("biValid", baseInputValid);
       }
+
+      return this.$emit("biValid", baseInputValid);
     },
     isNumberInputDone() {
       const baseNumberInputValid = { baseValid: false, numberValue: this.numberValue };

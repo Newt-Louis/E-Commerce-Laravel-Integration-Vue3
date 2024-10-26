@@ -1,5 +1,10 @@
 <template>
-  <BaseInput type="text" v-model:input-value="textValue" @bi-valid="declareTextInput">
+  <BaseInput
+    type="text"
+    v-model:input-value="textValue"
+    @bi-valid="declareTextInput"
+    :stop-validate="validateShouldStop"
+  >
     <template #required>
       <div class="invalid-feedback">
         <slot name="required"></slot>
@@ -33,9 +38,11 @@ export default {
     textInputName: String,
     parentValue: String,
   },
-  emits: ["textValid"],
+  emits: ["textValid", "input"],
+  inject: ["validateShouldStop"],
   data() {
     return {
+      textValue: "",
       isTextValid: {
         name: this.textInputName,
         isValid: false,
@@ -43,12 +50,14 @@ export default {
       },
     };
   },
-  computed: {
-    textValue() {
-      return this.parentValue;
+  computed: {},
+  watch: {
+    parentValue: {
+      handler(newVal) {
+        this.textValue = newVal;
+      },
     },
   },
-  watch: {},
   mounted() {
     this.$emit("textValid", this.isTextValid);
   },
@@ -61,6 +70,9 @@ export default {
         this.isTextValid.isValid = true;
         this.isTextValid.value = this.textValue;
       }
+      console.log(this.validateShouldStop);
+      this.$emit("input", data.value);
+
       return this.$emit("textValid", this.isTextValid);
     },
   },

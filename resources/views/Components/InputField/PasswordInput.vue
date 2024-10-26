@@ -1,5 +1,5 @@
 <template>
-  <BaseInput type="password" v-model="passwordValue" v-bind="$attrs" @bi-valid="declarePasswordInput">
+  <BaseInput type="password" v-model="passwordValue" @bi-valid="declarePasswordInput">
     <template #required>
       <div class="invalid-feedback">
         <slot name="required"></slot>
