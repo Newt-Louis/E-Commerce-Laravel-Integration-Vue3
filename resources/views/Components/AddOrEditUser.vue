@@ -3,16 +3,19 @@
     class="modal fade"
     data-bs-backdrop="static"
     data-bs-keyboard="false"
-    id="addOrEditUser"
     tabindex="-1"
     aria-labelledby="addOrEditUserLabel"
     aria-hidden="true"
+    id="addOrEditUser"
   >
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-lg" id="addOrEditUser">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header" style="height: 93px">
           <h1 class="modal-title fs-3 text-primary" id="addOrEditUserLabel" v-if="isAdd">Add New User</h1>
           <h1 class="modal-title fs-3 text-warning" id="addOrEditUserLabel" v-else>Edit User</h1>
+          <div style="width: 30%"></div>
+          <div class="alert alert-success m-0 align-self-center" role="alert">A simple success alert—check it out!</div>
+          <!-- <div class="alert alert-danger" role="alert">A simple danger alert—check it out!</div> -->
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form @submit.prevent="addOrUpdate" novalidate>
@@ -22,11 +25,11 @@
                 <label for="" class="form-label col-form-label">User name</label>
                 <TextInput
                   :text-input-name="`username`"
-                  v-model:parent-value="userInfo.nameValue"
-                  :placeholder="`Username`"
+                  :placeholder="`User Name`"
                   :required="true"
                   :pattern="'^\\S*$'"
                   @text-valid="checkValidateInputs"
+                  v-model:input-value="userInfo.nameValue"
                 >
                   <template #required> Please input your username ! </template>
                   <template #pattern> Username cannot contain spaces ! </template>
@@ -35,16 +38,15 @@
               <div class="col-lg-6">
                 <label for="" class="form-label col-form-label">Email</label>
                 <EmailInput
-                  @email-valid="checkValidateInputs"
                   v-model:email-edit-value="userInfo.emailValue"
+                  @email-valid="checkValidateInputs"
                 ></EmailInput>
               </div>
               <div class="col-lg-6">
                 <label class="form-label col-form-label">Password</label>
                 <PasswordInput
-                  v-model="userInfo.passwordValue"
-                  :placeholder="`Password`"
-                  :required="true"
+                  v-model:input-value="userInfo.passwordValue"
+                  :required="isAdd"
                   @password-valid="checkValidateInputs"
                 >
                   <template #required> Please input your username ! </template>
@@ -53,10 +55,9 @@
               <div class="col-lg-6">
                 <label for="" class="form-label col-form-label">Confirm Password</label>
                 <PasswordConfirmInput
-                  v-model="userInfo.confirmPasswordValue"
+                  v-model:confirm-password="userInfo.confirmPasswordValue"
                   @confirm-password-valid="checkValidateInputs"
                   :password="userInfo.passwordValue"
-                  :placeholder="`Confirm Password`"
                 >
                   Confirm Password & Password do not match !
                 </PasswordConfirmInput>
@@ -65,12 +66,13 @@
                 <label for="" class="form-label col-form-label">Phone</label>
                 <TextInput
                   :text-input-name="`phone`"
-                  v-model="userInfo.phoneValue"
+                  v-model:input-value="userInfo.phoneValue"
+                  :required="true"
                   :pattern="'^0\\d{9}$'"
                   :placeholder="`Phone Number`"
                   @text-valid="checkValidateInputs"
                 >
-                  <template #pattern> Bắt đầu bằng số 0 và phải đủ 10 chữ số ! </template>
+                  <template #pattern> Start with 0 and must have 10 characters number ! </template>
                 </TextInput>
               </div>
               <div class="col-lg-6">
@@ -118,6 +120,8 @@ import PasswordConfirmInput from "./InputField/PasswordConfirmInput.vue";
 import PasswordInput from "./InputField/PasswordInput.vue";
 import FileInput from "./InputField/FileInput.vue";
 import EmailInput from "./InputField/EmailInput.vue";
+import { mapActions, mapState } from "pinia";
+import { useValidateStateStore } from "../../js/piniaStores/validateStateStore";
 import { axsIns } from "../../js/bootstrap";
 export default {
   components: {
@@ -134,19 +138,14 @@ export default {
     },
     userData: {
       type: Object,
-      default: (rawProps) => ({ id: 0, name: "", email: "", phone: "", role: "", avatar: [] }),
+      default: () => ({ idUser: 0, name: "", email: "", phone: "", role: "", avatar: [] }),
     },
-  },
-  provide() {
-    return {
-      validateShouldStop: this.isValidateStop,
-    };
   },
   emit: [],
   data() {
     return {
-      stopValidate: false,
       registeredInputs: [],
+      closeModal: false,
       userInfo: {
         idValue: 0,
         nameValue: "",
@@ -165,31 +164,47 @@ export default {
     };
   },
   computed: {
+    ...mapState(useValidateStateStore, ["validateState"]),
     isInputsValidated() {
-      return this.registeredInputs.every((input) => input.isValid === true);
-    },
-    isValidateStop() {
-      return this.stopValidate;
+      const inputs = this.isAdd
+        ? [...this.registeredInputs]
+        : this.registeredInputs.filter((input) => input.name !== "password" && input.name !== "confirmpassword");
+      console.log(inputs);
+
+      return inputs.every((input) => input.isValid === true);
     },
   },
   watch: {
     userData: {
       handler(newVal) {
         if (newVal) {
-          this.userInfo.idValue = newVal.id;
+          this.userInfo.idValue = newVal.idUser;
           this.userInfo.nameValue = newVal.name;
           this.userInfo.emailValue = newVal.email;
           this.userInfo.phoneValue = newVal.phone;
           this.userInfo.roleValue = newVal.role;
           this.userInfo.avatarValue = newVal.avatar;
-          console.log(this.userInfo);
         }
       },
       deep: true,
     },
+    "userInfo.roleValue": {
+      handler(newVal) {
+        const roleInput = this.registeredInputs.find((input) => input.name === "role");
+        if (newVal === "") {
+          roleInput.isValid = false;
+        } else {
+          roleInput.isValid = true;
+          roleInput.value = newVal;
+        }
+      },
+    },
   },
-  mounted() {},
+  mounted() {
+    this.registeredInputs.push({ name: "role", isValid: false, value: "" });
+  },
   methods: {
+    ...mapActions(useValidateStateStore, ["turnValidateOff"]),
     checkValidateInputs(data) {
       const existingInput = this.registeredInputs.find((input) => data.name === input.name);
       if (existingInput) {
@@ -197,6 +212,7 @@ export default {
       } else {
         this.registeredInputs.push(data);
       }
+      console.log(data);
     },
     getFileData(data) {
       if (data?.value.length > 0) {
@@ -229,14 +245,16 @@ export default {
       try {
         const response = await axsIns.post("/api/users", formData);
         if (response.status === 200) {
-          console.log(response);
+          this.hanldeOnCloseModal();
         }
       } catch (error) {
         console.log(error);
       }
     },
     hanldeOnCloseModal() {
-      this.stopValidate = true;
+      this.turnValidateOff();
+      console.log(this.validateState);
+      this.closeModal = true;
     },
     testValue() {
       console.log(this.userInfo);

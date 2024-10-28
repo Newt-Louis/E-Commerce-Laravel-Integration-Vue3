@@ -1,5 +1,6 @@
 <template>
-  <BaseInput :type-number="true" v-bind="$attrs" @bi-valid="declareNumberInput" :pattern="'^[1-9]\\d*(,\\d+)*$'">
+  <input type="text" :class="`form-control ${isValidation}`" />
+  <!-- <BaseInput :type-number="true" v-bind="$attrs" @bi-valid="declareNumberInput" :pattern="'^[1-9]\\d*(,\\d+)*$'">
     <template #required>
       <div class="invalid-feedback">
         <slot name="required"></slot>
@@ -20,7 +21,7 @@
         <slot name="pattern"> Available only for number ! </slot>
       </div>
     </template>
-  </BaseInput>
+  </BaseInput> -->
 </template>
 
 <script>
@@ -33,6 +34,7 @@ export default {
   emits: ["numberValid"],
   data() {
     return {
+      isValidation: "",
       isNumberValid: {
         name: "number",
         isValid: false,

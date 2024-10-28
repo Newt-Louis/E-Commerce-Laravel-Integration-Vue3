@@ -3,9 +3,11 @@
     <input
       type="password"
       :class="`form-control ${isValidation}`"
-      v-model="confirmPasswordValue"
-      :placeholder="placeholder"
-      v-bind="$attrs"
+      :value="confirmPassword"
+      @input="checkPasswordConfirm"
+      @focus="hasFocused = true"
+      @blur="hasFocused = false"
+      placeholder="Confirm Password"
     />
     <div class="invalid-feedback">
       <slot></slot>
@@ -19,11 +21,19 @@ export default {
   props: {
     placeholder: String,
     password: String,
+    confirmPassword: {
+      type: String,
+      default: "",
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ["confirmPasswordValid", "emitConfirmPasswordStatus"],
+  emits: ["confirmPasswordValid", "update:confirmPassword"],
   data() {
     return {
-      confirmPasswordValue: "",
+      hasFocused: false,
       isConfirmPasswordValid: {
         name: "confirmpassword",
         isValid: false,
@@ -33,10 +43,10 @@ export default {
   },
   computed: {
     isPasswordConfirmed() {
-      if (this.confirmPasswordValue === "") {
+      if (this.confirmPassword === "") {
         return { isValid: false, isValidation: "" };
       } else {
-        if (this.confirmPasswordValue !== this.password) {
+        if (this.confirmPassword !== this.password) {
           return { isValid: false, isValidation: "is-invalid" };
         } else {
           return { isValid: true, isValidation: "is-valid" };
@@ -46,19 +56,20 @@ export default {
   },
   watch: {
     isPasswordConfirmed: {
-      immediate: true,
       handler(newVal) {
         this.isConfirmPasswordValid.isValid = newVal.isValid;
         this.isValidation = newVal.isValidation;
         this.$emit("confirmPasswordValid", this.isConfirmPasswordValid);
       },
+      immediate: true,
     },
   },
   mounted() {
     this.$emit("confirmPasswordValid", this.isConfirmPasswordValid);
   },
   methods: {
-    checkPasswordConfirm() {
+    checkPasswordConfirm(event) {
+      this.$emit("update:confirmPassword", event.target.value);
       return this.$emit("confirmPasswordValid", this.isConfirmPasswordValid);
     },
   },

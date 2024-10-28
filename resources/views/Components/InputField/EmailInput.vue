@@ -14,6 +14,8 @@
 
 <script>
 import { getValidator } from "~composable/validateInputRules.composable";
+import { useValidateStateStore } from "../../../js/piniaStores/validateStateStore";
+import { mapState, mapActions } from "pinia";
 export default {
   props: {
     emailEditValue: String,
@@ -33,23 +35,47 @@ export default {
       },
     };
   },
-  computed: {},
-  watch: {},
+  computed: {
+    ...mapState(useValidateStateStore, ["validateState"]),
+  },
+  watch: {
+    emailEditValue: {
+      handler(newVal) {
+        if (newVal) {
+          this.emailValidation(newVal);
+        }
+      },
+    },
+    validateState: {
+      handler(newVal) {
+        if (newVal === true) {
+          this.isValidation = "";
+        }
+      },
+    },
+  },
   mounted() {
     this.$emit("emailValid", this.isEmailValid);
   },
   methods: {
-    async validated(event) {
-      this.$emit("update:emailEditValue", event.target.value);
-      this.displayError.required = event.target.value === "";
-      const result = await getValidator("email", { value: event.target.value });
-      this.isValidation = result ? "is-valid" : "is-invalid";
-      this.displayError.isInValid = !result;
+    ...mapActions(useValidateStateStore, ["turnValidateOff"]),
+    emailValidation(valueToValidate) {
+      this.displayError.required = valueToValidate === "";
+      const result = getValidator("email", { value: valueToValidate });
       if (result) {
+        this.isValidation = "is-valid";
         this.isEmailValid.isValid = true;
-        this.isEmailValid.value = event.target.value;
-        this.$emit("emailValid", this.isEmailValid);
+      } else {
+        this.isValidation = "is-invalid";
+        this.isEmailValid.isValid = false;
       }
+      this.isEmailValid.value = valueToValidate;
+      this.displayError.isInValid = !result;
+    },
+    validated(event) {
+      this.$emit("update:emailEditValue", event.target.value);
+      this.emailValidation(event.target.value);
+      this.$emit("emailValid", this.isEmailValid);
     },
   },
 };

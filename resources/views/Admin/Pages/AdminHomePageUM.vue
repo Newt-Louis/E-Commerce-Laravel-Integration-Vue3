@@ -121,6 +121,8 @@
 
 <script>
 import AddOrEditUser from "~components/AddOrEditUser.vue";
+import { useValidateStateStore } from "../../../js/piniaStores/validateStateStore";
+import { mapState, mapActions } from "pinia";
 import { axsIns } from "../../../js/bootstrap";
 export default {
   components: {
@@ -135,10 +137,11 @@ export default {
       sortUpdated: "",
       sortDeleted: "",
       isAdd: true,
-      userEditing: { id: 0, name: "", email: "", phone: "", role: "", avatar: [] },
+      userEditing: { idUser: 0, name: "", email: "", phone: "", role: "", avatar: [] },
     };
   },
   computed: {
+    ...mapState(useValidateStateStore, ["validateState"]),
     filteredUsers() {
       let result = [...this.usersData];
       if (this.sortCreated !== "") {
@@ -149,9 +152,6 @@ export default {
       }
       return result;
     },
-  },
-  watch: {
-    sortCreated(newVal, oldVal) {},
   },
   created() {},
   async mounted() {
@@ -169,6 +169,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(useValidateStateStore, ["turnValidateOff", "turnValidateOn"]),
     sortCreatedAt(sortBy, data) {
       this.sortUpdated.isSort = false;
       this.sortDeleted.isSort = false;
@@ -208,18 +209,20 @@ export default {
       console.log(this.filterRole);
     },
     addingUser() {
+      this.turnValidateOn();
       this.isAdd = true;
-      this.userEditing.id = 0;
+      this.userEditing.idUser = 0;
       this.userEditing.name = "";
       this.userEditing.email = "";
       this.userEditing.phone = "";
-      this.userEditing.role = 0;
+      this.userEditing.role = "";
       this.userEditing.avatar.pop();
     },
     editingUser(id) {
       this.isAdd = false;
+      this.turnValidateOn();
       const userById = this.usersData.find((user) => user.id === id);
-      this.userEditing.id = userById.id;
+      this.userEditing.idUser = userById.id;
       this.userEditing.name = userById.name;
       this.userEditing.email = userById.email;
       this.userEditing.phone = userById.phone;
@@ -227,15 +230,12 @@ export default {
       if (userById?.avatar) {
         this.userEditing.avatar.push(userById.avatar);
       }
-      console.log(userById);
     },
   },
 };
 </script>
 
 <style>
-.homepage-container {
-}
 .select-group {
   margin-bottom: 24px;
 }
