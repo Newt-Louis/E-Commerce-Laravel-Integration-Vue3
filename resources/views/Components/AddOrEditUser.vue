@@ -249,7 +249,6 @@ export default {
     getFileData(data) {
       if (data?.value.length > 0) {
         this.userInfo.avatarValue.push(data.value[0]);
-        console.log(this.userInfo);
       }
     },
     async addOrUpdate() {
@@ -274,13 +273,32 @@ export default {
         3.
       */
       formData.append("avatar[]", this.userInfo.avatarValue[0]);
-      try {
-        const response = await axsIns.post("/api/users", formData);
-        if (response.status === 200) {
-          this.hanldeOnCloseModal();
+      console.log(this.userInfo);
+
+      if (this.isAdd) {
+        try {
+          const response = await axsIns.post("/api/users", formData);
+          if (response.status === 200) {
+            this.hanldeOnCloseModal();
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
+      } else {
+        /* 
+        form data does not have method put so that laravel cannot understand method put when
+        receive a request with method put, we have to use post and in FormData must append
+        a field _method with value PUT.
+        */
+        formData.append("_method", "PUT");
+        try {
+          const response = await axsIns.post("/api/users/" + this.userInfo.idValue, formData);
+          if (response.status === 200) {
+            this.hanldeOnCloseModal();
+          }
+        } catch (error) {
+          console.log(error);
+        }
       }
     },
     hanldeOnCloseModal() {

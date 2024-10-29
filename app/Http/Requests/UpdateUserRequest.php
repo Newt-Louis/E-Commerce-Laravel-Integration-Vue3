@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class UpdateUserRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,9 +25,9 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'id' => 'bail|required',
-            'name' => 'bail|required|string|max:255|unique:users',
-            'email' => 'bail|required|email|unique:users',
-            'phone' => 'bail|required|unique:users|between:10,10',
+            'name' => ['bail','required','string','max:255',Rule::unique('users')->ignore($this->route('user'))],
+            'email' => ['bail','required','email',Rule::unique('users')->ignore($this->route('user'))],
+            'phone' => ['bail','required','between:10,10',Rule::unique('users')->ignore($this->route('user'))],
             'role_id' => 'required'
         ];
     }
@@ -37,6 +39,16 @@ class UpdateUserRequest extends FormRequest
             'name.max' => 'Username too long !',
             'email.email' => 'Email not correct !',
             'phone.between' => 'Phone include only 10 character !'
+        ];
+    }
+    public function attributes()
+    {
+        return [
+          'id' => 'ID',
+          'name' => 'User Name',
+          'email' => 'Email',
+          'phone' => 'Phone',
+          'role_id' => 'Role',
         ];
     }
 }
