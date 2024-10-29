@@ -26,7 +26,6 @@ class UpdateUserRequest extends FormRequest
             'name' => 'bail|required|string|max:255|unique:users',
             'email' => 'bail|required|email|unique:users',
             'phone' => 'bail|required|unique:users|between:10,10',
-            'password' => 'required',
             'role_id' => 'required'
         ];
     }

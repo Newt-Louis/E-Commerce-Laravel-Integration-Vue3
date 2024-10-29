@@ -24,12 +24,13 @@
               <div class="col-lg-6">
                 <label for="" class="form-label col-form-label">User name</label>
                 <TextInput
+                  v-model:input-value="userInfo.nameValue"
                   :text-input-name="`username`"
                   :placeholder="`User Name`"
                   :required="true"
                   :pattern="'^\\S*$'"
+                  :validate-state="validateState.name"
                   @text-valid="checkValidateInputs"
-                  v-model:input-value="userInfo.nameValue"
                 >
                   <template #required> Please input your username ! </template>
                   <template #pattern> Username cannot contain spaces ! </template>
@@ -39,6 +40,7 @@
                 <label for="" class="form-label col-form-label">Email</label>
                 <EmailInput
                   v-model:email-edit-value="userInfo.emailValue"
+                  :validate-state="validateState.email"
                   @email-valid="checkValidateInputs"
                 ></EmailInput>
               </div>
@@ -46,7 +48,8 @@
                 <label class="form-label col-form-label">Password</label>
                 <PasswordInput
                   v-model:input-value="userInfo.passwordValue"
-                  :required="isAdd"
+                  :validate-state="validateState.password"
+                  :required="true"
                   @password-valid="checkValidateInputs"
                 >
                   <template #required> Please input your username ! </template>
@@ -70,6 +73,7 @@
                   :required="true"
                   :pattern="'^0\\d{9}$'"
                   :placeholder="`Phone Number`"
+                  :validate-state="validateState.phone"
                   @text-valid="checkValidateInputs"
                 >
                   <template #pattern> Start with 0 and must have 10 characters number ! </template>
@@ -77,21 +81,29 @@
               </div>
               <div class="col-lg-6">
                 <label for="" class="form-label col-form-label">Role</label>
-                <select v-model="userInfo.roleValue" class="form-select">
+                <select
+                  v-model="userInfo.roleValue"
+                  :class="`form-select ${roleValidation}`"
+                  @focus="roleInputFocused = true"
+                  @blur="roleInputFocused = false"
+                >
                   <option value="">Select user role</option>
                   <option value="1">Owner</option>
                   <option value="2">Administrator</option>
                   <option value="3">Staff</option>
                   <option value="4">Client</option>
                 </select>
+                <div class="invalid-feedback">
+                  <span>Must have Role !</span>
+                </div>
               </div>
               <div class="col-lg-6 offset-3">
                 <label for="" class="form-label col-form-label">Choose Avatar</label>
                 <FileInput
-                  v-model="userInfo.avatarValue"
                   :imageNumber="1"
                   @files-valid="getFileData"
                   :image-url-server="userData.avatar"
+                  :validate-state="validateState.avatar"
                 ></FileInput>
               </div>
             </div>
@@ -120,8 +132,6 @@ import PasswordConfirmInput from "./InputField/PasswordConfirmInput.vue";
 import PasswordInput from "./InputField/PasswordInput.vue";
 import FileInput from "./InputField/FileInput.vue";
 import EmailInput from "./InputField/EmailInput.vue";
-import { mapActions, mapState } from "pinia";
-import { useValidateStateStore } from "../../js/piniaStores/validateStateStore";
 import { axsIns } from "../../js/bootstrap";
 export default {
   components: {
@@ -140,12 +150,17 @@ export default {
       type: Object,
       default: () => ({ idUser: 0, name: "", email: "", phone: "", role: "", avatar: [] }),
     },
+    isValidateStateOn: {
+      type: Boolean,
+      default: true,
+    },
   },
-  emit: [],
+  emits: ["closeModal"],
   data() {
     return {
       registeredInputs: [],
-      closeModal: false,
+      roleInputFocused: false,
+      roleValidation: "",
       userInfo: {
         idValue: 0,
         nameValue: "",
@@ -161,16 +176,20 @@ export default {
         message: "",
         alertAnime: "",
       },
+      validateState: {
+        name: true,
+        email: true,
+        password: true,
+        phone: true,
+        avatar: true,
+      },
     };
   },
   computed: {
-    ...mapState(useValidateStateStore, ["validateState"]),
     isInputsValidated() {
       const inputs = this.isAdd
         ? [...this.registeredInputs]
         : this.registeredInputs.filter((input) => input.name !== "password" && input.name !== "confirmpassword");
-      console.log(inputs);
-
       return inputs.every((input) => input.isValid === true);
     },
   },
@@ -193,9 +212,24 @@ export default {
         const roleInput = this.registeredInputs.find((input) => input.name === "role");
         if (newVal === "") {
           roleInput.isValid = false;
+          this.roleValidation = "is-invalid";
         } else {
           roleInput.isValid = true;
           roleInput.value = newVal;
+          this.roleValidation = "is-valid";
+        }
+      },
+    },
+    isValidateStateOn: {
+      handler(newVal) {
+        if (newVal) {
+          for (const key of Object.keys(this.validateState)) {
+            this.validateState[key] = true;
+          }
+        } else {
+          for (const key of Object.keys(this.validateState)) {
+            this.validateState[key] = false;
+          }
         }
       },
     },
@@ -204,7 +238,6 @@ export default {
     this.registeredInputs.push({ name: "role", isValid: false, value: "" });
   },
   methods: {
-    ...mapActions(useValidateStateStore, ["turnValidateOff"]),
     checkValidateInputs(data) {
       const existingInput = this.registeredInputs.find((input) => data.name === input.name);
       if (existingInput) {
@@ -212,12 +245,11 @@ export default {
       } else {
         this.registeredInputs.push(data);
       }
-      console.log(data);
     },
     getFileData(data) {
       if (data?.value.length > 0) {
         this.userInfo.avatarValue.push(data.value[0]);
-        console.log(this.userInfo.avatarValue);
+        console.log(this.userInfo);
       }
     },
     async addOrUpdate() {
@@ -239,7 +271,7 @@ export default {
         1. name like this : "avatar[]" to make server understand that this input filed is an array
         2. this array won't accept an array assign to it, so that we have to make an iterator
            to append each file to this array.
-        3. 
+        3.
       */
       formData.append("avatar[]", this.userInfo.avatarValue[0]);
       try {
@@ -252,13 +284,21 @@ export default {
       }
     },
     hanldeOnCloseModal() {
-      this.turnValidateOff();
-      console.log(this.validateState);
-      this.closeModal = true;
+      this.resetField();
+      this.$emit("closeModal", { validateState: false });
     },
     testValue() {
-      console.log(this.userInfo);
-      console.log(this.userData);
+      this.resetField();
+    },
+    resetField() {
+      this.userInfo.idValue = 0;
+      this.userInfo.nameValue = "";
+      this.userInfo.emailValue = "";
+      this.userInfo.passwordValue = "";
+      this.userInfo.confirmPasswordValue = "";
+      this.userInfo.phoneValue = "";
+      this.userInfo.roleValue = "";
+      this.userInfo.avatarValue = [];
     },
   },
 };

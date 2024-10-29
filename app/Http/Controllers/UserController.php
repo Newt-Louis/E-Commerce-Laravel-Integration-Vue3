@@ -29,14 +29,13 @@ class UserController extends Controller
         if ($validate) {
             $user = User::create($validate);
             /** @var \App\Models\User $user */
-            $path = 'avatars/'.$user->name;
+            $path = 'public/avatars/'.$user->name;
             Storage::makeDirectory($path);
             if (!$request->hasFile('avatar')) {
                 Avatar::create([
                   'path' => $path,
                   'user_id' => $user->id,
                 ]);
-                Log::info('không xác nhận được file');
             } else {
                 /** @var \App\Models\User $user */
                 $validateFile = $request->validated(
@@ -57,7 +56,6 @@ class UserController extends Controller
                       'filename' => $fileName,
                       'user_id' => $user->id
                     ]);
-                    Log::info('Xác nhận được file');
                 }
             }
         }
@@ -85,24 +83,29 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request)
     {
-        $validatedData = $request->validated();
-        $user = User::find($validatedData->id);
-        $user->update($validatedData);
-        if ($request->hasFile('avatar')) {
-            $files = Storage::disk('local')->files('avatars/'.$user->name);
-            if (count($files) > 0) {
-                Storage::disk('local')->delete($files);
-            }
-            $file = $request->file('avatar');
-            $fileName = uniqid().'_'.$file[0]->getClientOriginalName();
-            $filePath = Storage::putFileAs('avatars/'.$user->name, $request->file('avatar'), $fileName);
-            $avatar = Avatar::where('user_id', $user->id)->get();
-            $avatar->update([
-              'path' => 'avatars/'.$user->name,
-              'filename' => $fileName,
-            ]);
-        }
-        return $this->index();
+        Log::info($request);
+        // $validatedData = $request->validated();
+        // $user = User::find($validatedData->id);
+        // if (!empty($request->input('password'))) {
+        //     $validatedData['password'] = $request->input('password');
+        // }
+        // if ($request->hasFile('avatar')) {
+        //     $path = 'public/avatars/'.$validatedData->name;
+        //     $files = Storage::disk('local')->files('avatars/'.$user->name);
+        //     if (count($files) > 0) {
+        //         Storage::disk('local')->delete($files);
+        //     }
+        //     $file = $request->file('avatar');
+        //     $fileName = uniqid().'_'.$file[0]->getClientOriginalName();
+        //     Storage::putFileAs($path, $request->file('avatar'), $fileName);
+        //     $avatar = Avatar::where('user_id', $user->id)->get();
+        //     $avatar->update([
+        //       'path' => $path,
+        //       'filename' => $fileName,
+        //     ]);
+        // }
+        // $user->update($validatedData);
+        // return $this->index();
     }
 
     /**

@@ -48,7 +48,12 @@
         >
           Add New User
         </button>
-        <AddOrEditUser :isAdd="isAdd" :user-data="userEditing"></AddOrEditUser>
+        <AddOrEditUser
+          :isAdd="isAdd"
+          :user-data="userEditing"
+          :isValidateStateOn="validate"
+          @close-modal="handleOnCloseModal"
+        ></AddOrEditUser>
       </div>
     </div>
     <div class="table-container w-100">
@@ -121,8 +126,6 @@
 
 <script>
 import AddOrEditUser from "~components/AddOrEditUser.vue";
-import { useValidateStateStore } from "../../../js/piniaStores/validateStateStore";
-import { mapState, mapActions } from "pinia";
 import { axsIns } from "../../../js/bootstrap";
 export default {
   components: {
@@ -138,10 +141,10 @@ export default {
       sortDeleted: "",
       isAdd: true,
       userEditing: { idUser: 0, name: "", email: "", phone: "", role: "", avatar: [] },
+      validate: true,
     };
   },
   computed: {
-    ...mapState(useValidateStateStore, ["validateState"]),
     filteredUsers() {
       let result = [...this.usersData];
       if (this.sortCreated !== "") {
@@ -169,7 +172,6 @@ export default {
     }
   },
   methods: {
-    ...mapActions(useValidateStateStore, ["turnValidateOff", "turnValidateOn"]),
     sortCreatedAt(sortBy, data) {
       this.sortUpdated.isSort = false;
       this.sortDeleted.isSort = false;
@@ -209,18 +211,19 @@ export default {
       console.log(this.filterRole);
     },
     addingUser() {
-      this.turnValidateOn();
       this.isAdd = true;
+      this.validate = true;
       this.userEditing.idUser = 0;
       this.userEditing.name = "";
       this.userEditing.email = "";
       this.userEditing.phone = "";
       this.userEditing.role = "";
-      this.userEditing.avatar.pop();
+      this.userEditing.avatar = [];
     },
     editingUser(id) {
       this.isAdd = false;
-      this.turnValidateOn();
+      this.validate = true;
+      this.userEditing.avatar = [];
       const userById = this.usersData.find((user) => user.id === id);
       this.userEditing.idUser = userById.id;
       this.userEditing.name = userById.name;
@@ -230,6 +233,10 @@ export default {
       if (userById?.avatar) {
         this.userEditing.avatar.push(userById.avatar);
       }
+      console.log(this.userEditing);
+    },
+    handleOnCloseModal(data) {
+      this.validate = data.validateState;
     },
   },
 };

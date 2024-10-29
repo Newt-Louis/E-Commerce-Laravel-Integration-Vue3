@@ -26,18 +26,9 @@
 
 <script>
 import { getValidator } from "~composable/validateInputRules.composable";
-import { useValidateStateStore } from "../../../js/piniaStores/validateStateStore";
-import { mapActions, mapState } from "pinia";
 export default {
   components: {},
   props: {
-    modelValue: {
-      type: String,
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
     required: {
       type: Boolean,
       default: false,
@@ -57,6 +48,10 @@ export default {
     inputValue: {
       type: String,
       default: "",
+    },
+    validateState: {
+      type: Boolean,
+      default: true,
     },
   },
   emits: ["passwordValid", "update:inputValue"],
@@ -84,13 +79,11 @@ export default {
       },
     };
   },
-  computed: {
-    ...mapState(useValidateStateStore, ["validateState"]),
-  },
+  computed: {},
   watch: {
     validateState: {
       handler(newVal) {
-        if (newVal === true) {
+        if (newVal === false) {
           this.isValidation = "";
         }
       },
@@ -100,7 +93,6 @@ export default {
     this.$emit("passwordValid", this.isPasswordValid);
   },
   methods: {
-    ...mapActions(useValidateStateStore, ["turnValidateOff"]),
     checkRules() {
       const enabledRules = [];
       if (this.required) enabledRules.push("required");
@@ -114,9 +106,7 @@ export default {
         const enabledRules = this.checkRules();
 
         enabledRules.forEach((rule) => {
-          const params = this.typeNumber
-            ? { value: this.formattedNumber, additionalArgs: [this[rule]] }
-            : { value: valueToValid, additionalArgs: [this[rule]] };
+          const params = { value: valueToValid, additionalArgs: [this[rule]] };
           this.validationResults[rule] = getValidator(rule, params);
           this.displayError[rule] = !this.validationResults[rule];
         });
@@ -135,9 +125,7 @@ export default {
           const enabledRules = this.checkRules();
 
           enabledRules.forEach((rule) => {
-            const params = this.typeNumber
-              ? { value: this.formattedNumber, additionalArgs: [this[rule]] }
-              : { value: valueToValid, additionalArgs: [this[rule]] };
+            const params = { value: valueToValid, additionalArgs: [this[rule]] };
             this.validationResults[rule] = getValidator(rule, params);
             this.displayError[rule] = !this.validationResults[rule];
           });
@@ -165,5 +153,4 @@ export default {
   },
 };
 </script>
-
 <style></style>

@@ -25,8 +25,6 @@
 </template>
 <script>
 import { getValidator } from "~composable/validateInputRules.composable";
-import { useValidateStateStore } from "../../../js/piniaStores/validateStateStore";
-import { mapState } from "pinia";
 export default {
   props: {
     textInputName: {
@@ -57,6 +55,10 @@ export default {
       type: String,
       default: "",
     },
+    validateState: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ["textValid", "update:inputValue"],
   data() {
@@ -82,9 +84,7 @@ export default {
       },
     };
   },
-  computed: {
-    ...mapState(useValidateStateStore, ["validateState"]),
-  },
+  computed: {},
   watch: {
     inputValue: {
       handler(newVal) {
@@ -93,7 +93,7 @@ export default {
     },
     validateState: {
       handler(newVal) {
-        if (newVal === true) {
+        if (newVal === false) {
           this.isValidation = "";
         }
       },
@@ -116,9 +116,7 @@ export default {
         const enabledRules = this.checkRules();
 
         enabledRules.forEach((rule) => {
-          const params = this.typeNumber
-            ? { value: this.formattedNumber, additionalArgs: [this[rule]] }
-            : { value: valueToValid, additionalArgs: [this[rule]] };
+          const params = { value: valueToValid, additionalArgs: [this[rule]] };
           this.validationResults[rule] = getValidator(rule, params);
           this.displayError[rule] = !this.validationResults[rule];
         });
@@ -138,11 +136,8 @@ export default {
       } else {
         if (this.hasFocused) {
           const enabledRules = this.checkRules();
-
           enabledRules.forEach((rule) => {
-            const params = this.typeNumber
-              ? { value: this.formattedNumber, additionalArgs: [this[rule]] }
-              : { value: valueToValid, additionalArgs: [this[rule]] };
+            const params = { value: valueToValid, additionalArgs: [this[rule]] };
             this.validationResults[rule] = getValidator(rule, params);
             this.displayError[rule] = !this.validationResults[rule];
           });
@@ -170,4 +165,4 @@ export default {
   },
 };
 </script>
-<style scope></style>
+<style></style>

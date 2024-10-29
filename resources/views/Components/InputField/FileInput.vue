@@ -1,16 +1,29 @@
 <template>
   <div class="inputfile-layout">
-    <input type="file" @change="onFileChange" :class="`form-control ${isValidation}`" multiple id="file-input" />
+    <input
+      type="file"
+      ref="fileTextValue"
+      @change="onFileChange"
+      :class="`form-control ${isValidation}`"
+      multiple
+      id="file-input"
+    />
     <div class="invalid-feedback">
       <span>{{ errMess }}</span>
     </div>
-    <div v-if="imageUrl.length > 0 && imageUrlServer.length === 0" class="img-container">
+    <!--     <div v-if="imageUrl.length > 0 && imageUrlServer.length === 0" class="img-container">
       <div v-for="(img, index) in imageUrl" :key="index" class="img-element">
         <img :src="img" alt="" width="70px" height="70px" style="border-radius: 8px" />
       </div>
     </div>
     <div v-else class="img-container">
       <div v-for="(img, index) in imageUrlServer" :key="index" class="img-element">
+        <img :src="img" alt="" width="70px" height="70px" style="border-radius: 8px" />
+      </div>
+    </div>
+  </div> -->
+    <div class="img-container">
+      <div v-for="(img, index) in imageUrl" :key="index" class="img-element">
         <img :src="img" alt="" width="70px" height="70px" style="border-radius: 8px" />
       </div>
     </div>
@@ -28,11 +41,16 @@ export default {
       type: Array,
       default: () => [],
     },
+    validateState: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ["filesValid"],
   data() {
     return {
       imageUrl: [],
+      fileTextValue: "",
       isValidation: "",
       errMess: "",
       isFileValid: {
@@ -43,7 +61,24 @@ export default {
     };
   },
   computed: {},
-  watch: {},
+  watch: {
+    imageUrlServer: {
+      handler(newVal) {
+        if (newVal) {
+          this.imageUrl = newVal;
+        }
+      },
+    },
+    validateState: {
+      handler(newVal) {
+        if (newVal === false) {
+          this.isValidation = "";
+          this.imageUrl = [];
+          this.$refs.fileTextValue.value = "";
+        }
+      },
+    },
+  },
   mounted() {
     this.$emit("filesValid", this.isFileValid);
   },
@@ -51,6 +86,7 @@ export default {
     onFileChange(event) {
       const files = event.target.files;
       this.imageUrl = [];
+
       if (files.length > this.imageNumber) {
         this.isValidation = "is-invalid";
         this.errMess = `Only ${this.imageNumber} images can be uploaded !`;

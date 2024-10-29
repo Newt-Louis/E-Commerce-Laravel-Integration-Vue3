@@ -14,11 +14,13 @@
 
 <script>
 import { getValidator } from "~composable/validateInputRules.composable";
-import { useValidateStateStore } from "../../../js/piniaStores/validateStateStore";
-import { mapState, mapActions } from "pinia";
 export default {
   props: {
     emailEditValue: String,
+    validateState: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: ["emailValid", "update:emailEditValue"],
   data() {
@@ -35,9 +37,7 @@ export default {
       },
     };
   },
-  computed: {
-    ...mapState(useValidateStateStore, ["validateState"]),
-  },
+  computed: {},
   watch: {
     emailEditValue: {
       handler(newVal) {
@@ -48,7 +48,7 @@ export default {
     },
     validateState: {
       handler(newVal) {
-        if (newVal === true) {
+        if (newVal === false) {
           this.isValidation = "";
         }
       },
@@ -58,7 +58,6 @@ export default {
     this.$emit("emailValid", this.isEmailValid);
   },
   methods: {
-    ...mapActions(useValidateStateStore, ["turnValidateOff"]),
     emailValidation(valueToValidate) {
       this.displayError.required = valueToValidate === "";
       const result = getValidator("email", { value: valueToValidate });
