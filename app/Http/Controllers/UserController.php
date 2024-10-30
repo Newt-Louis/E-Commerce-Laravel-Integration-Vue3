@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Avatar;
+use App\Models\User;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
-use App\Models\Avatar;
-use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -85,8 +85,6 @@ class UserController extends Controller
         $validatedData = $request->validated();
         $user = User::find($id);
         $avatar = $user->avatar;
-        Log::info($validatedData);
-        Log::info($request->file('avatar'));
         if (!empty($request->input('password'))) {
             $validatedData['password'] = $request->input('password');
         }

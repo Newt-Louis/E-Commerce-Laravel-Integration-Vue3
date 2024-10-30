@@ -53,6 +53,7 @@
           :user-data="userEditing"
           :isValidateStateOn="validate"
           @close-modal="handleOnCloseModal"
+          @update-users-data="getDataUpdate"
         ></AddOrEditUser>
       </div>
     </div>
@@ -98,7 +99,9 @@
                 >
                   Edit
                 </button>
-                <button class="btn btn-outline-danger btn-sm">Delete</button>
+                <button class="btn btn-outline-danger btn-sm" @click="deleteUser(user.id)" id="delete_user">
+                  Delete
+                </button>
               </div>
             </td>
             <td v-if="user?.deleted_at ? true : false">{{ user.deleted_at }}</td>
@@ -162,7 +165,6 @@ export default {
       const [usersResponse, rolesResponse] = await Promise.all([axsIns.get("/api/users"), axsIns.get("api/roles")]);
       if (usersResponse.status === 200) {
         this.usersData = usersResponse.data;
-        console.log(usersResponse);
       }
       if (rolesResponse.status === 200) {
         this.usersRole = rolesResponse.data;
@@ -234,6 +236,19 @@ export default {
         this.userEditing.avatar.push(userById.avatar);
       }
       console.log(this.userEditing);
+    },
+    deleteUser(id) {
+      try {
+        const response = axsIns.delete("api/users" + id);
+        if (response.status === 200) {
+          this.getDataUpdate(response.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getDataUpdate(data) {
+      this.usersData = data;
     },
     handleOnCloseModal(data) {
       this.validate = data.validateState;

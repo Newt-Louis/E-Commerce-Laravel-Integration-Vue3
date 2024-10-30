@@ -14,15 +14,27 @@
           <h1 class="modal-title fs-3 text-primary" id="addOrEditUserLabel" v-if="isAdd">Add New User</h1>
           <h1 class="modal-title fs-3 text-warning" id="addOrEditUserLabel" v-else>Edit User</h1>
           <div style="width: 30%"></div>
-          <div class="alert alert-success m-0 align-self-center" role="alert">A simple success alert—check it out!</div>
-          <!-- <div class="alert alert-danger" role="alert">A simple danger alert—check it out!</div> -->
+          <div
+            :class="`alert alert-success m-0 align-self-center animate__animated ${notification.alertAnime}`"
+            role="alert"
+            v-if="notification.isDone"
+          >
+            {{ notification.message }}
+          </div>
+          <div
+            :class="`alert alert-danger animate__animatedanimated ${notification.alertAnime}`"
+            role="alert"
+            v-if="notification.isError"
+          >
+            {{ notification.message }}
+          </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form @submit.prevent="addOrUpdate" novalidate>
           <div class="modal-body">
             <div class="row">
               <div class="col-lg-6">
-                <label for="" class="form-label col-form-label">User name</label>
+                <label for="" class="form-label col-form-label">User Name</label>
                 <TextInput
                   v-model:input-value="userInfo.nameValue"
                   :text-input-name="`username`"
@@ -155,7 +167,7 @@ export default {
       default: true,
     },
   },
-  emits: ["closeModal"],
+  emits: ["closeModal", "updateUsersData"],
   data() {
     return {
       registeredInputs: [],
@@ -173,6 +185,7 @@ export default {
       },
       notification: {
         isError: false,
+        isDone: false,
         message: "",
         alertAnime: "",
       },
@@ -272,16 +285,17 @@ export default {
         3.
       */
       formData.append("avatar[]", this.userInfo.avatarValue[0]);
-      console.log(this.userInfo);
-
       if (this.isAdd) {
         try {
           const response = await axsIns.post("/api/users", formData);
           if (response.status === 200) {
             this.hanldeOnCloseModal();
+            this.updateUserList(response.data);
+            this.notify("New user added successfully !", "isDone");
           }
         } catch (error) {
           console.log(error);
+          this.notify(error.response.data.errors, "isError");
         }
       } else {
         /* 
@@ -293,11 +307,12 @@ export default {
         try {
           const response = await axsIns.post("/api/users/" + this.userInfo.idValue, formData);
           if (response.status === 200) {
-            // this.hanldeOnCloseModal();
-            console.log(response);
+            this.updateUserList(response.data);
+            this.notify("Completed updating user information", "isDone");
           }
         } catch (error) {
           console.log(error);
+          this.notify(error.response.data.errors, "isError");
         }
       }
     },
@@ -307,6 +322,19 @@ export default {
     },
     testValue() {
       console.log(this.userInfo);
+    },
+    updateUserList(data) {
+      this.$emit("updateUsersData", data);
+    },
+    notify(message, warningType) {
+      this.notification[warningType] = true;
+      this.notification.message = message;
+      this.notification.alertAnime = "animate__fadeIn";
+      setTimeout(() => {
+        this.notification[warningType] = false;
+        this.notification.message = "";
+        this.notification.alertAnime = "";
+      }, 5000);
     },
     resetField() {
       this.userInfo.idValue = 0;

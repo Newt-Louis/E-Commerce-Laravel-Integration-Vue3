@@ -56,20 +56,6 @@ class User extends Authenticatable
     /**
      * Accessor & Mutators
      */
-    // protected function createdAt(): Attribute
-    // {
-    //     return Attribute::make(
-    //         get: fn (string $value) => Carbon::parse($value)->format('d-m-Y H:i'),
-    //         set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i'),
-    //     );
-    // }
-    // protected function updatedAt(): Attribute
-    // {
-    //     return Attribute::make(
-    //         get: fn (string $value) => Carbon::parse($value)->format('d-m-Y H:i'),
-    //         set: fn (string $value) => Carbon::parse($value)->format('Y-m-d H:i'),
-    //     );
-    // }
     /**
      * Encrypt password before saving.
      *
@@ -81,6 +67,10 @@ class User extends Authenticatable
             set: fn (string $value) => Hash::make($value)
         );
     }
+    /**
+     * Relationships
+     *
+     */
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
