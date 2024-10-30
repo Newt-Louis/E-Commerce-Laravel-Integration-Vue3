@@ -237,11 +237,11 @@ export default {
       }
       console.log(this.userEditing);
     },
-    deleteUser(id) {
+    async deleteUser(id) {
       try {
-        const response = axsIns.delete("api/users" + id);
+        const response = await axsIns.delete("api/users/" + id);
         if (response.status === 200) {
-          this.getDataUpdate(response.data);
+          this.usersData = response.data;
         }
       } catch (error) {
         console.log(error);
