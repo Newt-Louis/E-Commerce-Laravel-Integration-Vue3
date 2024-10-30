@@ -161,8 +161,8 @@ export default {
     try {
       const [usersResponse, rolesResponse] = await Promise.all([axsIns.get("/api/users"), axsIns.get("api/roles")]);
       if (usersResponse.status === 200) {
-        this.usersData = usersResponse.data.data;
-        console.log(this.usersData);
+        this.usersData = usersResponse.data;
+        console.log(usersResponse);
       }
       if (rolesResponse.status === 200) {
         this.usersRole = rolesResponse.data;

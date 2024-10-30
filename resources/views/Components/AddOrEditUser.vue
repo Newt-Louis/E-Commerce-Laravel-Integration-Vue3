@@ -202,7 +202,6 @@ export default {
           this.userInfo.emailValue = newVal.email;
           this.userInfo.phoneValue = newVal.phone;
           this.userInfo.roleValue = newVal.role;
-          this.userInfo.avatarValue = newVal.avatar;
         }
       },
       deep: true,
@@ -294,7 +293,8 @@ export default {
         try {
           const response = await axsIns.post("/api/users/" + this.userInfo.idValue, formData);
           if (response.status === 200) {
-            this.hanldeOnCloseModal();
+            // this.hanldeOnCloseModal();
+            console.log(response);
           }
         } catch (error) {
           console.log(error);
@@ -306,7 +306,7 @@ export default {
       this.$emit("closeModal", { validateState: false });
     },
     testValue() {
-      this.resetField();
+      console.log(this.userInfo);
     },
     resetField() {
       this.userInfo.idValue = 0;

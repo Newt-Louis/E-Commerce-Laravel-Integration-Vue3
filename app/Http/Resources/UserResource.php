@@ -20,7 +20,7 @@ class UserResource extends JsonResource
         if ($this->avatar) {
             if ($this->avatar->filename) {
                 $fullPath = $this->avatar->path.'/'.$this->avatar->filename;
-                $avatar = Storage::url($fullPath);
+                $avatar = Storage::disk('local')->url($fullPath);
             };
         }
         return [

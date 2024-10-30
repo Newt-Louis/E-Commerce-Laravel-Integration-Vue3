@@ -17,7 +17,7 @@ class UserController extends Controller
     public function index()
     {
         $users = User::with(['role', 'avatar'])->get();
-
+        UserResource::withoutWrapping();
         return UserResource::collection($users);
     }
     /**
@@ -29,15 +29,14 @@ class UserController extends Controller
         if ($validate) {
             $user = User::create($validate);
             /** @var \App\Models\User $user */
-            $path = 'public/avatars/'.$user->name;
-            Storage::makeDirectory($path);
+            $path = 'avatars/'.$user->name;
+            Storage::disk('public')->makeDirectory($path);
             if (!$request->hasFile('avatar')) {
                 Avatar::create([
                   'path' => $path,
                   'user_id' => $user->id,
                 ]);
             } else {
-                /** @var \App\Models\User $user */
                 $validateFile = $request->validated(
                     [
                     'avatar' => 'image|max:2048',
@@ -50,7 +49,7 @@ class UserController extends Controller
                 if ($validateFile) {
                     $file = $request->file('avatar');
                     $fileName = uniqid().'_'. $file[0]->getClientOriginalName();
-                    $filePath = Storage::putFileAs($path, $file[0], $fileName);
+                    $filePath = Storage::disk('public')->putFileAs($path, $file[0], $fileName);
                     Avatar::create([
                       'path' => $path,
                       'filename' => $fileName,
@@ -83,29 +82,37 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, string $id)
     {
-        Log::info($request->all());
-        // $validatedData = $request->validated();
-        // $user = User::find($validatedData->id);
-        // if (!empty($request->input('password'))) {
-        //     $validatedData['password'] = $request->input('password');
-        // }
-        // if ($request->hasFile('avatar')) {
-        //     $path = 'public/avatars/'.$validatedData->name;
-        //     $files = Storage::disk('local')->files('avatars/'.$user->name);
-        //     if (count($files) > 0) {
-        //         Storage::disk('local')->delete($files);
-        //     }
-        //     $file = $request->file('avatar');
-        //     $fileName = uniqid().'_'.$file[0]->getClientOriginalName();
-        //     Storage::putFileAs($path, $request->file('avatar'), $fileName);
-        //     $avatar = Avatar::where('user_id', $user->id)->get();
-        //     $avatar->update([
-        //       'path' => $path,
-        //       'filename' => $fileName,
-        //     ]);
-        // }
-        // $user->update($validatedData);
-        // return $this->index();
+        $validatedData = $request->validated();
+        $user = User::find($id);
+        $avatar = $user->avatar;
+        Log::info($validatedData);
+        Log::info($request->file('avatar'));
+        if (!empty($request->input('password'))) {
+            $validatedData['password'] = $request->input('password');
+        }
+        if ($request->hasFile('avatar')) {
+            // $path = $avatar->path.$avatar->filename;
+            $files = Storage::disk('public')->files($avatar->path);
+            if (count($files) > 0) {
+                Storage::disk('public')->delete($files);
+            }
+            $file = $request->file('avatar');
+            $fileName = uniqid().'_'.$file[0]->getClientOriginalName();
+            Storage::disk('public')->putFileAs($avatar->path, $file[0], $fileName);
+            $avatar->update([
+              'filename' => $fileName,
+            ]);
+        }
+        if ($user->name !== $validatedData['name']) {
+            $oldPath = $avatar->path;
+            $newPath = dirname($oldPath)."/".$validatedData['name'];
+            Storage::disk('public')->move($oldPath, $newPath);
+            $avatar->update([
+              'path' => $newPath,
+            ]);
+        }
+        $user->update($validatedData);
+        return $this->index();
     }
 
     /**
