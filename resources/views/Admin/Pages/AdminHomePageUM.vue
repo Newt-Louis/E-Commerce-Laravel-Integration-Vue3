@@ -112,14 +112,10 @@
     <div class="pagination-container float-end">
       <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-end">
-          <li class="page-item disabled">
-            <a class="page-link">Previous</a>
-          </li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item">
-            <a class="page-link" @click="test">Next</a>
+          <li class="page-item" v-for="(link, index) in linksPaginate" :key="index">
+            <a :class="`page-link ${link.active ? 'active' : ''}`" @click="handlePagination(link.url)">
+              {{ formattedLabel(link.label) }}
+            </a>
           </li>
         </ul>
       </nav>
@@ -145,6 +141,7 @@ export default {
       isAdd: true,
       userEditing: { idUser: 0, name: "", email: "", phone: "", role: "", avatar: [] },
       validate: true,
+      linksPaginate: [],
     };
   },
   computed: {
@@ -158,13 +155,20 @@ export default {
       }
       return result;
     },
+    formattedLabel() {
+      return (label) => {
+        return label.replace("&laquo;", "").replace("&raquo;", "");
+      };
+    },
   },
   created() {},
   async mounted() {
     try {
       const [usersResponse, rolesResponse] = await Promise.all([axsIns.get("/api/users"), axsIns.get("api/roles")]);
       if (usersResponse.status === 200) {
-        this.usersData = usersResponse.data;
+        console.log(usersResponse);
+        this.linksPaginate = usersResponse.data.meta.links;
+        this.usersData = usersResponse.data.data;
       }
       if (rolesResponse.status === 200) {
         this.usersRole = rolesResponse.data;
@@ -253,6 +257,19 @@ export default {
     handleOnCloseModal(data) {
       this.validate = data.validateState;
     },
+    async handlePagination(url) {
+      if (url) {
+        try {
+          const response = await axsIns.get(url);
+          if (response.status === 200) {
+            this.usersData = response.data.data;
+            this.linksPaginate = response.data.meta.links;
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    },
   },
 };
 </script>
@@ -276,5 +293,8 @@ export default {
   max-height: 50px;
   border-radius: 50%;
   object-fit: contain;
+}
+.page-link:hover {
+  cursor: pointer;
 }
 </style>

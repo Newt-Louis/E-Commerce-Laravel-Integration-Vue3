@@ -16,7 +16,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with(['role', 'avatar'])->get();
+        $users = User::with(['role', 'avatar'])->paginate(5);
         UserResource::withoutWrapping();
         return UserResource::collection($users);
     }
@@ -89,14 +89,16 @@ class UserController extends Controller
             $validatedData['password'] = $request->input('password');
         }
         if ($request->hasFile('avatar')) {
-            // $path = $avatar->path.$avatar->filename;
             $files = Storage::disk('public')->files($avatar->path);
             if (count($files) > 0) {
                 Storage::disk('public')->delete($files);
             }
             $file = $request->file('avatar');
             $fileName = uniqid().'_'.$file[0]->getClientOriginalName();
-            Storage::disk('public')->putFileAs($avatar->path, $file[0], $fileName);
+            /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+            /* Cause Intelephense don't understand method disk will return FilesystemAdapter */
+            $disk = Storage::disk('public');
+            $disk->putFileAs($avatar->path, $file[0], $fileName);
             $avatar->update([
               'filename' => $fileName,
             ]);

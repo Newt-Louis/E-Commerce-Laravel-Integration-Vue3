@@ -9,25 +9,24 @@
     id="addOrEditUser"
   >
     <div class="modal-dialog modal-lg" id="addOrEditUser">
+      <div
+        :class="`alert alert-success animate__animated ${notification.alertAnime}`"
+        role="alert"
+        v-if="notification.isDone"
+      >
+        {{ notification.message }}
+      </div>
+      <div
+        :class="`alert alert-danger animate__animated ${notification.alertAnime}`"
+        role="alert"
+        v-if="notification.isError"
+      >
+        {{ notification.message }}
+      </div>
       <div class="modal-content">
         <div class="modal-header" style="height: 93px">
           <h1 class="modal-title fs-3 text-primary" id="addOrEditUserLabel" v-if="isAdd">Add New User</h1>
           <h1 class="modal-title fs-3 text-warning" id="addOrEditUserLabel" v-else>Edit User</h1>
-          <div style="width: 30%"></div>
-          <div
-            :class="`alert alert-success m-0 align-self-center animate__animated ${notification.alertAnime}`"
-            role="alert"
-            v-if="notification.isDone"
-          >
-            {{ notification.message }}
-          </div>
-          <div
-            :class="`alert alert-danger animate__animatedanimated ${notification.alertAnime}`"
-            role="alert"
-            v-if="notification.isError"
-          >
-            {{ notification.message }}
-          </div>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <form @submit.prevent="addOrUpdate" novalidate>
