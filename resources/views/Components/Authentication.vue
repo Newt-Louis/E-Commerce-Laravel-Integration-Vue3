@@ -20,7 +20,7 @@ export default {
       if (response.status === 200) {
         this.setLogin();
         this.setAdminUser(response.data);
-        this.$router.push({ name: "admin-homepage" });
+        this.$router.push({ name: "admin-product" });
       }
     } catch (error) {
       if (!error.response?.data?.isRemember) {

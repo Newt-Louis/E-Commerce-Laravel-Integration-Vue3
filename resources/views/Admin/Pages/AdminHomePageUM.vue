@@ -1,6 +1,6 @@
 <template>
   <div class="homepage-container">
-    <h3 class="text-center mb-3 text-primary">Manage User</h3>
+    <h2 class="text-center mb-3 text-primary">Manage User</h2>
     <!-----------------------Select Group Row----------------------->
     <div class="row select-group">
       <div class="col-lg-3 filter-select">
@@ -113,7 +113,10 @@
       <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-end">
           <li class="page-item" v-for="(link, index) in linksPaginate" :key="index">
-            <a :class="`page-link ${link.active ? 'active' : ''}`" @click="handlePagination(link.url)">
+            <a
+              :class="`page-link ${link.url === null ? 'disabled' : link.active ? 'active' : ''}`"
+              @click="handlePagination(link.url)"
+            >
               {{ formattedLabel(link.label) }}
             </a>
           </li>

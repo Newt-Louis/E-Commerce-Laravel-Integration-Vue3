@@ -1,5 +1,8 @@
 <template>
-  <div><h1>Product Management</h1></div>
+  <div>
+    <h2 class="text-center text-primary mb-3">Product Management</h2>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script>

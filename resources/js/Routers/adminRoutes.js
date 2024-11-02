@@ -5,11 +5,37 @@ const adminRoutes = [
     meta: { requiresAuth: true },
     component: () => import("~views/Admin/Pages/AdminHomePageUM.vue"),
   },
+  // ~views/Admin/Pages/AdminHomePageUM.vue
   {
     path: "/admin/product",
-    name: "admin-product",
     meta: { requiresAuth: true },
     component: () => import("~views/Admin/Pages/AdminProductManagement.vue"),
+    children: [
+      {
+        path: "",
+        name: "admin-product",
+        component: () => import("~views/Admin/Pages/ProductsComponent/AdminProducts.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "add",
+        name: "admin-add-product",
+        component: () => import("~views/Admin/Pages/ProductsComponent/AdminAddProduct.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "edit",
+        name: "admin-edit-product-origin",
+        component: () => import("~views/Admin/Pages/ProductsComponent/AdminEditProduct.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "edit/:id",
+        name: "admin-edit-product",
+        component: () => import("~views/Admin/Pages/ProductsComponent/AdminEditProduct.vue"),
+        meta: { requiresAuth: true },
+      },
+    ],
   },
   {
     path: "/admin/order",
