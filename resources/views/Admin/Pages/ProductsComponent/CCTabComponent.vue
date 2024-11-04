@@ -2,10 +2,10 @@
   <div>
     <div class="tab-catalog-collection bg-white rounded p-3">
       <ul class="nav nav-tabs mb-3">
-        <li class="nav-item" @click="handleWithCCTab('catalogue')">
+        <li class="nav-item" @click="handleWithCCTab('catalogue')" ref="tabCatalog">
           <a :class="{ active: tabCatalogCollection.whichTab === 'catalogue' }" class="nav-link">Catalogue</a>
         </li>
-        <li class="nav-item" @click="handleWithCCTab('collection')">
+        <li class="nav-item" @click="handleWithCCTab('collection')" ref="tabCollection">
           <a :class="{ active: tabCatalogCollection.whichTab === 'collection' }" class="nav-link">Collection</a>
         </li>
       </ul>
@@ -48,6 +48,19 @@ export default {
         whichTab: "catalogue",
       },
     };
+  },
+  watch: {
+    "tabCatalogCollection.whichTab": {
+      handler(newVal) {
+        this.$nextTick(() => {
+          if (newVal === "catalogue") {
+            this.$refs.tabCatalog.scrollIntoView({ behavior: "smooth", block: "center" });
+          } else if (newVal === "collection") {
+            this.$refs.tabCollection.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        });
+      },
+    },
   },
   methods: {
     handleWithCCTab(tab) {

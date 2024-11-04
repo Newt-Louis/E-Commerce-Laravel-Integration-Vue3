@@ -1,0 +1,177 @@
+<template>
+  <div class="row" style="padding: 12px">
+    <div class="col-lg-4">
+      <ul class="list-group align-items-center">
+        <li
+          v-for="(item, index) in tabProductDetails"
+          :key="index"
+          @click="changeTPDDirect(item.name)"
+          class="list-group-item list-group-item-action row d-flex align-items-center"
+          :class="{ 'direction-angle': switchTab === item.name }"
+        >
+          <i class="col-lg-2 p-0 fa-solid" :class="item.icon"></i><span class="col-lg-1">{{ item.name }}</span>
+        </li>
+      </ul>
+    </div>
+    <div class="col-lg-8 border bg-white rounded position-relative">
+      <div class="price-container p-3 direction-angle-right" v-show="switchTab === tdpContent.price.name">
+        <div class="row align-items-center justify-content-center gap-2">
+          <div class="col-lg-3"></div>
+          <div class="col-lg-4">
+            <p class="fw-bold">Regular price</p>
+          </div>
+          <div class="col-lg-4">
+            <p class="fw-bold">Sale price</p>
+          </div>
+          <div class="col-lg-3">(capacity)</div>
+          <div class="col-lg-4">
+            <TextInput :placeholder="'$$$'"></TextInput>
+          </div>
+          <div class="col-lg-4">
+            <TextInput :placeholder="'$$$'"></TextInput>
+          </div>
+        </div>
+      </div>
+      <div class="restock-container p-3 direction-angle-right" v-show="switchTab === tdpContent.restock.name">
+        <div>
+          <p class="fw-bold m-0 mb-2 text-secondary">
+            Add to inventory <br />
+            <span class="fs-6 fw-light">Must fill with capacities on each quantity</span>
+          </p>
+          <div class="d-flex gap-2 align-items-center mb-2">
+            <p class="fw-semibold m-0">(Capacity)</p>
+            <TextInput :placeholder="'Quantity...'"></TextInput>
+          </div>
+        </div>
+      </div>
+      <div class="supplier-container p-3 direction-angle-right" v-show="switchTab === tdpContent.supplier.name">
+        <div class="h-100 w-100 d-inline-block">
+          <p class="fw-bold text-secondary">Supplier</p>
+          <div class="d-flex gap-2 align-items-center mb-2">
+            <TextInput :placeholder="'Supplier name ...'"></TextInput>
+          </div>
+          <div class="h-50 d-flex align-items-end justify-content-end">
+            <span class="fw-light fst-italic">Supplier may be add more info later</span>
+          </div>
+        </div>
+      </div>
+      <div class="capacities-container p-3 direction-angle-right" v-show="switchTab === tdpContent.capacities.name">
+        <p class="fw-bold text-secondary">Capacities</p>
+        <div class="capacities-show mb-3">
+          <div class="row row-cols-auto">
+            <div class="col">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                <label class="form-check-label" for="flexCheckDefault"> Default</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="capacities-adding">
+          <p class="fw-bold text-secondary">Or add more</p>
+          <div class="d-flex gap-2 mb-2">
+            <div class="d-flex flex-column gap-2">
+              <div class="d-flex align-items-center gap-2">
+                <label for="" class="">Name</label>
+                <TextInput :placeholder="'bottle, box, bar...'"></TextInput>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <label for="" class="">Volume</label>
+                <TextInput :placeholder="'1kg, 1.5ml, 5cm...'"></TextInput>
+              </div>
+            </div>
+            <button class="btn btn-primary w-25">New capacity</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import TextInput from "../../../Components/InputField/TextInput.vue";
+export default {
+  components: {
+    TextInput,
+  },
+  data() {
+    return {
+      tdpContent: {
+        price: { name: "Pricing", directAngle: "21px" },
+        restock: { name: "Restock", directAngle: "80px" },
+        supplier: { name: "Supplier", directAngle: "140px" },
+        capacities: { name: "Capacities", directAngle: "200px" },
+      },
+      directAngleContentRight: "21px",
+      switchTab: "Pricing",
+      tabProductDetails: [
+        { name: "Pricing", icon: "fa-dollar-sign" },
+        { name: "Restock", icon: "fa-cubes-stacked" },
+        { name: "Supplier", icon: "fa-truck-field" },
+        { name: "Capacities", icon: "fa-boxes-packing" },
+      ],
+    };
+  },
+  methods: {
+    changeTPDDirect(value) {
+      this.switchTab = value;
+      Object.values(this.tdpContent).forEach((element) => {
+        if (value === element.name) {
+          this.directAngleContentRight = element.directAngle;
+        }
+      });
+    },
+  },
+};
+</script>
+<style>
+.list-group-item-action {
+  height: 60px;
+}
+.list-group-item-action:hover {
+  cursor: pointer;
+  z-index: 9;
+}
+.nav-item:hover {
+  cursor: pointer;
+}
+.direction-angle {
+  font-weight: bold;
+}
+.direction-angle > i::before {
+  font-size: 18px;
+}
+.direction-angle::after {
+  content: "";
+  width: 15px;
+  height: 15px;
+  border-top: 0.5px solid rgb(220, 220, 220);
+  border-right: 0.5px solid rgb(220, 220, 220);
+  background-color: white;
+  transform: rotate(45deg);
+  position: absolute;
+  right: -8px;
+  top: 21px;
+  display: block;
+  z-index: 10;
+}
+.direction-angle:hover::after {
+  background-color: rgb(248, 249, 251);
+}
+.direction-angle-right::before {
+  content: "";
+  width: 15px;
+  height: 15px;
+  display: block;
+  border-top: 0.5px solid rgb(220, 220, 220);
+  border-right: 0.5px solid rgb(220, 220, 220);
+  transform: rotate(45deg);
+  background-color: rgb(240, 240, 240);
+  position: absolute;
+  left: -8px;
+  top: v-bind(directAngleContentRight);
+  z-index: 1;
+}
+.supplier-container {
+  height: 100%;
+}
+</style>
