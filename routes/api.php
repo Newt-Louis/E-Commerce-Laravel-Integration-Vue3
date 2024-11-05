@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ItemTypeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
@@ -25,8 +26,12 @@ Route::post('/admin-user/login', [AuthController::class,'adminLogin'])->middlewa
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/roles', RoleController::class);
-    Route::apiResource('users', UserController::class);
-    Route::apiResource('products', ProductController::class);
+    Route::apiResources([
+      'users' => UserController::class,
+      'products' => ProductController::class
+    ]);
+    Route::get('/categories', [ItemTypeController::class]);
+    Route::post('/categories', [ItemTypeController::class,'store']);
     Route::get('/auth/admin-remember', function (Request $request) {
         $request->session()->regenerate();
         return $request->user();

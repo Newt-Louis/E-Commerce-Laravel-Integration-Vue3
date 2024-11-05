@@ -1,4 +1,5 @@
 <template>
+  <div class="alert alert-danger" role="alert">A simple danger alert—check it out!</div>
   <div class="addproduct-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
@@ -54,17 +55,23 @@
           <TPDComponent></TPDComponent>
         </div>
         <div class="add-product-info">
-          <p class="fs-5 fw-bold">Check information before add</p>
-          <div class="row row-cols-auto">
-            <p class="col">Name:</p>
-            <p class="col">Gender:</p>
-            <p class="col">Origin:</p>
-            <p class="col">Capacity:</p>
-            <p class="col">Regular price:</p>
-            <p class="col">Sale price:</p>
-            <p class="col">Inventory:</p>
-            <p class="col">Supplier:</p>
-          </div>
+          <p class="fs-5 fw-bold">Result adding</p>
+          <ol class="list-group list-group-numbered list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-start bg-transparent">
+              <div class="ms-2">
+                <div><span class="fw-bold">Product name:</span> (Name)</div>
+                <div class="row row-cols-auto">
+                  <p class="col m-0">Regular price:</p>
+                  <p class="col m-0">Sale price:</p>
+                  <p class="col m-0">Gender:</p>
+                  <p class="col m-0">Origin</p>
+                  <p class="col m-0">Supplier:</p>
+                  <p class="col m-0">Capacity:</p>
+                  <p class="col m-0">Inventory:</p>
+                </div>
+              </div>
+            </li>
+          </ol>
         </div>
       </div>
       <div class="col-lg-4 p-0 pe-2">
