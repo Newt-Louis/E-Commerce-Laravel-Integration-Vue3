@@ -14,7 +14,7 @@
 export default {
   props: {
     inputValue: {
-      type: Date,
+      type: String,
     },
   },
   emits: ["dateValid", "update:inputValue"],

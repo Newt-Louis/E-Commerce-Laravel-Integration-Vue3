@@ -122,7 +122,11 @@
         </div>
         <div class="add-card">
           <p class="m-0 fs-5 fw-bold">Add new catalog or collection</p>
-          <CCTabComponent ref="navTabs" @updateCatalogIndex="catalogueChangeData"></CCTabComponent>
+          <CCTabComponent
+            ref="navTabs"
+            @updateCatalogIndex="catalogueChangeData"
+            @update-collection-index="collectionChangeData"
+          ></CCTabComponent>
         </div>
       </div>
     </div>
@@ -152,7 +156,12 @@ export default {
   },
   computed: {
     getCatalogueData() {
-      return this.catalogueIndexData;
+      const arrayToSort = [...this.catalogueIndexData];
+      return arrayToSort.sort((a, b) => b.id - a.id);
+    },
+    getCollectionData() {
+      const arrayToSort = [...this.collectionIndexData];
+      return arrayToSort.sort((a, b) => b.id - a.id);
     },
   },
   watch: {},
@@ -181,6 +190,9 @@ export default {
     },
     catalogueChangeData(data) {
       this.catalogueIndexData = data;
+    },
+    collectionChangeData(data) {
+      this.collectionIndexData = data;
     },
     catalogueChosen(event) {
       const value = event.target.value;

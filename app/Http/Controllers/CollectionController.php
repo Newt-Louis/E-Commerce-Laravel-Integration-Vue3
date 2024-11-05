@@ -9,7 +9,7 @@ class CollectionController extends Controller
 {
     public function index()
     {
-        $collection = Collection::all()->sortByDesc('id');
+        $collection = Collection::all();
         return response()->json($collection);
     }
     public function store(Request $request)

@@ -44,12 +44,16 @@
         v-if="tabCatalogCollection.whichTab === 'collection'"
       >
         <label for="" class="form-label">Add new collection</label>
-        <TextInput :placeholder="`Write collection name ...`" :text-input-name="'add-catalog'"></TextInput>
-        <label for="" class="form-label">Start date</label>
-        <DateInput></DateInput>
-        <label for="" class="form-label">End date</label>
-        <DateInput></DateInput>
-        <button class="btn btn-primary mt-3 w-100">Ok !</button>
+        <TextInput
+          v-model:input-value="collectionAddingInstance.nameValue"
+          :placeholder="`Write collection name ...`"
+          :text-input-name="'add-catalog'"
+        ></TextInput>
+        <label for="start_date" class="form-label">Start date</label>
+        <DateInput v-model:input-value="collectionAddingInstance.startDate" id="start_date"></DateInput>
+        <label for="end_date" class="form-label">End date</label>
+        <DateInput v-model:input-value="collectionAddingInstance.endDate" id="end_date"></DateInput>
+        <button class="btn btn-primary mt-3 w-100" @click="addNewCollection">Ok !</button>
       </div>
     </div>
   </div>
@@ -69,7 +73,7 @@ export default {
       nameCategory: "",
 
       collectionAddingInstance: {
-        value: "",
+        nameValue: "",
         startDate: "",
         endDate: "",
       },
@@ -110,14 +114,34 @@ export default {
         const catalogResponse = await axsIns.post("/api/categories", { name: this.nameCategory });
         if (catalogResponse.status === 200) {
           this.$emit("updateCatalogIndex", catalogResponse.data);
-          this.notify("Add new catalog", "isDone");
+          this.notify("Add new Catalogue !", "isDone");
           this.nameCategory = "";
         }
       } catch (error) {
         this.notify(error.response.data.erros, "isError");
       }
     },
-    async addNewCollection() {},
+    async addNewCollection() {
+      if (this.collectionAddingInstance.nameValue === "") {
+        this.notify("Collection must have a name !", "isError");
+        return;
+      }
+      try {
+        const collectionResponse = await axsIns.post("/api/collections", {
+          name: this.collectionAddingInstance.nameValue,
+          startAt: this.collectionAddingInstance.startDate,
+          endAt: this.collectionAddingInstance.endDate,
+        });
+        if (collectionResponse.status === 200) {
+          this.$emit("updateCollectionIndex", collectionResponse.data);
+          this.notify("Add new Collection !", "isDone");
+        }
+      } catch (error) {
+        console.log(error);
+        this.notify(error.response.data.erros, "isError");
+      }
+      console.log(this.collectionAddingInstance);
+    },
     notify(message, typeNotice) {
       this.notification[typeNotice] = true;
       this.notification.message = message;
