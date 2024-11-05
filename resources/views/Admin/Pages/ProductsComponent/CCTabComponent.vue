@@ -67,6 +67,7 @@ export default {
   data() {
     return {
       nameCategory: "",
+
       collectionAddingInstance: {
         value: "",
         startDate: "",

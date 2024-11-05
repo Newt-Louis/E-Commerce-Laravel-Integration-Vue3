@@ -7,6 +7,7 @@ use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Models\Collection;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +31,9 @@ Route::middleware('auth:sanctum')->group(function () {
       'users' => UserController::class,
       'products' => ProductController::class
     ]);
-    Route::get('/categories', [ItemTypeController::class]);
+    Route::get('/collections', [Collection::class,'index']);
+    Route::post('/collections', [Collection::class,'show']);
+    Route::get('/categories', [ItemTypeController::class,'index']);
     Route::post('/categories', [ItemTypeController::class,'store']);
     Route::get('/auth/admin-remember', function (Request $request) {
         $request->session()->regenerate();

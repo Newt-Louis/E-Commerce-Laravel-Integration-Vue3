@@ -9,7 +9,7 @@ class ItemTypeController extends Controller
 {
     public function index()
     {
-        $categories = ItemType::all();
+        $categories = ItemType::all()->sortByDesc('id');
         return response()->json($categories);
     }
     public function store(Request $request)

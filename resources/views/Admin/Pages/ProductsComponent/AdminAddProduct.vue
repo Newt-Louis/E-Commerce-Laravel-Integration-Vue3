@@ -1,6 +1,6 @@
 <template>
-  <div class="alert alert-danger" role="alert">A simple danger alert—check it out!</div>
   <div class="addproduct-container">
+    <!-- <div class="alert alert-danger" role="alert">A simple danger alert—check it out!</div> -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <div>
         <h3 class="m-0">Add a product</h3>
@@ -12,6 +12,7 @@
         <button class="btn btn-primary btn-sm">Publish product</button>
       </div>
     </div>
+    <!-------------------------- Input filed basic info Product ---------------------->
     <div class="row">
       <div class="col-lg-8 m-0">
         <div class="d-flex flex-column add-product-info">
@@ -75,6 +76,7 @@
         </div>
       </div>
       <div class="col-lg-4 p-0 pe-2">
+        <!------------------------ Add Categories & Collection ---------------------->
         <div class="add-card">
           <p class="fs-5 fw-bold">Fill with product</p>
           <div class="mb-4">
@@ -82,9 +84,15 @@
               >Catalogue <a href="#" class="" @click.prevent="switchCatalogTab">Add new catalogue</a></label
             >
             <div class="select-container">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                <label class="form-check-label" for="flexCheckDefault"> Default checkbox </label>
+              <div class="form-check" v-for="(category, index) in getCatalogueData" :key="index">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  :value="category.name"
+                  :id="index"
+                  @input="catalogueChosen"
+                />
+                <label class="form-check-label" :for="index"> {{ category.name }} </label>
               </div>
             </div>
           </div>
@@ -114,7 +122,7 @@
         </div>
         <div class="add-card">
           <p class="m-0 fs-5 fw-bold">Add new catalog or collection</p>
-          <CCTabComponent ref="navTabs"></CCTabComponent>
+          <CCTabComponent ref="navTabs" @updateCatalogIndex="catalogueChangeData"></CCTabComponent>
         </div>
       </div>
     </div>
@@ -126,6 +134,7 @@ import FileInput from "../../../Components/InputField/FileInput.vue";
 import DateInput from "../../../Components/InputField/DateInput.vue";
 import TPDComponent from "./TPDComponent.vue";
 import CCTabComponent from "./CCTabComponent.vue";
+import { axsIns } from "../../../../js/bootstrap";
 export default {
   components: {
     TextInput,
@@ -134,15 +143,55 @@ export default {
     CCTabComponent,
   },
   data() {
-    return {};
+    return {
+      catalogueIndexData: [],
+      catalogueChosenData: [],
+      collectionIndexData: [],
+      collectionChosenData: [],
+    };
+  },
+  computed: {
+    getCatalogueData() {
+      return this.catalogueIndexData;
+    },
   },
   watch: {},
+  async mounted() {
+    try {
+      const [catalogueResponse, collectionResponse] = await Promise.all([
+        axsIns.get("/api/categories"),
+        axsIns.get("api/collections"),
+      ]);
+      if (catalogueResponse.status === 200) {
+        this.catalogueIndexData = catalogueResponse.data;
+      }
+      if (collectionResponse.status === 200) {
+        this.collectionIndexData = collectionResponse.data;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
   methods: {
     switchCatalogTab() {
       this.$refs.navTabs.handleWithCCTab("catalogue");
     },
     switchCollectionTab() {
       this.$refs.navTabs.handleWithCCTab("collection");
+    },
+    catalogueChangeData(data) {
+      this.catalogueIndexData = data;
+    },
+    catalogueChosen(event) {
+      const value = event.target.value;
+      if (event.target.checked) {
+        if (!this.catalogueChosenData.includes(value)) {
+          this.catalogueChosenData.push(value);
+        }
+      } else {
+        const index = this.catalogueChosenData.findIndex((catalogueValue) => catalogueValue === value);
+        this.catalogueChosenData.splice(index, 1);
+      }
     },
   },
 };

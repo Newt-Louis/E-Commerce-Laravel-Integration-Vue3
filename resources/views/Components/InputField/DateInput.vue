@@ -1,9 +1,10 @@
 <template>
   <div>
     <input
-      v-model="isDateValid.value"
+      :value="inputValue"
       type="datetime-local"
       :class="`form-control ${isValidation}`"
+      @input="handleDateInput"
       @change="handleDateChange"
     />
   </div>
@@ -11,7 +12,12 @@
 
 <script>
 export default {
-  emits: ["dateValid"],
+  props: {
+    inputValue: {
+      type: Date,
+    },
+  },
+  emits: ["dateValid", "update:inputValue"],
   data() {
     return {
       isValidation: "",
@@ -36,6 +42,9 @@ export default {
         this.isDateValid.value = event.target.value;
         this.$emit("dateValid", this.isDateValid);
       }
+    },
+    handleDateInput(event) {
+      this.$emit("update:inputValue", event.target.value);
     },
   },
 };
