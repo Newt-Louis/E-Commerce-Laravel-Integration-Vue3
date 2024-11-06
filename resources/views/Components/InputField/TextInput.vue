@@ -124,6 +124,8 @@ export default {
         if (enabledRules.length > 0) {
           const checkIsValid = Object.values(this.validationResults).some((value) => value === false);
           if (checkIsValid) {
+            this.isTextValid.isValid = false;
+            this.isTextValid.value = valueToValid;
             return (this.isValidation = "is-invalid");
           } else {
             this.isTextValid.isValid = true;
@@ -145,6 +147,8 @@ export default {
           if (enabledRules.length > 0) {
             const checkIsValid = Object.values(this.validationResults).some((value) => value === false);
             if (checkIsValid) {
+              this.isTextValid.isValid = false;
+              this.isTextValid.value = valueToValid;
               return (this.isValidation = "is-invalid");
             } else {
               this.isTextValid.isValid = true;
@@ -165,4 +169,8 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+.base-input {
+  width: 100%;
+}
+</style>

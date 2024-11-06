@@ -15,7 +15,7 @@
     </div>
     <div class="col-lg-8 border bg-white rounded position-relative">
       <div class="price-container p-3 direction-angle-right" v-show="switchTab === tdpContent.price.name">
-        <div class="row align-items-center justify-content-center gap-2">
+        <div class="row align-items-center justify-content-center">
           <div class="col-lg-3"></div>
           <div class="col-lg-4">
             <p class="fw-bold">Regular price</p>
@@ -59,10 +59,18 @@
         <p class="fw-bold text-secondary">Capacities</p>
         <div class="capacities-show mb-3">
           <div class="row row-cols-auto">
-            <div class="col">
+            <div class="col" v-for="(capacity, index) in capacitiesIndexData" :key="index">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                <label class="form-check-label" for="flexCheckDefault"> Default</label>
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  :value="capacity.name"
+                  :id="index"
+                  @input="handleOnCapacityCheckbox($event, index)"
+                />
+                <label class="form-check-label" for="flexCheckDefault">{{
+                  capacity.name + " (" + capacity.volume + ")"
+                }}</label>
               </div>
             </div>
           </div>
@@ -71,16 +79,39 @@
           <p class="fw-bold text-secondary">Or add more</p>
           <div class="d-flex gap-2 mb-2">
             <div class="d-flex flex-column gap-2">
-              <div class="d-flex align-items-center gap-2">
-                <label for="" class="">Name</label>
-                <TextInput :placeholder="'bottle, box, bar...'"></TextInput>
+              <div class="d-flex gap-2 justify-content-between">
+                <label for="" class="">Name: </label>
+                <TextInput
+                  :placeholder="'bottle, box, bar...'"
+                  v-model:input-value="capacitiesAddingIns.name"
+                  :text-input-name="'capacityName'"
+                  :required="true"
+                  @text-valid="checkCapacitiesInput"
+                >
+                  <template #required>Must have a name like jar, bottle...</template>
+                </TextInput>
               </div>
-              <div class="d-flex align-items-center gap-2">
-                <label for="" class="">Volume</label>
-                <TextInput :placeholder="'1kg, 1.5ml, 5cm...'"></TextInput>
+              <div class="d-flex gap-2 justify-content-between">
+                <label for="" class="">Volume: </label>
+                <TextInput
+                  :placeholder="'1g, 1.5ml, 5cm...'"
+                  v-model:input-value="capacitiesAddingIns.volume"
+                  :text-input-name="'capacityVolume'"
+                  :required="true"
+                  @text-valid="checkCapacitiesInput"
+                >
+                  <template #required>Must have a measurement unit like ml, g, cm...</template>
+                </TextInput>
               </div>
             </div>
-            <button class="btn btn-primary w-25">New capacity</button>
+            <button
+              class="btn btn-primary w-25"
+              style="height: 84px"
+              @click="addNewCapacity"
+              :disabled="!isRegisteredCapacitiesInputDone"
+            >
+              New capacity
+            </button>
           </div>
         </div>
       </div>
@@ -88,6 +119,7 @@
   </div>
 </template>
 <script>
+import { axsIns } from "../../../../js/bootstrap";
 import TextInput from "../../../Components/InputField/TextInput.vue";
 export default {
   components: {
@@ -109,7 +141,30 @@ export default {
         { name: "Supplier", icon: "fa-truck-field" },
         { name: "Capacities", icon: "fa-boxes-packing" },
       ],
+      capacitiesIndexData: [],
+      capacitiesChosenData: [],
+      capacitiesAddingIns: {
+        name: "",
+        volume: "",
+      },
+      registeredCapacitiesInput: [],
     };
+  },
+  computed: {
+    isRegisteredCapacitiesInputDone() {
+      return this.registeredCapacitiesInput.every((capacity) => capacity.isValid === true);
+    },
+  },
+  async mounted() {
+    try {
+      const capacitiesResponse = await axsIns.get("/api/capacities");
+      if (capacitiesResponse.status === 200) {
+        this.capacitiesIndexData = capacitiesResponse.data;
+        console.log(capacitiesResponse);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   },
   methods: {
     changeTPDDirect(value) {
@@ -119,6 +174,36 @@ export default {
           this.directAngleContentRight = element.directAngle;
         }
       });
+    },
+    async addNewCapacity() {
+      try {
+        const addCapacityResponse = await axsIns.post("/api/capacities", this.capacitiesAddingIns);
+        if (addCapacityResponse.status === 200) {
+          this.capacitiesIndexData = addCapacityResponse.data;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    checkCapacitiesInput(data) {
+      const existInput = this.registeredCapacitiesInput.find((registered) => registered.name === data.name);
+      if (existInput) {
+        existInput.isValid = data.isValid;
+      } else {
+        this.registeredCapacitiesInput.push(data);
+      }
+    },
+    handleOnCapacityCheckbox(event, index) {
+      const value = event.target.value;
+      if (event.target.checked) {
+        this.capacitiesChosenData.push(this.capacitiesIndexData[index]);
+      } else {
+        const capacityIns = this.capacitiesIndexData[index];
+        const capacityChosenIndex = this.capacitiesChosenData.findIndex(
+          (capacity) => capacity.name === capacityIns.name
+        );
+        this.capacitiesChosenData.splice(capacityChosenIndex, 1);
+      }
     },
   },
 };

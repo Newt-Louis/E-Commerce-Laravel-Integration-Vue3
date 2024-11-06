@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CapacitiesController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ItemTypeController;
 use App\Http\Controllers\ProductController;
@@ -36,6 +37,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/collections/{collection}', [CollectionController::class,'destroy']);
     Route::get('/categories', [ItemTypeController::class,'index']);
     Route::post('/categories', [ItemTypeController::class,'store']);
+    Route::get('/capacities', [CapacitiesController::class,'index']);
+    Route::post('/capacities', [CapacitiesController::class,'store']);
     Route::get('/auth/admin-remember', function (Request $request) {
         $request->session()->regenerate();
         return $request->user();

@@ -14,8 +14,8 @@ return new class () extends Migration {
             $table->foreignId('product_id')->constrained();
             $table->foreignId('capacity_id')->constrained();
             $table->string('supplier')->nullable();
-            $table->bigInteger('inventory');
-            $table->unsignedInteger('price');
+            $table->bigInteger('inventory')->nullable();
+            $table->unsignedInteger('price')->nullable();
             $table->float('discount')->nullable();
             $table->timestamps();
             $table->softDeletes();
