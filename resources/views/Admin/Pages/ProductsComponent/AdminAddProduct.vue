@@ -101,27 +101,43 @@
               >Collection <a href="#" class="" @click.prevent="switchCollectionTab">Add new collection</a></label
             >
             <div class="select-container">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
-                <label class="form-check-label" for="flexCheckDefault"> Default checkbox </label>
+              <div class="form-check" v-for="(collect, index) in getCollectionData" :key="index">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  :value="collect.name"
+                  :id="index"
+                  @input="collectionChosen"
+                />
+                <label class="form-check-label" :for="index"> {{ collect.name }} </label>
               </div>
             </div>
           </div>
         </div>
         <div class="add-card">
-          <p class="m-0 fs-5 fw-bold">Information</p>
+          <p class="m-0 fs-5 fw-bold">Collection information</p>
           <div class="">
             <ul class="list-group list-group-flush">
-              <li class="list-group-item bg-transparent">An item</li>
-              <li class="list-group-item bg-transparent">A second item</li>
-              <li class="list-group-item bg-transparent">A third item</li>
-              <li class="list-group-item bg-transparent">A fourth item</li>
-              <li class="list-group-item bg-transparent">And a fifth one</li>
+              <li class="list-group-item bg-transparent" v-for="(collect, index) in getCollectionData" :key="index">
+                <span
+                  class="delete-collect-button position-absolute translate-middle p-2 bg-danger border border-light rounded-circle"
+                  @click="deleteChooseCollect(collect.id)"
+                >
+                </span>
+
+                <p class="m-0"><span class="fst-italic">Collection name: </span> {{ collect.name }}</p>
+                <div class="d-flex align-items-center">
+                  <span class="fst-italic">Start: </span>
+                  <span class="ms-2 text-center">{{ collect.start_at ? collect.start_at : "None" }}</span>
+                  <span class="ms-3 fst-italic">End: </span>
+                  <span class="ms-2 text-center">{{ collect.end_at ? collect.end_at : "None" }}</span>
+                </div>
+              </li>
             </ul>
           </div>
         </div>
         <div class="add-card">
-          <p class="m-0 fs-5 fw-bold">Add new catalog or collection</p>
+          <p class="fs-5 fw-bold">Add new catalog or collection</p>
           <CCTabComponent
             ref="navTabs"
             @updateCatalogIndex="catalogueChangeData"
@@ -169,13 +185,14 @@ export default {
     try {
       const [catalogueResponse, collectionResponse] = await Promise.all([
         axsIns.get("/api/categories"),
-        axsIns.get("api/collections"),
+        axsIns.get("/api/collections"),
       ]);
       if (catalogueResponse.status === 200) {
         this.catalogueIndexData = catalogueResponse.data;
       }
       if (collectionResponse.status === 200) {
         this.collectionIndexData = collectionResponse.data;
+        console.log(collectionResponse);
       }
     } catch (error) {
       console.log(error);
@@ -205,6 +222,28 @@ export default {
         this.catalogueChosenData.splice(index, 1);
       }
     },
+    collectionChosen(event) {
+      const value = event.target.data;
+      if (event.target.checked) {
+        if (!this.collectionChosenData.includes(value)) {
+          this.collectionChosenData.push(value);
+        }
+      } else {
+        const index = this.collectionChosenData.findIndex((collectValue) => collectValue === value);
+        this.collectionChosenData.splice(index, 1);
+      }
+    },
+    async deleteChooseCollect(id) {
+      try {
+        const response = await axsIns.delete("/api/collections/" + id);
+        console.log(response);
+        if (response.status === 200) {
+          this.collectionChangeData(response.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
 };
 </script>
@@ -229,5 +268,35 @@ export default {
   border: 0.5px solid rgb(230, 230, 230);
   border-radius: 8px;
   padding: 8px;
+}
+.delete-collect-button {
+  display: none;
+  top: 15px;
+  right: 0;
+}
+.delete-collect-button:hover {
+  cursor: pointer;
+  top: 14px;
+  right: 1px;
+}
+.delete-collect-button:active {
+  transform: translate(0, 0);
+  top: 15px;
+  right: 0;
+}
+.list-group-item:hover {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+}
+.list-group-item:hover .delete-collect-button {
+  display: block;
+  animation: enabledDeleteCollectButton 0.4s ease-in;
+}
+@keyframes enabledDeleteCollectButton {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

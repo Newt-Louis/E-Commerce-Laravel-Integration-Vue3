@@ -135,12 +135,14 @@ export default {
         if (collectionResponse.status === 200) {
           this.$emit("updateCollectionIndex", collectionResponse.data);
           this.notify("Add new Collection !", "isDone");
+          this.collectionAddingInstance.nameValue = "";
+          this.collectionAddingInstance.startDate = "";
+          this.collectionAddingInstance.endDate = "";
         }
       } catch (error) {
         console.log(error);
         this.notify(error.response.data.erros, "isError");
       }
-      console.log(this.collectionAddingInstance);
     },
     notify(message, typeNotice) {
       this.notification[typeNotice] = true;

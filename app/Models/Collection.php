@@ -23,13 +23,15 @@ class Collection extends Model
     protected function startAt(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => Carbon::parse($value),
+            get: fn (?string $value) => $value ? Carbon::parse($value)->format('d-m-Y H:i') : null,
+            set: fn (?string $value) => $value ? Carbon::parse($value) : null,
         );
     }
     protected function endAt(): Attribute
     {
         return Attribute::make(
-            set: fn (string $value) => Carbon::parse($value),
+            get: fn (?string $value) => $value ? Carbon::parse($value)->format('d-m-Y H:i') : null,
+            set: fn (?string $value) => $value ? Carbon::parse($value) : null,
         );
     }
 }

@@ -13,8 +13,8 @@ return new class () extends Migration {
         Schema::create('collections', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->date('start_at')->nullable();
-            $table->date('end_at')->nullable();
+            $table->dateTime('start_at')->nullable();
+            $table->dateTime('end_at')->nullable();
             $table->timestamps();
         });
     }

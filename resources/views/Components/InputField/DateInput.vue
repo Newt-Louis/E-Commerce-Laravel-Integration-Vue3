@@ -44,6 +44,8 @@ export default {
       }
     },
     handleDateInput(event) {
+      console.log(event.target.value);
+
       this.$emit("update:inputValue", event.target.value);
     },
   },

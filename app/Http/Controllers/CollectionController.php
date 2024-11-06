@@ -31,4 +31,9 @@ class CollectionController extends Controller
             return $this->index();
         }
     }
+    public function destroy(Collection $collection)
+    {
+        $collection->delete();
+        return $this->index();
+    }
 }
