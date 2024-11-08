@@ -151,7 +151,7 @@
 <script>
 import TextInput from "../../../Components/InputField/TextInput.vue";
 import FileInput from "../../../Components/InputField/FileInput.vue";
-import DateInput from "../../../Components/InputField/DateInput.vue";
+import NumberInput from "../../../Components/InputField/NumberInput.vue";
 import TPDComponent from "./TPDComponent.vue";
 import CCTabComponent from "./CCTabComponent.vue";
 import { axsIns } from "../../../../js/bootstrap";
@@ -159,6 +159,7 @@ export default {
   components: {
     TextInput,
     FileInput,
+    NumberInput,
     TPDComponent,
     CCTabComponent,
   },
@@ -192,7 +193,6 @@ export default {
       }
       if (collectionResponse.status === 200) {
         this.collectionIndexData = collectionResponse.data;
-        console.log(collectionResponse);
       }
     } catch (error) {
       console.log(error);

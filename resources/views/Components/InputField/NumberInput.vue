@@ -1,58 +1,75 @@
 <template>
-  <input type="text" :class="`form-control ${isValidation}`" />
-  <!-- <BaseInput :type-number="true" v-bind="$attrs" @bi-valid="declareNumberInput" :pattern="'^[1-9]\\d*(,\\d+)*$'">
-    <template #required>
-      <div class="invalid-feedback">
-        <slot name="required"></slot>
-      </div>
-    </template>
-    <template #minlength>
-      <div class="invalid-feedback">
-        <slot name="minlength"></slot>
-      </div>
-    </template>
-    <template #maxlength>
-      <div class="invalid-feedback">
-        <slot name="maxlength"></slot>
-      </div>
-    </template>
-    <template #pattern>
-      <div class="invalid-feedback">
-        <slot name="pattern"> Available only for number ! </slot>
-      </div>
-    </template>
-  </BaseInput> -->
+  <input type="text" :class="`form-control ${isValidation}`" :placeholder="placeholder" v-model="displayValue" />
 </template>
 
 <script>
-import BaseInput from "./BaseInput.vue";
+import { getValidator } from "../../../js/Composable/validateInputRules.composable";
+import { useUtilities } from "../../../js/Composable/utilities.composable";
 export default {
-  components: {
-    BaseInput,
+  components: {},
+  props: {
+    numberInputName: {
+      type: String,
+      default: "",
+    },
+    placeholder: {
+      type: String,
+      default: "",
+    },
+    required: {
+      type: Boolean,
+      default: false,
+    },
+    minlength: {
+      type: Number,
+      default: 0,
+    },
+    maxlength: {
+      type: Number,
+      default: 0,
+    },
+    pattern: {
+      type: String,
+      default: "",
+    },
+    modelValue: String,
+    validateState: {
+      type: Boolean,
+      default: true,
+    },
   },
-  props: {},
-  emits: ["numberValid"],
+  emits: ["numberValid", "update:modelValue"],
   data() {
     return {
       isValidation: "",
       isNumberValid: {
-        name: "number",
+        name: this.numberInputName,
         isValid: false,
-        value: "",
+        value: this.modelValue,
       },
     };
   },
-  computed: {},
+  computed: {
+    displayValue: {
+      get() {
+        // const result = this.modelValue.trim();
+        // return result.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        const utilities = useUtilities();
+        return utilities.numberWithCommas(this.modelValue);
+      },
+      set(newValue) {
+        const numberValue = newValue.replace(/,/g, "");
+        this.$emit("update:modelValue", numberValue);
+      },
+    },
+  },
   watch: {},
   mounted() {
     this.$emit("numberValid", this.isNumberValid);
   },
   methods: {
-    declareNumberInput(validationData) {
-      if (validationData?.baseValid) {
-        this.isNumberValid.isValid = true;
-        this.isNumberValid.value = validationData?.numberValue;
-      }
+    isNumberInputDone(event) {
+      this.$emit("update:modelValue", event.target.value);
       return this.$emit("numberValid", this.isNumberValid);
     },
   },

@@ -15,20 +15,42 @@
     </div>
     <div class="col-lg-8 border bg-white rounded position-relative">
       <div class="price-container p-3 direction-angle-right" v-show="switchTab === tdpContent.price.name">
-        <div class="row align-items-center justify-content-center">
-          <div class="col-lg-3"></div>
-          <div class="col-lg-4">
+        <p class="fw-bold m-0 mb-2 text-secondary">
+          Add price <br />
+          <span class="fs-6 fw-light">Must fill with capacities on each quantity</span>
+        </p>
+        <div class="row">
+          <div class="col">
+            <p class="fw-bold text-center">Measurement</p>
+          </div>
+          <div class="col text-center">
             <p class="fw-bold">Regular price</p>
           </div>
-          <div class="col-lg-4">
+          <div class="col text-center">
             <p class="fw-bold">Sale price</p>
           </div>
-          <div class="col-lg-3">(capacity)</div>
-          <div class="col-lg-4">
-            <TextInput :placeholder="'$$$'"></TextInput>
+        </div>
+        <div
+          class="row row-auto-cols align-items-center justify-content-between mb-3"
+          v-for="(capacity, index) in capacitiesChosenData"
+          :key="index"
+        >
+          <div class="col fw-semibold">{{ capacity.name + " (" + capacity.volume + ")" }}</div>
+          <div class="col w-25">
+            <NumberInput
+              v-model="capacity.regularPrice"
+              :placeholder="'$$$'"
+              :number-input-name="capacity.name + 'Regular'"
+              @input="handleOnPriceInput"
+            ></NumberInput>
           </div>
-          <div class="col-lg-4">
-            <TextInput :placeholder="'$$$'"></TextInput>
+          <div class="col w-25">
+            <NumberInput
+              v-model="capacity.salePrice"
+              :placeholder="'$$$'"
+              :number-input-name="capacity.name + 'Sale'"
+              @input="handleOnPriceInput"
+            ></NumberInput>
           </div>
         </div>
       </div>
@@ -38,9 +60,13 @@
             Add to inventory <br />
             <span class="fs-6 fw-light">Must fill with capacities on each quantity</span>
           </p>
-          <div class="d-flex gap-2 align-items-center mb-2">
-            <p class="fw-semibold m-0">(Capacity)</p>
-            <TextInput :placeholder="'Quantity...'"></TextInput>
+          <div class="row align-items-center mb-2" v-for="(capacity, index) in getCapacitiesChosenData" :key="index">
+            <div class="col-lg-5">
+              <p class="fw-semibold m-0">{{ capacity.name + " (" + capacity.volume + ")" }}</p>
+            </div>
+            <div class="col-lg-7">
+              <TextInput :placeholder="'Quantity...'" :text-input-name="capacity.name"></TextInput>
+            </div>
           </div>
         </div>
       </div>
@@ -121,10 +147,14 @@
 <script>
 import { axsIns } from "../../../../js/bootstrap";
 import TextInput from "../../../Components/InputField/TextInput.vue";
+import NumberInput from "../../../Components/InputField/NumberInput.vue";
 export default {
   components: {
     TextInput,
+    NumberInput,
   },
+  props: {},
+  emits: [""],
   data() {
     return {
       tdpContent: {
@@ -148,11 +178,15 @@ export default {
         volume: "",
       },
       registeredCapacitiesInput: [],
+      pdInfo: [],
     };
   },
   computed: {
     isRegisteredCapacitiesInputDone() {
       return this.registeredCapacitiesInput.every((capacity) => capacity.isValid === true);
+    },
+    getCapacitiesChosenData() {
+      return this.capacitiesChosenData;
     },
   },
   async mounted() {
@@ -160,7 +194,6 @@ export default {
       const capacitiesResponse = await axsIns.get("/api/capacities");
       if (capacitiesResponse.status === 200) {
         this.capacitiesIndexData = capacitiesResponse.data;
-        console.log(capacitiesResponse);
       }
     } catch (error) {
       console.log(error);
@@ -180,6 +213,8 @@ export default {
         const addCapacityResponse = await axsIns.post("/api/capacities", this.capacitiesAddingIns);
         if (addCapacityResponse.status === 200) {
           this.capacitiesIndexData = addCapacityResponse.data;
+          this.capacitiesAddingIns.name = "";
+          this.capacitiesAddingIns.volume = "";
         }
       } catch (error) {
         console.log(error);
@@ -196,7 +231,14 @@ export default {
     handleOnCapacityCheckbox(event, index) {
       const value = event.target.value;
       if (event.target.checked) {
-        this.capacitiesChosenData.push(this.capacitiesIndexData[index]);
+        const capacityInstance = {
+          ...this.capacitiesIndexData[index],
+          regularPrice: "",
+          salePrice: "",
+          inventory: "",
+          supplier: "",
+        };
+        this.capacitiesChosenData.push(capacityInstance);
       } else {
         const capacityIns = this.capacitiesIndexData[index];
         const capacityChosenIndex = this.capacitiesChosenData.findIndex(
@@ -204,6 +246,21 @@ export default {
         );
         this.capacitiesChosenData.splice(capacityChosenIndex, 1);
       }
+    },
+    handleOnPriceInput(data) {
+      console.log(data);
+      console.log(this.capacitiesChosenData);
+    },
+    hanldeOnRestockInput(data) {},
+    handleOnSupplierInput(data) {},
+    handleOnProductDetailsInfo() {
+      let pdInstance = {
+        measurement: "",
+        regularPrice: "",
+        salePrice: "",
+        inventory: "",
+        supplier: "",
+      };
     },
   },
 };
