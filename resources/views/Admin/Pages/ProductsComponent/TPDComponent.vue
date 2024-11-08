@@ -31,17 +31,17 @@
           </div>
         </div>
         <div
-          class="row row-auto-cols align-items-center justify-content-between mb-3"
+          class="row row-auto-cols justify-content-between mb-3"
           v-for="(capacity, index) in capacitiesChosenData"
           :key="index"
         >
-          <div class="col fw-semibold">{{ capacity.name + " (" + capacity.volume + ")" }}</div>
+          <div class="col fw-semibold mt-2">{{ capacity.name + " (" + capacity.volume + ")" }}</div>
           <div class="col w-25">
             <NumberInput
               v-model="capacity.regularPrice"
               :placeholder="'$$$'"
               :number-input-name="capacity.name + 'Regular'"
-              @input="handleOnPriceInput"
+              @number-valid="handleOnPriceInput"
             ></NumberInput>
           </div>
           <div class="col w-25">
@@ -49,7 +49,7 @@
               v-model="capacity.salePrice"
               :placeholder="'$$$'"
               :number-input-name="capacity.name + 'Sale'"
-              @input="handleOnPriceInput"
+              @number-valid="handleOnPriceInput"
             ></NumberInput>
           </div>
         </div>
