@@ -73,6 +73,10 @@
                   <p class="col m-0">Supplier: {{ item.supplier }}</p>
                   <p class="col m-0">Capacity: {{ item.name + " (" + item.volume + ")" }}</p>
                   <p class="col m-0">Inventory: {{ item.inventory }}</p>
+                  <p class="col m-0" v-if="item?.collection && item.collection.length > 0">
+                    Collection:
+                    <span v-for="(collect, index) in item.collection" :key="index">{{ collect.name + ", " }}</span>
+                  </p>
                 </div>
               </div>
             </li>
@@ -120,8 +124,8 @@
         </div>
         <div class="add-card" v-if="collectionChosenData.length > 0">
           <p class="fs-5 fw-bold">Choose product with</p>
-          <div v-for="(collect, index) in collectionChosenData" :key="index">
-            <p class="fw-semibold">{{ collect?.name }}</p>
+          <div class="mb-3" v-for="(collect, index) in collectionChosenData" :key="index">
+            <p class="m-0 fw-semibold">{{ collect?.name }}</p>
             <div class="select-container" v-if="pdInfo.length > 0">
               <div class="form-check" v-for="(item, index) in pdInfo" :key="index">
                 <input
