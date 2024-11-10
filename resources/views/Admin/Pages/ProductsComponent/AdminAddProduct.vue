@@ -109,11 +109,29 @@
                 <input
                   class="form-check-input"
                   type="checkbox"
-                  :value="collect.name"
+                  :value="collect.id"
                   :id="index"
                   @input="collectionChosen"
                 />
                 <label class="form-check-label" :for="index"> {{ collect.name }} </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="add-card" v-if="collectionChosenData.length > 0">
+          <p class="fs-5 fw-bold">Choose product with</p>
+          <div v-for="(collect, index) in collectionChosenData" :key="index">
+            <p class="fw-semibold">{{ collect?.name }}</p>
+            <div class="select-container" v-if="pdInfo.length > 0">
+              <div class="form-check" v-for="(item, index) in pdInfo" :key="index">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  :value="item.name"
+                  :id="index"
+                  @input="getCollectionForProduct($event, collect.id)"
+                />
+                <label class="form-check-label" :for="index"> {{ "product name" + " (" + item.name + ")" }} </label>
               </div>
             </div>
           </div>
@@ -228,13 +246,12 @@ export default {
       }
     },
     collectionChosen(event) {
-      const value = event.target.data;
+      const idCollect = event.target.value;
       if (event.target.checked) {
-        if (!this.collectionChosenData.includes(value)) {
-          this.collectionChosenData.push(value);
-        }
+        const collectionInstance = this.collectionIndexData.find((collect) => collect.id === +idCollect);
+        this.collectionChosenData.push(collectionInstance);
       } else {
-        const index = this.collectionChosenData.findIndex((collectValue) => collectValue === value);
+        const index = this.collectionChosenData.findIndex((collect) => collect.id === +idCollect);
         this.collectionChosenData.splice(index, 1);
       }
     },
@@ -249,9 +266,27 @@ export default {
         console.log(error);
       }
     },
+    getCollectionForProduct(event, collectionID) {
+      const capacityName = event.target.value;
+      const PDInstance = this.pdInfo.find((prod) => prod.name === capacityName);
+      if (event.target.checked) {
+        if (!PDInstance?.collection) {
+          PDInstance["collection"] = [];
+        }
+        PDInstance["collection"].push(this.collectionChosenData.find((collect) => collect.id === collectionID));
+      } else {
+        const index = PDInstance["collection"].findIndex((collect) => collect.id === collectionID);
+        PDInstance["collection"].splice(index, 1);
+      }
+      /*
+        property may not include in product detail instance cause collection don't have to
+        had a collection property so we have to take care about this collection property when
+        send a request to add a product
+      */
+      console.log(this.pdInfo);
+    },
     handleOnUpdatePDInfo(data) {
       this.pdInfo = data;
-      console.log(this.pdInfo);
     },
   },
 };

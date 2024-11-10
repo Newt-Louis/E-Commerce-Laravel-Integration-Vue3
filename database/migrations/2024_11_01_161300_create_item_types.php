@@ -12,7 +12,7 @@ return new class () extends Migration {
     {
         Schema::create('item_types', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable();
+            $table->string('name')->nullable()->unique();
             $table->timestamps();
         });
     }
