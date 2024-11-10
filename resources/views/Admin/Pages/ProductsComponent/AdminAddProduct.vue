@@ -53,22 +53,26 @@
         </div>
         <div class="add-product-info">
           <p class="m-0 fs-5 fw-bold">Product details</p>
-          <TPDComponent></TPDComponent>
+          <TPDComponent @update:pd-info="handleOnUpdatePDInfo"></TPDComponent>
         </div>
         <div class="add-product-info">
           <p class="fs-5 fw-bold">Result adding</p>
-          <ol class="list-group list-group-numbered list-group-flush">
-            <li class="list-group-item d-flex justify-content-between align-items-start bg-transparent">
+          <ol class="list-group list-group-numbered list-group-flush" v-if="pdInfo.length > 0">
+            <li
+              class="list-group-item d-flex justify-content-between align-items-start bg-transparent"
+              v-for="(item, index) in pdInfo"
+              :key="index"
+            >
               <div class="ms-2">
                 <div><span class="fw-bold">Product name:</span> (Name)</div>
                 <div class="row row-cols-auto">
-                  <p class="col m-0">Regular price:</p>
-                  <p class="col m-0">Sale price:</p>
+                  <p class="col m-0">Regular price: {{ item.price }}</p>
+                  <p class="col m-0">Sale price: {{ item.discount }}</p>
                   <p class="col m-0">Gender:</p>
-                  <p class="col m-0">Origin</p>
-                  <p class="col m-0">Supplier:</p>
-                  <p class="col m-0">Capacity:</p>
-                  <p class="col m-0">Inventory:</p>
+                  <p class="col m-0">Origin:</p>
+                  <p class="col m-0">Supplier: {{ item.supplier }}</p>
+                  <p class="col m-0">Capacity: {{ item.name + " (" + item.volume + ")" }}</p>
+                  <p class="col m-0">Inventory: {{ item.inventory }}</p>
                 </div>
               </div>
             </li>
@@ -169,6 +173,7 @@ export default {
       catalogueChosenData: [],
       collectionIndexData: [],
       collectionChosenData: [],
+      pdInfo: [],
     };
   },
   computed: {
@@ -244,6 +249,10 @@ export default {
         console.log(error);
       }
     },
+    handleOnUpdatePDInfo(data) {
+      this.pdInfo = data;
+      console.log(this.pdInfo);
+    },
   },
 };
 </script>
@@ -285,6 +294,7 @@ export default {
   right: 0;
 }
 .list-group-item:hover {
+  border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.7) !important;
 }
 .list-group-item:hover .delete-collect-button {

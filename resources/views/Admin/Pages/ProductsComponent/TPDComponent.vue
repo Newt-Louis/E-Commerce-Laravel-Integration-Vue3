@@ -38,19 +38,22 @@
           <div class="col fw-semibold mt-2">{{ capacity.name + " (" + capacity.volume + ")" }}</div>
           <div class="col w-25">
             <NumberInput
-              v-model="capacity.regularPrice"
+              v-model="capacity.price"
               :placeholder="'$$$'"
               :number-input-name="capacity.name + 'Regular'"
               @number-valid="handleOnPriceInput"
             ></NumberInput>
           </div>
           <div class="col w-25">
-            <NumberInput
-              v-model="capacity.salePrice"
-              :placeholder="'$$$'"
-              :number-input-name="capacity.name + 'Sale'"
-              @number-valid="handleOnPriceInput"
-            ></NumberInput>
+            <TextInput
+              v-model:input-value="capacity.discount"
+              :placeholder="'0.325, 0.1...'"
+              :text-input-name="capacity.name + 'Sale'"
+              :pattern="'^(?:0|[1-9]\\d*)(?:\\.\\d+)?$'"
+              @text-valid="handleOnPriceInput"
+            >
+              <template #pattern>Discount must be written as a decimal number: 0.1, 0.235 etc... </template>
+            </TextInput>
           </div>
         </div>
       </div>
@@ -65,7 +68,12 @@
               <p class="fw-semibold m-0">{{ capacity.name + " (" + capacity.volume + ")" }}</p>
             </div>
             <div class="col-lg-7">
-              <TextInput :placeholder="'Quantity...'" :text-input-name="capacity.name"></TextInput>
+              <NumberInput
+                :placeholder="'Quantity...'"
+                :number-input-name="capacity.name + 'Inventory'"
+                v-model="capacity.inventory"
+                @number-valid="hanldeOnRestockInput"
+              ></NumberInput>
             </div>
           </div>
         </div>
@@ -74,7 +82,12 @@
         <div class="h-100 w-100 d-inline-block">
           <p class="fw-bold text-secondary">Supplier</p>
           <div class="d-flex gap-2 align-items-center mb-2">
-            <TextInput :placeholder="'Supplier name ...'"></TextInput>
+            <TextInput
+              :placeholder="'Supplier name ...'"
+              :text-input-name="'supplier'"
+              v-model:input-value="supplierValue"
+              @text-valid="handleOnSupplierInput"
+            ></TextInput>
           </div>
           <div class="h-50 d-flex align-items-end justify-content-end">
             <span class="fw-light fst-italic">Supplier may be add more info later</span>
@@ -154,7 +167,7 @@ export default {
     NumberInput,
   },
   props: {},
-  emits: [""],
+  emits: ["update:pdInfo"],
   data() {
     return {
       tdpContent: {
@@ -179,6 +192,7 @@ export default {
       },
       registeredCapacitiesInput: [],
       pdInfo: [],
+      supplierValue: "",
     };
   },
   computed: {
@@ -233,8 +247,8 @@ export default {
       if (event.target.checked) {
         const capacityInstance = {
           ...this.capacitiesIndexData[index],
-          regularPrice: "",
-          salePrice: "",
+          price: "",
+          discount: "",
           inventory: "",
           supplier: "",
         };
@@ -246,21 +260,24 @@ export default {
         );
         this.capacitiesChosenData.splice(capacityChosenIndex, 1);
       }
+      this.handleOnProductDetailsInfo();
     },
     handleOnPriceInput(data) {
-      console.log(data);
-      console.log(this.capacitiesChosenData);
+      this.handleOnProductDetailsInfo();
     },
-    hanldeOnRestockInput(data) {},
-    handleOnSupplierInput(data) {},
+    hanldeOnRestockInput(data) {
+      this.handleOnProductDetailsInfo();
+    },
+    handleOnSupplierInput(data) {
+      if (this.capacitiesChosenData.length > 0) {
+        for (let index = 0; index < this.capacitiesChosenData.length; index++) {
+          this.capacitiesChosenData[index].supplier = this.supplierValue;
+        }
+      }
+      this.handleOnProductDetailsInfo();
+    },
     handleOnProductDetailsInfo() {
-      let pdInstance = {
-        measurement: "",
-        regularPrice: "",
-        salePrice: "",
-        inventory: "",
-        supplier: "",
-      };
+      this.$emit("update:pdInfo", this.capacitiesChosenData);
     },
   },
 };
