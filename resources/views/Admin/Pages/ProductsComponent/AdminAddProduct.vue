@@ -9,7 +9,7 @@
       <div class="d-grid gap-2 d-lg-block">
         <button class="btn btn-outline-dark btn-sm me-2">Discard</button>
         <button class="btn btn-outline-primary btn-sm me-2">Save draft</button>
-        <button class="btn btn-primary btn-sm">Publish product</button>
+        <button class="btn btn-primary btn-sm" @click="handleOnAddProduct">Publish product</button>
       </div>
     </div>
     <!-------------------------- Input filed basic info Product ---------------------->
@@ -19,6 +19,7 @@
           <div class="mb-4">
             <label for="p-title" class="form-label fw-bold fs-5">Product Title</label>
             <TextInput
+              v-model:input-value="productBasicInfo.title"
               :placeholder="`Write title here ...`"
               :text-input-name="`product-title`"
               id="p-title"
@@ -26,12 +27,12 @@
           </div>
           <div class="mb-3">
             <label for="p-des" class="form-label fw-bold fs-5">Product Description</label>
-            <textarea class="form-control" id="p-des"></textarea>
+            <textarea class="form-control" id="p-des" v-model="productBasicInfo.description"></textarea>
           </div>
           <div class="d-flex justify-content-around mb-4">
             <div>
               <label for="p-gender" class="form-label fw-bold fs-5">Gender</label>
-              <select name="" id="p-gender" class="form-select">
+              <select name="" id="p-gender" class="form-select" v-model="productBasicInfo.gender">
                 <option value="">Select Gender</option>
                 <option value="lady">Lady</option>
                 <option value="gentlemen">Gentlemen</option>
@@ -41,29 +42,30 @@
             <div>
               <label for="p-title" class="form-label fw-bold fs-5">Product Origin</label>
               <TextInput
+                v-model:input-value="productBasicInfo.origin"
                 :placeholder="`Write origin here ...`"
                 :text-input-name="`product-origin`"
                 id="p-origin"
-              ></TextInput>
+              >
+              </TextInput>
             </div>
           </div>
           <div>
-            <FileInput :image-number="4"></FileInput>
+            <FileInput :image-number="4" @files-valid="getFileData"></FileInput>
           </div>
         </div>
         <div class="add-product-info">
           <p class="m-0 fs-5 fw-bold">Product details</p>
-          <TPDComponent @update:pd-info="handleOnUpdatePDInfo"></TPDComponent>
+          <TPDComponent
+            :is-reset-field="validateState.resetField"
+            @update:pd-info="handleOnUpdatePDInfo"
+          ></TPDComponent>
         </div>
         <div class="add-product-info">
           <p class="fs-5 fw-bold">Result adding</p>
           <ol class="list-group list-group-numbered list-group-flush" v-if="pdInfo.length > 0">
-            <li
-              class="list-group-item d-flex justify-content-between align-items-start bg-transparent"
-              v-for="(item, index) in pdInfo"
-              :key="index"
-            >
-              <div class="ms-2">
+            <li class="list-group-item d-flex bg-transparent" v-for="(item, index) in pdInfo" :key="index">
+              <div>
                 <div><span class="fw-bold">Product name:</span> (Name)</div>
                 <div class="row row-cols-auto">
                   <p class="col m-0">Regular price: {{ item.price }}</p>
@@ -95,12 +97,13 @@
               <div class="form-check" v-for="(category, index) in getCatalogueData" :key="index">
                 <input
                   class="form-check-input"
-                  type="checkbox"
-                  :value="category.name"
-                  :id="index"
+                  type="radio"
+                  name="catalog"
+                  :value="category.id"
+                  :id="category.name"
                   @input="catalogueChosen"
                 />
-                <label class="form-check-label" :for="index"> {{ category.name }} </label>
+                <label class="form-check-label" :for="category.name"> {{ category.name }} </label>
               </div>
             </div>
           </div>
@@ -114,10 +117,10 @@
                   class="form-check-input"
                   type="checkbox"
                   :value="collect.id"
-                  :id="index"
+                  :id="collect.name"
                   @input="collectionChosen"
                 />
-                <label class="form-check-label" :for="index"> {{ collect.name }} </label>
+                <label class="form-check-label" :for="collect.name"> {{ collect.name }} </label>
               </div>
             </div>
           </div>
@@ -191,8 +194,27 @@ export default {
   },
   data() {
     return {
+      notification: {
+        isError: false,
+        isDone: false,
+        message: "",
+        alertAnime: "",
+      },
+      validateState: {
+        title: true,
+        catalogue: true,
+        resetField: false,
+      },
+      productBasicInfo: {
+        title: "",
+        description: "",
+        gender: "",
+        origin: "",
+        itemTypeId: "",
+        pImages: [],
+      },
       catalogueIndexData: [],
-      catalogueChosenData: [],
+      // catalogueChosenData: [],
       collectionIndexData: [],
       collectionChosenData: [],
       pdInfo: [],
@@ -239,15 +261,15 @@ export default {
       this.collectionIndexData = data;
     },
     catalogueChosen(event) {
-      const value = event.target.value;
-      if (event.target.checked) {
-        if (!this.catalogueChosenData.includes(value)) {
-          this.catalogueChosenData.push(value);
-        }
-      } else {
-        const index = this.catalogueChosenData.findIndex((catalogueValue) => catalogueValue === value);
-        this.catalogueChosenData.splice(index, 1);
-      }
+      this.productBasicInfo.itemTypeId = event.target.value;
+      // if (event.target.checked) {
+      //   if (!this.catalogueChosenData.includes(value)) {
+      //     this.catalogueChosenData.push(value);
+      //   }
+      // } else {
+      //   const index = this.catalogueChosenData.findIndex((catalogueValue) => catalogueValue === value);
+      //   this.catalogueChosenData.splice(index, 1);
+      // }
     },
     collectionChosen(event) {
       const idCollect = event.target.value;
@@ -270,6 +292,13 @@ export default {
         console.log(error);
       }
     },
+    getFileData(data) {
+      if (data?.value.length > 0) {
+        data.value.forEach((element) => {
+          this.productBasicInfo.pImages.push(element);
+        });
+      }
+    },
     getCollectionForProduct(event, collectionID) {
       const capacityName = event.target.value;
       const PDInstance = this.pdInfo.find((prod) => prod.name === capacityName);
@@ -289,8 +318,59 @@ export default {
       */
       console.log(this.pdInfo);
     },
-    handleOnUpdatePDInfo(data) {
+    handleOnUpdatePDInfo(data, isResetFiled) {
       this.pdInfo = data;
+      this.validateState.resetField = isResetFiled;
+    },
+    async handleOnAddProduct() {
+      const formData = new FormData();
+      if (this.productBasicInfo.title === "" || this.productBasicInfo.itemTypeId === "") {
+        this.notify("Products must have a title and a category", "isError");
+        return;
+      } else {
+        formData.append("name", this.productBasicInfo.title);
+        formData.append("description", this.productBasicInfo.description);
+        formData.append("gender", this.productBasicInfo.gender);
+        formData.append("origin", this.productBasicInfo.origin);
+        formData.append("item_type_id", this.productBasicInfo.itemTypeId);
+        if (this.productBasicInfo.pImages.length > 0) {
+          this.productBasicInfo.pImages.forEach((image) => {
+            formData.append("product_images[]", image);
+          });
+        }
+      }
+      if (this.pdInfo.length > 0) {
+        formData.append("product_details[]", JSON.stringify(this.pdInfo));
+      }
+      try {
+        const response = await axsIns("/api/products", formData);
+        if (response.status === 200) {
+          this.notify("Add new product success");
+          this.clearField();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    notify(message, warningType) {
+      this.notification[warningType] = true;
+      this.notification.message = message;
+      this.notification.alertAnime = "animate__fadeIn";
+      setTimeout(() => {
+        this.notification[warningType] = false;
+        this.notification.message = "";
+        this.notification.alertAnime = "";
+      }, 5000);
+    },
+    clearField() {
+      this.productBasicInfo.title = "";
+      this.productBasicInfo.description = "";
+      this.productBasicInfo.gender = "";
+      this.productBasicInfo.itemTypeId = "";
+      this.productBasicInfo.origin = "";
+      this.productBasicInfo.pImages = [];
+      this.pdInfo = [];
+      this.validateState.resetField = true;
     },
   },
 };

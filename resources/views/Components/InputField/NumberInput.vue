@@ -9,17 +9,17 @@
       @focus="hasFocused = true"
       @blur="hasFocused = false"
     />
-    <div class="invalid-feedback">
-      <slot name="required" v-if="displayError.required"></slot>
+    <div class="invalid-feedback" v-if="displayError.required">
+      <slot name="required"></slot>
     </div>
-    <div class="invalid-feedback">
-      <slot name="minlength" v-if="displayError.minlength"></slot>
+    <div class="invalid-feedback" v-if="displayError.minlength">
+      <slot name="minlength"></slot>
     </div>
-    <div class="invalid-feedback">
-      <slot name="maxlength" v-if="displayError.maxlength"></slot>
+    <div class="invalid-feedback" v-if="displayError.maxlength">
+      <slot name="maxlength"></slot>
     </div>
-    <div class="invalid-feedback">
-      <span v-if="displayError.pattern">Only number</span>
+    <div class="invalid-feedback" v-if="displayError.pattern">
+      <span>Only number</span>
     </div>
   </div>
 </template>

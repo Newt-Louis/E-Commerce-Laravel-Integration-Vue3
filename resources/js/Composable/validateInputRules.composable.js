@@ -12,7 +12,7 @@ const validationRulesStrategies = {
     return true;
   },
   maxlength: (value, stringLength) => {
-    if (value === "" || value.length >= stringLength) {
+    if (value.length >= stringLength) {
       return false;
     }
     return true;

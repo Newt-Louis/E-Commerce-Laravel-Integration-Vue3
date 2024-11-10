@@ -166,7 +166,11 @@ export default {
     TextInput,
     NumberInput,
   },
-  props: {},
+  props: {
+    isResetField: {
+      type: Boolean,
+    },
+  },
   emits: ["update:pdInfo"],
   data() {
     return {
@@ -201,6 +205,15 @@ export default {
     },
     getCapacitiesChosenData() {
       return this.capacitiesChosenData;
+    },
+  },
+  watch: {
+    isResetField: {
+      handler(newVal) {
+        if (newVal === true) {
+          this.capacitiesChosenData = [];
+        }
+      },
     },
   },
   async mounted() {
@@ -277,7 +290,7 @@ export default {
       this.handleOnProductDetailsInfo();
     },
     handleOnProductDetailsInfo() {
-      this.$emit("update:pdInfo", this.capacitiesChosenData);
+      this.$emit("update:pdInfo", this.capacitiesChosenData, !(this.capacitiesChosenData.length > 0));
     },
   },
 };
