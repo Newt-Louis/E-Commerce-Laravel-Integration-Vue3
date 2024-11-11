@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Capacities;
+use App\Models\Capacity;
 use Illuminate\Http\Request;
 
-class CapacitiesController extends Controller
+class CapacityController extends Controller
 {
     public function index()
     {
-        $capacities = Capacities::all();
+        $capacities = Capacity::all();
         return response()->json($capacities);
     }
     public function store(Request $request)
@@ -21,11 +21,11 @@ class CapacitiesController extends Controller
             ],
             [
               'name.required' => 'Capacity must have a name',
-              'volume' => 'Must have measurement unit',
+              'volume.required' => 'Must have measurement unit',
             ]
         );
         if ($validated) {
-            Capacities::create($validated);
+            Capacity::create($validated);
             return $this->index();
         }
     }
