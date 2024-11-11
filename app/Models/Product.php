@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -22,9 +23,12 @@ class Product extends Model
     {
         return $this->belongsTo(ItemType::class);
     }
-    public function productDetails(): HasMany
+    public function capacities(): BelongsToMany
     {
-        return $this->hasMany(ProductDetail::class);
+        return $this->belongsToMany(Capacity::class)
+        ->as('capacities')
+        ->withPivot('supplier', 'inventory', 'price', 'discount', 'created_at', 'updated_at')
+        ->withTimestamps();
     }
     public function productImages(): HasMany
     {

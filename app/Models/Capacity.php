@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Capacity extends Model
@@ -12,8 +13,11 @@ class Capacity extends Model
 
     protected $fillable = ['name','volume'];
 
-    public function productDetails(): HasMany
+    public function products(): BelongsToMany
     {
-        return $this->hasMany(ProductDetail::class);
+        return $this->belongsToMany(ProductDetail::class)
+        ->as('products')
+        ->withPivot('supplier', 'inventory', 'price', 'discount', 'created_at', 'updated_at')
+        ->withTimestamps();
     }
 }

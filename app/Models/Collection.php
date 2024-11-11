@@ -21,8 +21,9 @@ class Collection extends Model
     */
     public function productDetails(): HasManyThrough
     {
-        return $this->hasManyThrough(ProductDetail::class, CollectionProductDetail::class, 'product_id', 'product_id', 'id', 'collection_id');
+        return $this->hasManyThrough(ProductDetail::class, CollectionProductDetail::class, 'collection_id', 'product_id', 'id', 'product_id');
     }
+
     /**
      *
      * Accessor & Mutators

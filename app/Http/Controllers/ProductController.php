@@ -29,7 +29,11 @@ class ProductController extends Controller
      */
     public function store(StoreProductRequest $request)
     {
-        //
+        $validate = $request->validated();
+        $product = Product::create($validate);
+        if ($request->input('product_details')) {
+            # code...
+        }
     }
 
     /**
