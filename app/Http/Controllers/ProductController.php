@@ -32,7 +32,7 @@ class ProductController extends Controller
     {
         $validate = $request->validated();
         Log::info($validate);
-        Log::info(print_r($request->input('product_details')[0], true));
+        Log::info(var_dump($request->input('product_details')[0], true));
         /** @var App\Models\Product $product */
         // $product = Product::create($validate);
         // if (isset($validate['product_details'])) {

@@ -8,7 +8,7 @@
       </div>
       <div class="d-grid gap-2 d-lg-block">
         <button class="btn btn-outline-dark btn-sm me-2">Discard</button>
-        <button class="btn btn-outline-primary btn-sm me-2">Save draft</button>
+        <button class="btn btn-outline-primary btn-sm me-2" @click="clearField">Save draft</button>
         <button class="btn btn-primary btn-sm" @click="handleOnAddProduct">Publish product</button>
       </div>
     </div>
@@ -344,18 +344,15 @@ export default {
           formData.append(`product_details[${index}]`, pdInstance);
         });
       }
-      this.clearField();
-      // console.log(this.productBasicInfo);
-      // console.log(this.pdInfo);
-      // try {
-      //   const response = await axsIns.post("/api/products", formData);
-      //   if (response.status === 200) {
-      //     this.notify("Add new product success");
-      //     this.clearField();
-      //   }
-      // } catch (error) {
-      //   console.log(error);
-      // }
+      try {
+        const response = await axsIns.post("/api/products", formData);
+        if (response.status === 200) {
+          this.notify("Add new product success");
+          this.clearField();
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
     notify(message, warningType) {
       this.notification[warningType] = true;

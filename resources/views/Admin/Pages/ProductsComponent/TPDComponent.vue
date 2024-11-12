@@ -98,17 +98,17 @@
         <p class="fw-bold text-secondary">Capacities</p>
         <div class="capacities-show mb-3">
           <div class="row row-cols-auto">
-            <div class="col" v-for="(capacity, index) in capacitiesIndexData" :key="index">
+            <div class="col" v-for="(capacity, index) in getCapacitiesIndexData" :key="index">
               <div class="form-check">
                 <input
                   class="form-check-input"
                   type="checkbox"
                   :value="capacity.name"
-                  :checked="capacity?.isChecked"
-                  :id="index"
+                  :checked="capacity.isChecked"
+                  :id="`capacity${index}`"
                   @input="handleOnCapacityCheckbox($event, index)"
                 />
-                <label class="form-check-label" for="flexCheckDefault">{{
+                <label class="form-check-label" :for="`capacity${index}`">{{
                   capacity.name + " (" + capacity.volume + ")"
                 }}</label>
               </div>
@@ -207,16 +207,15 @@ export default {
     getCapacitiesChosenData() {
       return this.capacitiesChosenData;
     },
+    getCapacitiesIndexData() {
+      return this.capacitiesIndexData;
+    },
   },
   watch: {
     isResetField: {
       handler(newVal) {
         if (newVal === true) {
-          console.log(this.capacitiesIndexData);
-          this.capacitiesChosenData = [];
-          this.capacitiesIndexData.forEach((capacity, index) => {
-            capacity.isChecked = false;
-          });
+          this.handleOnResetField();
         }
       },
     },
@@ -226,7 +225,7 @@ export default {
       const capacitiesResponse = await axsIns.get("/api/capacities");
       if (capacitiesResponse.status === 200) {
         capacitiesResponse.data.forEach((capacity) => {
-          capacity["isChecked"] = true;
+          capacity["isChecked"] = false;
           this.capacitiesIndexData.push(capacity);
         });
         // this.capacitiesIndexData = capacitiesResponse.data;
@@ -267,6 +266,7 @@ export default {
     handleOnCapacityCheckbox(event, index) {
       const value = event.target.value;
       if (event.target.checked) {
+        this.capacitiesIndexData[index].isChecked = event.target.checked;
         const capacityInstance = {
           ...this.capacitiesIndexData[index],
           price: "",
@@ -300,6 +300,12 @@ export default {
     },
     handleOnProductDetailsInfo() {
       this.$emit("update:pdInfo", this.capacitiesChosenData, !(this.capacitiesChosenData.length > 0));
+    },
+    handleOnResetField() {
+      this.capacitiesChosenData = [];
+      this.capacitiesIndexData.forEach((capacity) => {
+        capacity.isChecked = false;
+      });
     },
   },
 };
