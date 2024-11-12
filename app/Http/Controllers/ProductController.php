@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -28,11 +29,13 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductRequest $request)
+    public function store(Request $request)
     {
-        $validate = $request->validated();
-        Log::info($validate);
-        Log::info(var_dump($request->input('product_details')[0], true));
+        // $validate = $request->validated();
+        Log::info($request->all());
+        foreach (json_decode($request->product_details, true) as $pd) {
+            Log::info($pd);
+        }
         /** @var App\Models\Product $product */
         // $product = Product::create($validate);
         // if (isset($validate['product_details'])) {

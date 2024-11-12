@@ -340,9 +340,7 @@ export default {
         }
       }
       if (this.pdInfo.length > 0) {
-        this.pdInfo.forEach((pdInstance, index) => {
-          formData.append(`product_details[${index}]`, pdInstance);
-        });
+        formData.append("product_details", JSON.stringify(this.pdInfo));
       }
       try {
         const response = await axsIns.post("/api/products", formData);

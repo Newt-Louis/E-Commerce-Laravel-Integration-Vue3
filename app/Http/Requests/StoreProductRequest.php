@@ -14,7 +14,15 @@ class StoreProductRequest extends FormRequest
     {
         return true;
     }
-
+    /**
+     * Process the data before validation
+     */
+    protected function prepareForValidation()
+    {
+        $this->merge([
+          'product_details' => json_decode($this->input('product_details'), true)
+        ]);
+    }
     /**
      * Get the validation rules that apply to the request.
      *
@@ -28,16 +36,16 @@ class StoreProductRequest extends FormRequest
           'gender' => ['nullable',Rule::in(['unisex','gentlemen','lady'])],
           'origin' => ['nullable'],
           'item_type_id' => ['bail','required'],
-          // 'product_images' => ['sometimes','array'],
-          // 'product_images.*' => ['image'],
-          // 'product_details' => ['sometimes','array'],
-          // 'product_details.*.id' => ['required'],
-          // 'product_details.*.price' => ['nullable'],
-          // 'product_details.*.discount' => ['nullable'],
-          // 'product_details.*.inventory' => ['nullable'],
-          // 'product_details.*.supplier' => ['nullable'],
-          // 'product_details.*.collection' => ['sometimes','array'],
-          // 'product_details.*.collection.id' => ['required'],
+          'product_images' => ['sometimes','array'],
+          'product_images.*' => ['image'],
+          'product_details' => ['sometimes','array'],
+          'product_details.*.id' => ['required'],
+          'product_details.*.price' => ['nullable'],
+          'product_details.*.discount' => ['nullable'],
+          'product_details.*.inventory' => ['nullable'],
+          'product_details.*.supplier' => ['nullable'],
+          'product_details.*.collection' => ['sometimes','array'],
+          'product_details.*.collection.id' => ['required'],
         ];
     }
     public function messages()
