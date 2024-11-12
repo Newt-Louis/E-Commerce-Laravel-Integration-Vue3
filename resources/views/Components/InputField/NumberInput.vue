@@ -117,7 +117,6 @@ export default {
         this.validationResults[rule] = getValidator(rule, params);
         this.displayError[rule] = !this.validationResults[rule];
       });
-      console.log(this.validationResults);
 
       return enabledRules.length;
     },

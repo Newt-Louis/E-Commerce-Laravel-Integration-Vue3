@@ -66,12 +66,12 @@
           <ol class="list-group list-group-numbered list-group-flush" v-if="pdInfo.length > 0">
             <li class="list-group-item d-flex bg-transparent" v-for="(item, index) in pdInfo" :key="index">
               <div>
-                <div><span class="fw-bold">Product name:</span> (Name)</div>
+                <div><span class="fw-bold">Product name:</span> {{ productBasicInfo.title }}</div>
                 <div class="row row-cols-auto">
                   <p class="col m-0">Regular price: {{ item.price }}</p>
                   <p class="col m-0">Sale price: {{ item.discount }}</p>
-                  <p class="col m-0">Gender:</p>
-                  <p class="col m-0">Origin:</p>
+                  <p class="col m-0">Gender: {{ productBasicInfo.gender }}</p>
+                  <p class="col m-0">Origin: {{ productBasicInfo.origin }}</p>
                   <p class="col m-0">Supplier: {{ item.supplier }}</p>
                   <p class="col m-0">Capacity: {{ item.name + " (" + item.volume + ")" }}</p>
                   <p class="col m-0">Inventory: {{ item.inventory }}</p>
@@ -334,23 +334,28 @@ export default {
         formData.append("origin", this.productBasicInfo.origin);
         formData.append("item_type_id", this.productBasicInfo.itemTypeId);
         if (this.productBasicInfo.pImages.length > 0) {
-          this.productBasicInfo.pImages.forEach((image) => {
-            formData.append("product_images[]", image);
+          this.productBasicInfo.pImages.forEach((image, index) => {
+            formData.append(`product_images[${index}]`, image);
           });
         }
       }
       if (this.pdInfo.length > 0) {
-        formData.append("product_details[]", JSON.stringify(this.pdInfo));
+        this.pdInfo.forEach((pdInstance, index) => {
+          formData.append(`product_details[${index}]`, pdInstance);
+        });
       }
-      try {
-        const response = await axsIns("/api/products", formData);
-        if (response.status === 200) {
-          this.notify("Add new product success");
-          this.clearField();
-        }
-      } catch (error) {
-        console.log(error);
-      }
+      this.clearField();
+      // console.log(this.productBasicInfo);
+      // console.log(this.pdInfo);
+      // try {
+      //   const response = await axsIns.post("/api/products", formData);
+      //   if (response.status === 200) {
+      //     this.notify("Add new product success");
+      //     this.clearField();
+      //   }
+      // } catch (error) {
+      //   console.log(error);
+      // }
     },
     notify(message, warningType) {
       this.notification[warningType] = true;

@@ -104,6 +104,7 @@
                   class="form-check-input"
                   type="checkbox"
                   :value="capacity.name"
+                  :checked="capacity?.isChecked"
                   :id="index"
                   @input="handleOnCapacityCheckbox($event, index)"
                 />
@@ -211,7 +212,11 @@ export default {
     isResetField: {
       handler(newVal) {
         if (newVal === true) {
+          console.log(this.capacitiesIndexData);
           this.capacitiesChosenData = [];
+          this.capacitiesIndexData.forEach((capacity, index) => {
+            capacity.isChecked = false;
+          });
         }
       },
     },
@@ -220,7 +225,11 @@ export default {
     try {
       const capacitiesResponse = await axsIns.get("/api/capacities");
       if (capacitiesResponse.status === 200) {
-        this.capacitiesIndexData = capacitiesResponse.data;
+        capacitiesResponse.data.forEach((capacity) => {
+          capacity["isChecked"] = true;
+          this.capacitiesIndexData.push(capacity);
+        });
+        // this.capacitiesIndexData = capacitiesResponse.data;
       }
     } catch (error) {
       console.log(error);

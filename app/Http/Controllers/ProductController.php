@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -30,10 +31,20 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $validate = $request->validated();
-        $product = Product::create($validate);
-        if ($request->input('product_details')) {
-            # code...
-        }
+        Log::info($validate);
+        Log::info(print_r($request->input('product_details')[0], true));
+        /** @var App\Models\Product $product */
+        // $product = Product::create($validate);
+        // if (isset($validate['product_details'])) {
+        //     foreach ($validate['product_details'] as $pd) {
+        //         $product->capacities()->attach($pd->id, [
+        //           'price' => $pd->price,
+        //             'discount' => $pd->discount,
+        //             'inventory' => $pd->inventory,
+        //              'supplier' => $pd->supplier,
+        //         ]);
+        //     }
+        // }
     }
 
     /**
