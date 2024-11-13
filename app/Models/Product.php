@@ -25,8 +25,7 @@ class Product extends Model
     }
     public function capacities(): BelongsToMany
     {
-        return $this->belongsToMany(Capacity::class)
-        ->as('capacities')
+        return $this->belongsToMany(Capacity::class, 'product_details')
         ->withPivot('supplier', 'inventory', 'price', 'discount', 'created_at', 'updated_at')
         ->withTimestamps();
     }

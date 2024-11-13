@@ -11,11 +11,12 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::create('product_details', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('product_id')->constrained();
             $table->foreignId('capacity_id')->constrained();
             $table->string('supplier')->nullable();
             $table->bigInteger('inventory')->nullable();
-            $table->unsignedInteger('price')->nullable();
+            $table->unsignedBigInteger('price')->nullable();
             $table->float('discount')->nullable();
             $table->timestamps();
             $table->softDeletes();

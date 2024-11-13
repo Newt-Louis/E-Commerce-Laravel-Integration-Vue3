@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\ProductDetail;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
@@ -29,25 +32,43 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
-        // $validate = $request->validated();
-        Log::info($request->all());
-        foreach (json_decode($request->product_details, true) as $pd) {
-            Log::info($pd);
-        }
+        $validate = $request->validated();
         /** @var App\Models\Product $product */
-        // $product = Product::create($validate);
-        // if (isset($validate['product_details'])) {
-        //     foreach ($validate['product_details'] as $pd) {
-        //         $product->capacities()->attach($pd->id, [
-        //           'price' => $pd->price,
-        //             'discount' => $pd->discount,
-        //             'inventory' => $pd->inventory,
-        //              'supplier' => $pd->supplier,
-        //         ]);
-        //     }
-        // }
+
+        DB::transaction(function () use ($validate) {
+            if (Arr::exists($validate, 'product_details')) {
+                $productDetails = Arr::pull($validate, 'product_details');
+                $product = Product::create($validate);
+                Log::info($productDetails);
+                foreach ($productDetails as $pd) {
+                    if (Arr::exists($pd, 'collection')) {
+                        $collection = Arr::pull($pd, 'collection');
+                        $pdInstance = ProductDetail::create([
+                          'product_id' => $product->id,
+                          'capacity_id' => $pd['id'],
+                          'price' => $pd['price'],
+                          'discount' => $pd['discount'],
+                          'inventory' => $pd['inventory'],
+                          'supplier' => $pd['supplier'],
+                        ]);
+                        foreach ($collection as $collect) {
+                            $pdInstance->collections()->attach($collect->id);
+                        }
+                    } else {
+                        $product->capacities()->attach($pd['id'], [
+                          'price' => $pd['price'] === '' ? null : $pd['price'],
+                          'inventory' => $pd['inventory'] === '' ? null : $pd['inventory'],
+                          'supplier' => $pd['supplier'],
+                          'discount' => $pd['discount'] === '' ? null : $pd['discount'],
+                        ]);
+                    }
+                }
+            } else {
+                $product = Product::create($validate);
+            }
+        });
     }
 
     /**

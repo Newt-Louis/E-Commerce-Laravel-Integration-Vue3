@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductDetail extends Model
@@ -16,6 +16,10 @@ class ProductDetail extends Model
 
     protected $fillable = ['product_id','capacity_id','supplier','inventory','price','discount'];
 
+
+    /**
+     * Relationships
+     */
     public function capacity(): BelongsTo
     {
         return $this->belongsTo(Capacity::class);
@@ -24,8 +28,31 @@ class ProductDetail extends Model
     {
         return $this->belongsTo(Product::class);
     }
-    public function collections(): HasManyThrough
+    public function collections(): BelongsToMany
     {
-        return $this->hasManyThrough(Collection::class, CollectionProductDetail::class, 'product_id', 'product_id', 'product_id', 'collection_id');
+        return $this->belongsToMany(Collection::class);
     }
+
+    /**
+     * Accessor & Mutators
+     */
+    protected function inventory(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => $value === '' ? null : (int) $value,
+        );
+    }
+    protected function price(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => $value === '' ? null : (int) $value,
+        );
+    }
+    protected function discount(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value) => $value === '' ? null : (float) str_replace(',', '.', $value),
+        );
+    }
+
 }

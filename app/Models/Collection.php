@@ -5,7 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 class Collection extends Model
@@ -19,9 +20,9 @@ class Collection extends Model
      * Relationships
      *
     */
-    public function productDetails(): HasManyThrough
+    public function productDetails(): BelongsToMany
     {
-        return $this->hasManyThrough(ProductDetail::class, CollectionProductDetail::class, 'collection_id', 'product_id', 'id', 'product_id');
+        return $this->belongsToMany(ProductDetail::class);
     }
 
     /**
