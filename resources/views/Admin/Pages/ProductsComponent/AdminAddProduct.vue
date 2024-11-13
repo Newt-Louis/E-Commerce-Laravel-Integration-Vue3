@@ -101,7 +101,7 @@
                   name="catalog"
                   :value="category.id"
                   :id="category.name"
-                  @input="catalogueChosen"
+                  v-model="productBasicInfo.itemTypeId"
                 />
                 <label class="form-check-label" :for="category.name"> {{ category.name }} </label>
               </div>
@@ -116,9 +116,9 @@
                 <input
                   class="form-check-input"
                   type="checkbox"
-                  :value="collect.id"
+                  :value="collect"
                   :id="collect.name"
-                  @input="collectionChosen"
+                  v-model="collectionChosenData"
                 />
                 <label class="form-check-label" :for="collect.name"> {{ collect.name }} </label>
               </div>
@@ -260,27 +260,27 @@ export default {
     collectionChangeData(data) {
       this.collectionIndexData = data;
     },
-    catalogueChosen(event) {
-      this.productBasicInfo.itemTypeId = event.target.value;
-      // if (event.target.checked) {
-      //   if (!this.catalogueChosenData.includes(value)) {
-      //     this.catalogueChosenData.push(value);
-      //   }
-      // } else {
-      //   const index = this.catalogueChosenData.findIndex((catalogueValue) => catalogueValue === value);
-      //   this.catalogueChosenData.splice(index, 1);
-      // }
-    },
-    collectionChosen(event) {
-      const idCollect = event.target.value;
-      if (event.target.checked) {
-        const collectionInstance = this.collectionIndexData.find((collect) => collect.id === +idCollect);
-        this.collectionChosenData.push(collectionInstance);
-      } else {
-        const index = this.collectionChosenData.findIndex((collect) => collect.id === +idCollect);
-        this.collectionChosenData.splice(index, 1);
-      }
-    },
+    // catalogueChosen(event) {
+    //   this.productBasicInfo.itemTypeId = event.target.value;
+    //   if (event.target.checked) {
+    //     if (!this.catalogueChosenData.includes(value)) {
+    //       this.catalogueChosenData.push(value);
+    //     }
+    //   } else {
+    //     const index = this.catalogueChosenData.findIndex((catalogueValue) => catalogueValue === value);
+    //     this.catalogueChosenData.splice(index, 1);
+    //   }
+    // },
+    // collectionChosen(event) {
+    //   const idCollect = event.target.value;
+    //   if (event.target.checked) {
+    //     const collectionInstance = this.collectionIndexData.find((collect) => collect.id === +idCollect);
+    //     this.collectionChosenData.push(collectionInstance);
+    //   } else {
+    //     const index = this.collectionChosenData.findIndex((collect) => collect.id === +idCollect);
+    //     this.collectionChosenData.splice(index, 1);
+    //   }
+    // },
     async deleteChooseCollect(id) {
       try {
         const response = await axsIns.delete("/api/collections/" + id);
@@ -306,9 +306,10 @@ export default {
         if (!PDInstance?.collection) {
           PDInstance["collection"] = [];
         }
-        PDInstance["collection"].push(this.collectionChosenData.find((collect) => collect.id === collectionID));
+        const collectInstance = this.collectionIndexData.find((collectID) => collectID.id === collectionID);
+        PDInstance["collection"].push(collectInstance);
       } else {
-        const index = PDInstance["collection"].findIndex((collect) => collect.id === collectionID);
+        const index = PDInstance["collection"].findIndex((collectID) => collectID.id === collectionID);
         PDInstance["collection"].splice(index, 1);
       }
       /*
@@ -370,6 +371,7 @@ export default {
       this.productBasicInfo.origin = "";
       this.productBasicInfo.pImages = [];
       this.pdInfo = [];
+      this.collectionChosenData = [];
       this.validateState.resetField = true;
     },
   },

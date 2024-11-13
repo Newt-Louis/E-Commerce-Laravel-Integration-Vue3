@@ -54,14 +54,16 @@ class ProductController extends Controller
                           'supplier' => $pd['supplier'],
                         ]);
                         foreach ($collection as $collect) {
-                            $pdInstance->collections()->attach($collect->id);
+                            $pdInstance->collections()->attach($collect['id']);
                         }
                     } else {
-                        $product->capacities()->attach($pd['id'], [
-                          'price' => $pd['price'] === '' ? null : $pd['price'],
-                          'inventory' => $pd['inventory'] === '' ? null : $pd['inventory'],
+                        ProductDetail::create([
+                          'product_id' => $product->id,
+                          'capacity_id' => $pd['id'],
+                          'price' => $pd['price'],
+                          'discount' => $pd['discount'],
+                          'inventory' => $pd['inventory'],
                           'supplier' => $pd['supplier'],
-                          'discount' => $pd['discount'] === '' ? null : $pd['discount'],
                         ]);
                     }
                 }

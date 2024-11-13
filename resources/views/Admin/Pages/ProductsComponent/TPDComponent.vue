@@ -303,6 +303,7 @@ export default {
     },
     handleOnResetField() {
       this.capacitiesChosenData = [];
+      this.supplierValue = "";
       this.capacitiesIndexData.forEach((capacity) => {
         capacity.isChecked = false;
       });
