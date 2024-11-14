@@ -36,7 +36,6 @@ class ProductController extends Controller
     {
         $validate = $request->validated();
         /** @var App\Models\Product $product */
-
         DB::transaction(function () use ($validate) {
             if (Arr::exists($validate, 'product_details')) {
                 $productDetails = Arr::pull($validate, 'product_details');

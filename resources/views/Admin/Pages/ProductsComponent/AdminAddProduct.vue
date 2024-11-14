@@ -7,8 +7,8 @@
         <p class="fs-6 text-secondary m-0">Additionally collection and more !</p>
       </div>
       <div class="d-grid gap-2 d-lg-block">
-        <button class="btn btn-outline-dark btn-sm me-2">Discard</button>
-        <button class="btn btn-outline-primary btn-sm me-2" @click="clearField">Save draft</button>
+        <button class="btn btn-outline-dark btn-sm me-2" @click="clearField">Discard</button>
+        <button class="btn btn-outline-primary btn-sm me-2">Save draft</button>
         <button class="btn btn-primary btn-sm" @click="handleOnAddProduct">Publish product</button>
       </div>
     </div>
@@ -317,7 +317,6 @@ export default {
         had a collection property so we have to take care about this collection property when
         send a request to add a product
       */
-      console.log(this.pdInfo);
     },
     handleOnUpdatePDInfo(data, isResetFiled) {
       this.pdInfo = data;
