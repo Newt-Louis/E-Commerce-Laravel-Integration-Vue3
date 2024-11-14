@@ -49,7 +49,10 @@ class UserController extends Controller
                 if ($validateFile) {
                     $file = $request->file('avatar');
                     $fileName = uniqid().'_'. $file[0]->getClientOriginalName();
-                    $filePath = Storage::disk('public')->putFileAs($path, $file[0], $fileName);
+                    /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+                    /* Cause Intelephense don't understand method disk will return FilesystemAdapter */
+                    $disk = Storage::disk('public');
+                    $disk->putFileAs($path, $file[0], $fileName);
                     Avatar::create([
                       'path' => $path,
                       'filename' => $fileName,

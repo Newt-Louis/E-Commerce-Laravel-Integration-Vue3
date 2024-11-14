@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 
 class ProductDetail extends Model
 {
@@ -55,4 +56,26 @@ class ProductDetail extends Model
         );
     }
 
+    /**
+     * Interact with product_details table
+     */
+    public function insertSequenceFromProduct(array $data, int $id)
+    {
+        foreach ($data as $pd) {
+            $pdInstance = $this->create([
+              'product_id' => $id,
+              'capacity_id' => $pd['id'],
+              'price' => $pd['price'],
+              'discount' => $pd['discount'],
+              'inventory' => $pd['inventory'],
+              'supplier' => $pd['supplier']
+              ]);
+            if (Arr::exists($data, 'collection')) {
+                $collection = Arr::pull($data, 'collection');
+                foreach ($collection as $collect) {
+                    $pdInstance->collections()->attach($collect['id']);
+                }
+            }
+        }
+    }
 }

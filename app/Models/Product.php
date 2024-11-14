@@ -40,27 +40,4 @@ class Product extends Model
      * Accessor & Mutator
      *
      */
-    //
-
-    /**
-     * Database interaction functions
-     */
-    public function updateOrCreateProductDetails(array $data, int $id)
-    {
-
-        foreach ($data as $pd) {
-
-            $pdInstance = ProductDetail::updateOrCreate(['product_id' => $id], [
-              'capacity_id' => $pd['id'],
-              'price' => $pd['price'],
-              'discount' => $pd['discount'],
-              'inventory' => $pd['inventory'],
-              'supplier' => $pd['supplier'],
-            ]);
-
-            if (Arr::exists($pd, 'collection')) {
-                $collection = Arr::pull($pd, 'collection');
-            }
-        }
-    }
 }
