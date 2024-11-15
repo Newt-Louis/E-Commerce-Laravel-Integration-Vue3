@@ -113,7 +113,10 @@ export default {
   props: {},
   emits: [],
   data() {
-    return {};
+    return {
+      dataIndexProducts: [],
+      dataPaginateProducts: [],
+    };
   },
   computed: {},
   watch: {},
@@ -121,6 +124,8 @@ export default {
     try {
       const productResponse = await axsIns.get("/api/products");
       if (productResponse.status === 200) {
+        this.dataIndexProducts = productResponse.data.data;
+        this.dataPaginateProducts = productResponse.data.meta.links;
         console.log(productResponse);
       }
     } catch (error) {

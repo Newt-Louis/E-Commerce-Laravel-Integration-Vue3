@@ -21,12 +21,9 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $product = Product::with(['capacities','productImages'])->get();
-        // Log::info($product);
+        $product = Product::with(['capacities','productImages'])->paginate(10);
         $collection = new ProductCollection($product);
-        // Log::info($collection);
         return $collection;
-
     }
 
     /**
@@ -72,7 +69,7 @@ class ProductController extends Controller
                 $pdInstance->insertSequenceFromProduct($productDetails, $product->id);
             }
         });
-        return $this->index();
+        return response('Add new product done !');
     }
 
     /**

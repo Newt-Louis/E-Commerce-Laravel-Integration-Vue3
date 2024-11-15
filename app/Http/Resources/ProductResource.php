@@ -29,14 +29,12 @@ class ProductResource extends JsonResource
           'deleted_at' => $this->deleted_at,
           'capacities' => $this->capacities->map(function ($capacity) {
               $capacityArray = $capacity->toArray();
-              // Log::info($capacity);
               $pivot = ProductDetail::where('capacity_id', $capacityArray['id'])->where('product_id', $this->id)->get();
-              // Log::info($pivot);
               $pivot->load('collections');
               $capacityArray['pivot'] = $pivot;
-              Log::info($capacityArray);
               return $capacityArray;
           }),
+          'product_images' => $this->productImages,
         ];
     }
 }
