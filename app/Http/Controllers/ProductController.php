@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Http\Resources\ProductCollection;
 use App\Models\ProductDetail;
 use App\Models\ProductImage;
 use Illuminate\Support\Facades\Log;
@@ -20,7 +21,12 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $product = Product::with(['capacities','productImages'])->get();
+        // Log::info($product);
+        $collection = new ProductCollection($product);
+        // Log::info($collection);
+        return $collection;
+
     }
 
     /**

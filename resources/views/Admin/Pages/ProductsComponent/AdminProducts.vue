@@ -104,11 +104,30 @@
   </div>
 </template>
 <script>
+import { axsIns } from "../../../../js/bootstrap";
 import TextInput from "../../../Components/InputField/TextInput.vue";
 export default {
   components: {
     TextInput,
   },
+  props: {},
+  emits: [],
+  data() {
+    return {};
+  },
+  computed: {},
+  watch: {},
+  async mounted() {
+    try {
+      const productResponse = await axsIns.get("/api/products");
+      if (productResponse.status === 200) {
+        console.log(productResponse);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+  methods: {},
 };
 </script>
 <style>

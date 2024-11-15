@@ -23,7 +23,6 @@ class ProductImage extends Model
     /** @param \Illuminate\Http\UploadedFile[] $data */
     public function insertSequenceFromProduct(array $data, int $id)
     {
-        /** Create new folder for images whether or not */
         $path = 'product_images/'.uniqid().'_'.$id;
         foreach ($data as $image) {
             $fileName = uniqid().'_'.$image->getClientOriginalName();

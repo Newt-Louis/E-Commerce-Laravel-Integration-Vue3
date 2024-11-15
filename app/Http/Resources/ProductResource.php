@@ -2,8 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\ProductDetail;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 
 class ProductResource extends JsonResource
 {
@@ -14,6 +16,27 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+          'id' => $this->id,
+          'name' => $this->name,
+          'description' => $this->description,
+          'gender' => $this->gender,
+          'origin' => $this->origin,
+          'views' => $this->views,
+          'item_type_id' => $this->item_type_id,
+          'created_at' => $this->created_at,
+          'updated_at' => $this->updated_at,
+          'deleted_at' => $this->deleted_at,
+          'capacities' => $this->capacities->map(function ($capacity) {
+              $capacityArray = $capacity->toArray();
+              // Log::info($capacity);
+              $pivot = ProductDetail::where('capacity_id', $capacityArray['id'])->where('product_id', $this->id)->get();
+              // Log::info($pivot);
+              $pivot->load('collections');
+              $capacityArray['pivot'] = $pivot;
+              Log::info($capacityArray);
+              return $capacityArray;
+          }),
+        ];
     }
 }
