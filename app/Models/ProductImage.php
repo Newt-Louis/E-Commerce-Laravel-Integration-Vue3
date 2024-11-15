@@ -21,13 +21,12 @@ class ProductImage extends Model
     }
 
     /** @param \Illuminate\Http\UploadedFile[] $data */
-    public function insertSequenceFromProduct(array $data, $id)
+    public function insertSequenceFromProduct(array $data, int $id)
     {
         /** Create new folder for images whether or not */
         $path = 'product_images/'.uniqid().'_'.$id;
-        Storage::disk('public')->makeDirectory($path);
         foreach ($data as $image) {
-            $fileName = uniqid().'_'.$image->getClientOrginalName();
+            $fileName = uniqid().'_'.$image->getClientOriginalName();
             /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
             $disk = Storage::disk('public');
             $disk->putFileAs($path, $image, $fileName);

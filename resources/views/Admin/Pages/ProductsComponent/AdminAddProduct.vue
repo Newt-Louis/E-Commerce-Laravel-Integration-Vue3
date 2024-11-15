@@ -51,7 +51,11 @@
             </div>
           </div>
           <div>
-            <FileInput :image-number="4" @files-valid="getFileData"></FileInput>
+            <FileInput
+              :image-number="4"
+              :validate-state="!validateState.resetField"
+              @files-valid="getFileData"
+            ></FileInput>
           </div>
         </div>
         <div class="add-product-info">

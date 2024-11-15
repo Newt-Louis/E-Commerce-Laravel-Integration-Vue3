@@ -70,8 +70,8 @@ class ProductDetail extends Model
               'inventory' => $pd['inventory'],
               'supplier' => $pd['supplier']
               ]);
-            if (Arr::exists($data, 'collection')) {
-                $collection = Arr::pull($data, 'collection');
+            if (Arr::exists($pd, 'collection')) {
+                $collection = Arr::pull($pd, 'collection');
                 foreach ($collection as $collect) {
                     $pdInstance->collections()->attach($collect['id']);
                 }

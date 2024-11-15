@@ -47,48 +47,26 @@ class ProductController extends Controller
               'origin' => $validate['origin'],
               'item_type_id' => $validate['item_type_id'],
             ]);
-            /** Create new folder for images whether or not */
-            $path = 'product_images/'.uniqid().'_'.$product->id;
-            Storage::disk('public')->makeDirectory($path);
+            /**
+             * Create new folder for images when product adding don't include images
+             * when use putFileAs() it will create new folder if directory don't have
+             * specified folder to store.
+             */
             if (Arr::exists($validate, 'product_images')) {
                 $productImages = Arr::pull($validate, 'product_images');
                 $imagesInstance = new ProductImage();
                 $imagesInstance->insertSequenceFromProduct($productImages, $product->id);
-                /*                 foreach ($productImages as $image) {
-                                    $fileName = uniqid().'_'.$image->getClientOrginalName();
-
-                                    $disk = Storage::disk('public');
-                                    $disk->putFileAs($path, $image, $fileName);
-                                    ProductImage::create([
-                                      'path' => $path,
-                                      'filename' => $fileName,
-                                      'product_id' => $product->id
-                                    ]);
-                                } */
+            } else {
+                $path = 'product_images/'.uniqid().'_'.$product->id;
+                Storage::disk('public')->makeDirectory($path);
             }
             if (Arr::exists($validate, 'product_details')) {
                 $productDetails = Arr::pull($validate, 'product_details');
                 $pdInstance = new ProductDetail();
                 $pdInstance->insertSequenceFromProduct($productDetails, $product->id);
-                /* foreach ($productDetails as $pd) {
-                    $pdInstance = ProductDetail::create([
-                      'product_id' => $product->id,
-                      'capacity_id' => $pd['id'],
-                      'price' => $pd['price'],
-                      'discount' => $pd['discount'],
-                      'inventory' => $pd['inventory'],
-                      'supplier' => $pd['supplier'],
-                    ]);
-                    if (Arr::exists($pd, 'collection')) {
-                        $collection = Arr::pull($pd, 'collection');
-                        foreach ($collection as $collect) {
-                            $pdInstance->collections()->attach($collect['id']);
-                        }
-                    }
-                } */
             }
-            return $this->index();
         });
+        return $this->index();
     }
 
     /**
