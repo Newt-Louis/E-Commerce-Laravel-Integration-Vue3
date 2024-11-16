@@ -46,7 +46,7 @@
       </div>
     </div>
     <div class="products-main mb-4">
-      <div class="scroll-table w-100">
+      <div class="table-responsive w-100">
         <table class="table table-hover caption-top">
           <caption>
             List of Products
@@ -60,22 +60,22 @@
               <th scope="col">Gender</th>
               <th scope="col">Origin</th>
               <th scope="col">Category name</th>
-              <th scope="col" colspan="2" class="text-center">Capacities</th>
-              <th scope="col" colspan="2" class="text-center">Collection</th>
-              <th scope="col">Handle</th>
-              <th scope="col">Handle</th>
-              <th scope="col">Handle</th>
+              <th scope="col">Capacities</th>
+              <th scope="col">Collection</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(item, index) in getProductsData" :key="index">
-              <th scope="row">{{ item.id }}</th>
+              <td>
+                <span class="fw-bold">{{ item.id }}</span>
+              </td>
               <td>
                 <a href="">{{ item.name }}</a>
               </td>
               <td>
                 <div class="images-container" v-if="item.product_images.length > 0">
                   <img
+                    class="me-2"
                     v-for="(image, index) in item.product_images"
                     :key="index"
                     :src="image.fullpath"
@@ -92,11 +92,37 @@
               <td>{{ item.gender }}</td>
               <td>{{ item.origin }}</td>
               <td>{{ item.item_type.name }}</td>
-              <td v-for="(capacity, index) in item.capacities" :key="index">
-                <span>{{ capacity.name + " (" + capacity.volume + ")" }}</span>
-                <span></span>
+              <td>
+                <div v-if="item.capacities.length > 0" class="d-inline-flex p-2 flex-wrap">
+                  <span
+                    class="badge text-wrap text-bg-secondary capacity-badge me-2"
+                    v-for="(capacity, index) in item.capacities"
+                    :key="index"
+                    >{{ capacity.name + " (" + capacity.volume + ")" }}</span
+                  >
+                </div>
+                <div v-else>
+                  <span>None</span>
+                </div>
               </td>
-              <td v-for="(capacity, index) in item.capacities" :key="index"></td>
+              <td>
+                <div v-if="item.capacities.length > 0">
+                  <div v-for="(capacity, index) in item.capacities" :key="index">
+                    <div v-if="capacity.pivot.collections.length > 0">
+                      <span class="badge text-bg-secondary">{{ capacity.name }}</span>
+                      <span class="me-2" v-for="(collect, index) in capacity.pivot.collections" :key="index">{{
+                        collect.name
+                      }}</span>
+                    </div>
+                    <div v-else>
+                      <span>None</span>
+                    </div>
+                  </div>
+                </div>
+                <div v-else>
+                  <span>None</span>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -129,6 +155,13 @@ export default {
   emits: [],
   data() {
     return {
+      tableHeader: {
+        oneCol: ["#", "Name", "Images", "Gender", "Origin", "Description", "Category"],
+        multiCol: {
+          collection: [],
+          capacities: [],
+        },
+      },
       dataIndexProducts: [],
       dataPaginateProducts: [],
       notification: {
@@ -202,6 +235,15 @@ export default {
   overflow-x: scroll;
 }
 .table {
-  width: 150%;
+  width: 200%;
+}
+tbody > tr > td {
+  width: 250px;
+  word-break: break-all;
+}
+tbody > tr > td:first-child {
+  width: 50px;
+}
+.capacity-badge {
 }
 </style>
