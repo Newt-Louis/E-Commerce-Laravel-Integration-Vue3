@@ -5,7 +5,9 @@ namespace App\Http\Resources;
 use App\Models\ProductDetail;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class ProductResource extends JsonResource
 {
@@ -16,6 +18,16 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $productImages = [];
+        if (count($this->productImages) > 0) {
+            foreach ($this->productImages as $image) {
+                $imageArray = $image->toArray();
+                $fullPath = $imageArray['path'].'/'.$imageArray['filename'];
+                $imageArray = Arr::except($imageArray, ['path','filename']);
+                $imageArray = Arr::add($imageArray, 'fullpath', Storage::disk('local')->url($fullPath));
+                $productImages[] = $imageArray;
+            }
+        }
         return [
           'id' => $this->id,
           'name' => $this->name,
@@ -27,6 +39,7 @@ class ProductResource extends JsonResource
           'created_at' => $this->created_at,
           'updated_at' => $this->updated_at,
           'deleted_at' => $this->deleted_at,
+          'item_type' => $this->itemType,
           'capacities' => $this->capacities->map(function ($capacity) {
               $capacityArray = $capacity->toArray();
               $pivot = ProductDetail::where('capacity_id', $capacityArray['id'])->where('product_id', $this->id)->get();
@@ -34,7 +47,7 @@ class ProductResource extends JsonResource
               $capacityArray['pivot'] = $pivot;
               return $capacityArray;
           }),
-          'product_images' => $this->productImages,
+          'product_images' => $productImages,
         ];
     }
 }

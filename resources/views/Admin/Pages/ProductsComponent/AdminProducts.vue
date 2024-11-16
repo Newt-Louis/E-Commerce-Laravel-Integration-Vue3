@@ -54,33 +54,49 @@
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">First</th>
-              <th scope="col">Last</th>
-              <th scope="col">Handle</th>
-              <th scope="col">Handle</th>
-              <th scope="col">Handle</th>
-              <th scope="col">Handle</th>
-              <th scope="col">Handle</th>
-              <th scope="col">Handle</th>
+              <th scope="col">Name</th>
+              <th scope="col">Images</th>
+              <th scope="col">Description</th>
+              <th scope="col">Gender</th>
+              <th scope="col">Origin</th>
+              <th scope="col">Category name</th>
+              <th scope="col" colspan="2" class="text-center">Capacities</th>
+              <th scope="col" colspan="2" class="text-center">Collection</th>
               <th scope="col">Handle</th>
               <th scope="col">Handle</th>
               <th scope="col">Handle</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">1</th>
-              <td>Mark</td>
-              <td>Otto</td>
-              <td>@mdo</td>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-              <td>Larry the Bird</td>
-              <td>@twitter</td>
-              <td>@twittádfsfsdfgdfgdfer</td>
-              <td>@twitter</td>
-              <td>@twitter</td>
+            <tr v-for="(item, index) in getProductsData" :key="index">
+              <th scope="row">{{ item.id }}</th>
+              <td>
+                <a href="">{{ item.name }}</a>
+              </td>
+              <td>
+                <div class="images-container" v-if="item.product_images.length > 0">
+                  <img
+                    v-for="(image, index) in item.product_images"
+                    :key="index"
+                    :src="image.fullpath"
+                    alt=""
+                    width="50px"
+                    height="50px"
+                  />
+                </div>
+                <div v-else>
+                  <img src="/blank_avatar.jpg" alt="" width="50px" height="50px" />
+                </div>
+              </td>
+              <td class="text-wrap">{{ item.description }}</td>
+              <td>{{ item.gender }}</td>
+              <td>{{ item.origin }}</td>
+              <td>{{ item.item_type.name }}</td>
+              <td v-for="(capacity, index) in item.capacities" :key="index">
+                <span>{{ capacity.name + " (" + capacity.volume + ")" }}</span>
+                <span></span>
+              </td>
+              <td v-for="(capacity, index) in item.capacities" :key="index"></td>
             </tr>
           </tbody>
         </table>
@@ -89,14 +105,13 @@
     <div class="pagination-container float-end">
       <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-end">
-          <li class="page-item disabled">
-            <a class="page-link">Previous</a>
-          </li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item">
-            <a class="page-link" href="#">Next</a>
+          <li class="page-item" v-for="(link, index) in getProductPaginates" :key="index">
+            <a
+              class="page-link"
+              :class="{ active: link.active, disabled: link.url === null }"
+              @click="handleOnPaginate(link.url)"
+              >{{ formattedLabel(link.label) }}</a
+            >
           </li>
         </ul>
       </nav>
@@ -116,9 +131,27 @@ export default {
     return {
       dataIndexProducts: [],
       dataPaginateProducts: [],
+      notification: {
+        isDone: false,
+        isError: false,
+        message: "",
+        alertAnimate: "",
+      },
     };
   },
-  computed: {},
+  computed: {
+    getProductsData() {
+      return this.dataIndexProducts;
+    },
+    getProductPaginates() {
+      return this.dataPaginateProducts;
+    },
+    formattedLabel() {
+      return (label) => {
+        return label.replace("&laquo;", "").replace("&raquo;", "");
+      };
+    },
+  },
   watch: {},
   async mounted() {
     try {
@@ -132,7 +165,33 @@ export default {
       console.log(error);
     }
   },
-  methods: {},
+  methods: {
+    async handleOnPaginate(url) {
+      if (!url) {
+        return;
+      }
+      try {
+        const pageResponse = await axsIns.get(url);
+        if (pageResponse.status === 200) {
+          this.dataIndexProducts = pageResponse.data.data;
+          this.dataPaginateProducts = pageResponse.data.meta.links;
+        }
+      } catch (error) {
+        console.log(error);
+        this.notify("Something Wrong", "isError");
+      }
+    },
+    notify(message, warningType) {
+      this.notification[warningType] = true;
+      this.notification.message = message;
+      this.notification.alertAnimate = "animate__fadeIn";
+      setTimeout(() => {
+        this.notification[warningType] = false;
+        this.notification.message = "";
+        this.notification.alertAnimate = "";
+      }, 5000);
+    },
+  },
 };
 </script>
 <style>
