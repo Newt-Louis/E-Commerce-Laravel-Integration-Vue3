@@ -8,7 +8,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductCollection;
 use App\Models\ProductDetail;
 use App\Models\ProductImage;
-use App\Service\ProductService;
+use App\Services\ProductService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;

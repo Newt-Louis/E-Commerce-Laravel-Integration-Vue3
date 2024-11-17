@@ -16,13 +16,13 @@
           (product number)
         </div>
       </div>
-      <div class="row">
+      <div class="row row-gap-2">
         <div class="col-lg-3">
           <TextInput :placeholder="`Search product`"></TextInput>
         </div>
         <div class="col-lg-6 btn-group">
           <select name="" id="" class="form-select">
-            <option value="">Origin</option>
+            <option value="">Collections</option>
             <option value="2">2</option>
             <option value="3">3</option>
           </select>
@@ -37,12 +37,41 @@
             <option value="3">3</option>
           </select>
         </div>
-        <div class="col-lg-3">
-          <button type="button" class="btn btn-primary me-2">+ Add Filter</button>
+        <div class="col-lg-3 d-flex">
+          <div class="dropdown">
+            <button
+              type="button"
+              class="btn btn-primary me-2 dropdown-toggle"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              data-bs-auto-close="outside"
+            >
+              + Add Filter
+            </button>
+            <div class="dropdown-menu px-2 py-1">
+              <div class="form-check" v-for="(checkIns, index) in filterCheckbox" :key="index">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  :value="checkIns.name"
+                  :id="checkIns.name"
+                  v-model="filterSelectRender"
+                />
+                <label :for="checkIns.name" class="form-check-label"> {{ checkIns.name }}</label>
+              </div>
+            </div>
+          </div>
+
           <button type="button" class="btn btn-outline-success"><i class="fa-solid fa-file-export"></i> Export</button>
         </div>
-        <div class="col-lg-3"></div>
-        <div class="col-lg-3"></div>
+        <div class="col-lg-3" v-for="(item, index) in filterSelectRender" :key="index">
+          <select class="form-select" aria-label="Default select example">
+            <option selected>{{ item }}</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+        </div>
       </div>
     </div>
     <div class="products-main mb-4">
@@ -162,6 +191,15 @@ export default {
   emits: [],
   data() {
     return {
+      filterCheckbox: [
+        { name: "Gender", isActive: false },
+        { name: "Origin", isActive: false },
+        { name: "Supplier", isActive: false },
+        { name: "Inventory", isActive: false },
+        { name: "Price", isActive: false },
+        { name: "Discount", isActive: false },
+      ],
+      filterSelectRender: [],
       dataIndexProducts: [],
       dataPaginateProducts: [],
       notification: {
@@ -229,6 +267,7 @@ export default {
 </script>
 <style>
 .products-header {
+  border-radius: 8px;
   background-color: rgb(240, 240, 240);
 }
 .scroll-table {
