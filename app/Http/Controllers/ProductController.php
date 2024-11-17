@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductCollection;
 use App\Models\ProductDetail;
 use App\Models\ProductImage;
+use App\Service\ProductService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
@@ -16,6 +17,11 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    protected $productService;
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
     /**
      * Display a listing of the resource.
      */

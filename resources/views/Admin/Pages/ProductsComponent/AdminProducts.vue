@@ -162,13 +162,6 @@ export default {
   emits: [],
   data() {
     return {
-      tableHeader: {
-        oneCol: ["#", "Name", "Images", "Gender", "Origin", "Description", "Category"],
-        multiCol: {
-          collection: [],
-          capacities: [],
-        },
-      },
       dataIndexProducts: [],
       dataPaginateProducts: [],
       notification: {
