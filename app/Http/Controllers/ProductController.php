@@ -109,4 +109,9 @@ class ProductController extends Controller
     {
         //
     }
+    public function originIndex()
+    {
+        $product = Product::all();
+        return response()->json();
+    }
 }

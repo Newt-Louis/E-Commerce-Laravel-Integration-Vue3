@@ -1,6 +1,7 @@
 <template>
   <div class="base-input">
     <input
+      :id="idValue"
       type="text"
       :class="`form-control ${isValidation}`"
       :placeholder="placeholder"
@@ -27,6 +28,7 @@
 import { getValidator } from "~composable/validateInputRules.composable";
 export default {
   props: {
+    idValue: String,
     textInputName: {
       type: String,
       default: "",

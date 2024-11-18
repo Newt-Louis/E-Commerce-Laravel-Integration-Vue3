@@ -5,6 +5,7 @@ use App\Http\Controllers\CapacityController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ItemTypeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductDetailController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -32,6 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
       'users' => UserController::class,
       'products' => ProductController::class
     ]);
+    Route::get('/product/gender', [ProductController::class], 'genderIndex');
+    Route::get('products/origin', [ProductController::class], 'originIndex');
+    Route::get('product/supplier', [ProductDetailController::class], 'supplierIndex');
     Route::get('/collections', [CollectionController::class,'index']);
     Route::post('/collections', [CollectionController::class,'store']);
     Route::delete('/collections/{collection}', [CollectionController::class,'destroy']);
