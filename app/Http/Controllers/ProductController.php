@@ -119,6 +119,6 @@ class ProductController extends Controller
     }
     public function productFilter(Request $request)
     {
-
+        Log::info(Product::query()->toArray());
     }
 }
