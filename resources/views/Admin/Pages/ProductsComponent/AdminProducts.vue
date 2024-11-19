@@ -33,7 +33,7 @@
             v-if="dataIndexCollection.length > 0"
             v-model="filteredInstance.collection"
           >
-            <option value="">Collections</option>
+            <option value="">All</option>
             <option v-for="(collect, index) in dataIndexCollection" :key="index" :value="collect.id">
               {{ collect.name }}
             </option>
@@ -47,7 +47,7 @@
             v-if="dataIndexCapacities.length > 0"
             v-model="filteredInstance.capacity"
           >
-            <option value="">Capacity</option>
+            <option value="">All</option>
             <option v-for="(capacity, index) in dataIndexCapacities" :key="index" :value="capacity.id">
               {{ capacity.name + " (" + capacity.volume + ")" }}
             </option>
@@ -61,7 +61,7 @@
             v-if="dataIndexCategories.length > 0"
             v-model="filteredInstance.category"
           >
-            <option value="">Category</option>
+            <option value="">All</option>
             <option v-for="(category, index) in dataIndexCategories" :key="index" :value="category.id">
               {{ category.name }}
             </option>
@@ -107,11 +107,9 @@
             v-model="filteredInstance[box.name.toLowerCase()]"
           >
             <option value="" selected>All</option>
-            <!-- <option v-for="(value,index) in box.data" :key="index" :value="value">
-                  {{ value.charAt(0).toUpperCase + value.slice(1) }}
-                  </option> -->
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+            <option v-for="(value, index) in box.data" :key="index" :value="value">
+              {{ value ? value : "None" }}
+            </option>
           </select>
         </div>
       </div>
@@ -335,6 +333,22 @@ export default {
           break;
         }
       }
+    },
+    filteredInstance: {
+      async handler(newVal) {
+        if (newVal) {
+          try {
+            const productResponse = await axsIns.post("/api/products/filter", newVal);
+            if (productResponse.status === 200) {
+              this.dataIndexProducts = productResponse.data.data;
+              this.dataPaginateProducts = productResponse.data.meta.links;
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      },
+      deep: true,
     },
   },
   async mounted() {

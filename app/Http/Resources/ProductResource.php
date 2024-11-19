@@ -44,7 +44,6 @@ class ProductResource extends JsonResource
               $capacityArray = $capacity->toArray();
               $pivot = ProductDetail::where('capacity_id', $capacityArray['id'])->where('product_id', $this->id)->get();
               $pivot->load('collections');
-              Log::info($pivot);
               $capacityArray['pivot'] = $pivot[0];
               return $capacityArray;
           }),

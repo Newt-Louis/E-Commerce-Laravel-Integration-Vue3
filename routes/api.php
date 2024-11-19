@@ -31,11 +31,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/roles', RoleController::class);
     Route::apiResources([
       'users' => UserController::class,
-      'products' => ProductController::class
     ]);
-    Route::get('/product/gender', [ProductController::class], 'genderIndex');
-    Route::get('products/origin', [ProductController::class], 'originIndex');
-    Route::get('product/supplier', [ProductDetailController::class], 'supplierIndex');
+    Route::prefix('products')->group(function () {
+        Route::apiResource('/', ProductController::class);
+        Route::get('/origin', [ProductController::class,'originIndex']);
+        Route::get('/supplier', [ProductDetailController::class, 'supplierIndex']);
+        Route::post('/filter', [ProductController::class,'productFilter']);
+    });
+    // Route::get('/product/origin', [ProductController::class,'originIndex']);
     Route::get('/collections', [CollectionController::class,'index']);
     Route::post('/collections', [CollectionController::class,'store']);
     Route::delete('/collections/{collection}', [CollectionController::class,'destroy']);

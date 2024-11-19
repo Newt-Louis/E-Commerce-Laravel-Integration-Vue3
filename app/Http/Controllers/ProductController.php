@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
+use function Laravel\Prompts\select;
+
 class ProductController extends Controller
 {
     protected $productService;
@@ -111,7 +113,12 @@ class ProductController extends Controller
     }
     public function originIndex()
     {
-        $product = Product::all();
-        return response()->json();
+        $origin = Product::select('origin')->get()->toArray();
+        $result = Arr::pluck($origin, 'origin');
+        return response()->json($result);
+    }
+    public function productFilter(Request $request)
+    {
+
     }
 }
