@@ -12,9 +12,12 @@ class ProductService
     {
         $this->product = $product;
     }
-    public function filter()
+    public function filter(Request $request)
     {
         $query = Product::with(['capacities','productImages'])->query();
+        if ($request->gender !== null || $request->gender !== '') {
+            $this->filterByGender($query, $request->gender);
+        }
     }
     public function filterByGender(Builder $query, $value)
     {
@@ -22,5 +25,9 @@ class ProductService
             $query->where('gender', '=', $value);
         }
         return $query;
+    }
+    public function filterBySupplier(Builder $query, $value)
+    {
+        $query->join('product_details', 'product_id', '=');
     }
 }
