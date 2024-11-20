@@ -339,11 +339,11 @@ export default {
         if (newVal) {
           try {
             const productResponse = await axsIns.post("/api/products/filter", newVal);
-            console.log(productResponse.data);
-            // if (productResponse.status === 200) {
-            //    this.dataIndexProducts = productResponse.data.data;
-            //   this.dataPaginateProducts = productResponse.data.meta.links;
-            // }
+            console.log(productResponse);
+            if (productResponse.status === 200) {
+              this.dataIndexProducts = productResponse.data.data;
+              this.dataPaginateProducts = productResponse.data.meta.links;
+            }
           } catch (error) {
             console.log(error);
           }

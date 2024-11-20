@@ -122,7 +122,7 @@ class ProductController extends Controller
         Log::info($request->all());
         $queryProduct = $this->productService->filterProduct($request->all());
         $queryProduct->with(['capacities','productImages','collectionProductDetail']);
-        $products = $queryProduct->get();
+        $products = $queryProduct->paginate(10);
         return new ProductCollection($products);
         // $query = Product::query();
         // $product = $query->whereHas('collectionProductDetail', function (Builder $subquery) {
