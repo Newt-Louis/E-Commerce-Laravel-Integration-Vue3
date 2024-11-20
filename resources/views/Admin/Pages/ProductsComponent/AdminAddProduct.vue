@@ -35,7 +35,7 @@
               <select name="" id="p-gender" class="form-select" v-model="productBasicInfo.gender">
                 <option value="">Select Gender</option>
                 <option value="lady">Lady</option>
-                <option value="gentlemen">Gentlemen</option>
+                <option value="gentlement">Gentlemen</option>
                 <option value="unisex">Unisex</option>
               </select>
             </div>

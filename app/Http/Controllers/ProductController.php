@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
 use App\Http\Resources\ProductCollection;
+use App\Http\Resources\ProductResource;
 use App\Models\ProductDetail;
 use App\Models\ProductImage;
 use App\Services\ProductService;
@@ -14,8 +15,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-
-use function Laravel\Prompts\select;
+use Illuminate\Database\Eloquent\Builder;
 
 class ProductController extends Controller
 {
@@ -119,6 +119,16 @@ class ProductController extends Controller
     }
     public function productFilter(Request $request)
     {
-        Log::info(Product::query()->toArray());
+        Log::info($request->all());
+        $queryProduct = $this->productService->filterProduct($request->all());
+        $queryProduct->with(['capacities','productImages','collectionProductDetail']);
+        $products = $queryProduct->get();
+        return new ProductCollection($products);
+        // $query = Product::query();
+        // $product = $query->whereHas('collectionProductDetail', function (Builder $subquery) {
+        //     $subquery->where('collection_id', '=', 1);
+        // })->with(['capacities','productImages']);
+        // $products = $product->get();
+        // return new ProductCollection($products);
     }
 }

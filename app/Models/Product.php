@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
@@ -33,6 +34,11 @@ class Product extends Model
     public function productImages(): HasMany
     {
         return $this->hasMany(ProductImage::class);
+    }
+    public function collectionProductDetail(): HasManyThrough
+    {
+        // return $this->through('capacities')->has('collections');
+        return $this->hasManyThrough(CollectionProductDetail::class, ProductDetail::class, 'product_id', 'product_detail_id', 'id', 'id');
     }
 
     /**
