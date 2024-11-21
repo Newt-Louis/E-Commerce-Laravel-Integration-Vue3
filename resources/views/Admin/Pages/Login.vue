@@ -11,7 +11,7 @@
         </div>
         <div class="col-lg-9 mb-3">
           <TextInput
-            v-model="loginValue.usernameValue"
+            v-model:input-value="loginValue.usernameValue"
             :placeholder="`Username`"
             :required="true"
             :pattern="'^\\S*$'"
@@ -27,7 +27,7 @@
         </div>
         <div class="col-lg-9 mb-3">
           <PasswordInput
-            v-model="loginValue.passwordValue"
+            v-model:input-value="loginValue.passwordValue"
             :placeholder="`Password`"
             :required="true"
             @password-valid="checkValidateInputs"
@@ -40,7 +40,7 @@
         </div>
         <div class="col-lg-9 mb-3">
           <PasswordConfirmInput
-            v-model="loginValue.confirmPasswordValue"
+            v-model:confirm-password="loginValue.confirmPasswordValue"
             :placeholder="`Confirm Password`"
             :password="loginValue.passwordValue"
             @confirm-password-valid="checkValidateInputs"
@@ -99,7 +99,7 @@
         </div>
         <div class="col-sm-12 mb-3">
           <PasswordConfirmInput
-            v-model="loginValue.confirmPasswordValue"
+            v-model:confirm-password="loginValue.confirmPasswordValue"
             :placeholder="`Confirm Password`"
             :password="loginValue.passwordValue"
             @confirm-password-valid="checkValidateInputs"

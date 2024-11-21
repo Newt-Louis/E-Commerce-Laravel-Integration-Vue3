@@ -63,6 +63,19 @@ export default {
       },
       immediate: true,
     },
+    // confirmPassword: {
+    //   hanlder(newVal) {
+    //     if (newVal === "") {
+    //       return { isValid: false, isValidation: "" };
+    //     } else {
+    //       if (newVal !== this.password) {
+    //         return { isValid: false, isValidation: "is-invalid" };
+    //       } else {
+    //         return { isValid: true, isValidation: "is-valid" };
+    //       }
+    //     }
+    //   },
+    // },
   },
   mounted() {
     this.$emit("confirmPasswordValid", this.isConfirmPasswordValid);
