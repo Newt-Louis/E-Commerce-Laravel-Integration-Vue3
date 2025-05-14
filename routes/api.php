@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\CapacityController;
 use App\Http\Controllers\CollectionController;
 use App\Http\Controllers\ItemTypeController;
@@ -51,4 +52,5 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
     Route::post('/admin-user/logout', [AuthController::class,'logout']);
+    Route::post('/test-language-detection',AvatarController::class);
 });
