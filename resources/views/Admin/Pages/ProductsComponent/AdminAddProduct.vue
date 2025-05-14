@@ -347,7 +347,7 @@ export default {
         formData.append("product_details", JSON.stringify(this.pdInfo));
       }
       try {
-        const response = await axsIns.post("/api/products", formData);
+        const response = await `axsIns.`post("/api/products", formData);
         if (response.status === 200) {
           this.notify("Add new product success");
           this.clearField();
