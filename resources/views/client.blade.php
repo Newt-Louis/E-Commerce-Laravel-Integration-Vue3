@@ -6,7 +6,7 @@
         <link rel="icon" type="image/png" href="/nl-logo.png" />
         <title>Perfume - Devandur</title>
         <script src="https://kit.fontawesome.com/f5fc8fd02c.js" crossorigin="anonymous"></script>
-        @vite(['./resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js','resources/js/jquery-init.js'])
     </head>
     <body>
         <div id="app"></div>
